@@ -1,11 +1,12 @@
 Package: MOSTWAS
-Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Title: Multi-Omic Strategies for Transcriptome-Wide Association Studies
+Version: 0.0.1
+Authors@R:
+    person(given = "Arjun",
+           family = "Bhattacharya",
+           role = c("aut", "cre"),
+           email = "bhattacharya.a.bt@gmail.com")
+Description: Enrichment for transcriptome imputation and association studies using mediating biomarkers.
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
