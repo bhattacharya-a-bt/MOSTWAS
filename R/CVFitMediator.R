@@ -17,12 +17,13 @@
 #'
 #' @export
 
-CVFit <- function(foldNum,
+CVFitMediator <- function(foldNum,
                   parts.train,
                   parts.test,
                   pheno,
                   snpCur,
-                  parallel = T){
+                  parallel = T,
+                  fixedEffects = NULL){
 
   training = parts.train[[foldNum]]
   test = parts.test[[foldNum]]
