@@ -1,9 +1,9 @@
 #' Run QTL analysis of mediators v. mRNA expression
-#' 
+#'
 #' The function runs QTL analysis between mediators and
-#' gene expression for a single training-test split 
+#' gene expression for a single training-test split
 #' using MatrixEQTL (Shabalin 2012)
-#' 
+#'
 #' @param mediator_file_name character, filename for mediators file
 #' @param mediator_location_file_name character, filename for genomic positions of mediators
 #' @param expression_file_name character, filename for gene expression file
@@ -16,11 +16,11 @@
 #' @param traP numeric, P-value cutoff for tra-QTLs
 #' @param errorCovariance matrix, error covariance matrix, defaults to identity
 #' @param cisDist numeric, cis-QTL window
-#' 
+#'
 #' @return writes out cis- and trans-QTLs between mediators and gene expression
-#' 
+#'
 #' @import MatrixEQTL
-#' 
+#'
 #' @export
 partitionQTL <- function(mediator_file_name,
                          mediator_location_file_name,
@@ -34,10 +34,10 @@ partitionQTL <- function(mediator_file_name,
                          traP = 1e-6,
                          errorCovariance = numeric(),
                          cisDist = 1e6){
-  
+
   if (!require(MatrixEQTL)) install.packages('MatrixEQTL')
   require(MatrixEQTL)
-  
+
   ## Load genotype data
 
   snps = SlicedData$new();
@@ -47,9 +47,9 @@ partitionQTL <- function(mediator_file_name,
   snps$fileSkipColumns = 1;       # one column of row labels
   snps$fileSliceSize = 2000;      # read file in slices of 2,000 rows
   snps$LoadFile(mediator_file_name);
-  
+
   ## Load gene expression data
-  
+
   gene = SlicedData$new();
   gene$fileDelimiter = "\t";      # the TAB character
   gene$fileOmitCharacters = "NA"; # denote missing values;
@@ -57,9 +57,9 @@ partitionQTL <- function(mediator_file_name,
   gene$fileSkipColumns = 1;       # one column of row labels
   gene$fileSliceSize = 2000;      # read file in slices of 2,000 rows
   gene$LoadFile(expression_file_name);
-  
+
   ## Load covariates
-  
+
   cvrt = SlicedData$new();
   cvrt$fileDelimiter = "\t";      # the TAB character
   cvrt$fileOmitCharacters = "NA"; # denote missing values;
@@ -68,40 +68,40 @@ partitionQTL <- function(mediator_file_name,
   if(length(covariates_file_name)>0) {
     cvrt$LoadFile(covariates_file_name);
   }
-  
+
   ## Run the analysis
-  snpspos = read.table(mediator_location_file_name, 
-                       header = TRUE, 
+  snpspos = read.table(mediator_location_file_name,
+                       header = TRUE,
                        stringsAsFactors = FALSE);
-  genepos = read.table(gene_location_file_name, 
-                       header = TRUE, 
+  genepos = read.table(gene_location_file_name,
+                       header = TRUE,
                        stringsAsFactors = FALSE);
-  
+
   me = Matrix_eQTL_main(
-    snps = snps, 
-    gene = gene, 
+    snps = snps,
+    gene = gene,
     cvrt = cvrt,
     output_file_name      = output_file_name_tra,
     pvOutputThreshold     = traP,
-    useModel = useModel, 
-    errorCovariance = errorCovariance, 
-    verbose = TRUE, 
+    useModel = useModel,
+    errorCovariance = errorCovariance,
+    verbose = TRUE,
     output_file_name.cis  = output_file_name_cis,
     pvOutputThreshold.cis = cisP,
-    snpspos = snpspos, 
+    snpspos = snpspos,
     genepos = genepos,
     cisDist = cisDist,
     pvalue.hist = TRUE,
     min.pv.by.genesnp = FALSE,
     noFDRsaveMemory = FALSE);
-  
-  
+
+
   a = fread(output_file_name_cis)
-  a = subset(a, `t-stat` >= 100000)
+  a = subset(a, SNP == gene)
   fwrite(a,output_file_name_cis,quote=F,col.names = T,row.names = F,sep='\t')
-  
+
   a = fread(output_file_name_tra)
-  a = subset(a, `t-stat` >= 100000)
+  a = subset(a, SNP == gene)
   fwrite(a,output_file_name_tra,quote=F,col.names = T,row.names = F,sep='\t')
-  
+
 }
