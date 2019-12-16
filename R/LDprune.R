@@ -24,10 +24,11 @@ LDprune <- function(W,
                     numSNPShift,
                     ldThresh){
 
-  genfile = paste0(fileName,'.gen')
-  samplefile = paste0(fileName,'.sample')
-  bedfile = fileName
-  outFile = fileName
+  if (!dir.exists('temp/')){ dir.create('temp/') }
+  genfile = paste0('temp/',fileName,'.gen')
+  samplefile = paste0('temp/',fileName,'.sample')
+  bedfile = paste0('temp/',fileName)
+  outFile = paste0('temp/',fileName)
 
   df = as.data.frame(matrix(nrow = 1,ncol =2))
   ids = row.names(W)
@@ -38,7 +39,7 @@ LDprune <- function(W,
   onlyThese <- snpLocs[snpLocs$snpid %in% geno$SNP,]
   geno <- geno[geno$SNP %in% snpLocs$snpid,]
   onlyThese <- onlyThese[match(onlyThese$snpid,geno$SNP),]
-  chr <- unlist(lapply(strsplit(onlyThese$chr,'r'),function(x) as.character(x[2])))
+  chr <- onlyThese$chr
   geno$Pos <- onlyThese$pos
   geno$A1 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[3])))
   geno$A2 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[4])))

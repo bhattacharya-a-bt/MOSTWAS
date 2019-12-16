@@ -32,6 +32,7 @@
 #'
 #' @export
 trainMediator <- function(medInt,
+                          pheno = NULL,
                           mediator,
                           medLocs,
                           snps,
@@ -48,17 +49,8 @@ trainMediator <- function(medInt,
                           ldThresh = .5,
                           cores = 5){
 
-  if (parallel){
-    doParallel::registerDoParallel(5)
-  }
-
-  set.seed(seed)
-  parts.train = caret::createFolds(colnames(mediator)[-1],k=k,returnTrain = T)
-  set.seed(seed)
-  parts.test = caret::createFolds(colnames(mediator)[-1],k=k,returnTrain = F)
-
   colnames(mediator)[1] = 'Mediator'
-  pheno = as.numeric(mediator[mediator$Mediator == medInt,-1])
+  if (is.null(pheno)){ pheno = as.numeric(mediator[mediator$Mediator == medInt,-1]) }
 
   res = as.data.frame(cbind(pheno,t(covariates[,-1])))
   pheno = as.numeric(resid(lm(pheno~.,data=res)))
@@ -72,99 +64,50 @@ trainMediator <- function(medInt,
   snpList = cisGeno$snpList
   thisSNP = cisGeno$thisSNP
 
-  if (prune == T){
-    prune = LDprune(W = t(snpCur),
+  if (prune){
+    pruneObj = LDprune(W = t(snpCur),
                   snpList = snpList,
                   snpLocs = snpLocs,
                   fileName = fileName,
                   windowSize = windowSize,
                   numSNPShift = numSNPShift,
                   ldThresh = ldThresh)
-  snpCur = t(prune$W)
-  snpList = prune$snpList
-  thisSNP = prune$onlyThese
-  rm(prune)}
+  snpCur = t(pruneObj$W)
+  snpList = pruneObj$snpList
+  thisSNP = pruneObj$onlyThese
+  rm(pruneObj)}
 
-  if (parallel){
-    out = abind::abind(parallel::mclapply(1:k,
-                                          CVFit,
-                                          parts.train=parts.train,
-                                          parts.test=parts.test,
-                                          pheno=pheno,
-                                          snpCur=snpCur,
-                                          parallel = F,
-                                          mc.cores = cores),
-                       along = 1)
-  }
-  if (!parallel){
-    out = abind::abind(lapply(1:k,
-                              CVFit,
-                              parts.train=parts.train,
-                              parts.test=parts.test,
-                              pheno=pheno,
-                              snpCur=snpCur,
-                              parallel = F),
-                       along = 1)
-  }
+  data = as.data.frame(cbind(pheno,t(snpCur)))
 
-  out = as.data.frame(out)
-  colnames(out) = c('id','enet','lasso','lmm')
-  out = out[order(out$id),]
+  set.seed(seed)
+  control = caret::trainControl(method = "cv",
+                                number = 5,
+                                savePredictions = 'final')
+  suppressWarnings({
+    cl <- parallel::makePSOCKcluster(cores)
+    doParallel::registerDoParallel(cl)
+    model.enet = caret::train(pheno~.,
+                       data = data,
+                       method = 'glmnet',
+                       trControl=control,
+                       tuneLength = 5,
+                       metric = 'Rsquared')
+    ParallelLogger::stopCluster(cl)
+    })
+  best.model = model.enet$finalModel
+  best.lambda = model.enet$results$lambda[which.max(model.enet$results$Rsquared)]
+  best.alpha = model.enet$results$alpha[which.max(model.enet$results$Rsquared)]
+  pred = model.enet$pred
+  pred = pred[order(pred$rowIndex),]
+  r2 = max(model.enet$results$Rsquared)
 
-  r2.lmm = adjR2(pheno,out$lmm)
-  r2.enet = adjR2(pheno,out$enet)
-  r2.lasso = adjR2(pheno,out$lasso)
-
-  if (max(r2.lmm,r2.enet,r2.lasso) <= 0.01){return('Mediator is not well-predicted')}
-
-  if (r2.lmm >= max(r2.lasso,r2.enet)){
-
-    tot.mod = rrBLUP::mixed.solve(y = pheno,
-                                  Z = t(snpCur))
-    mod.df = data.frame(SNP = c('Intercept',thisSNP$snpid),
-                        Chromosome = c('-',thisSNP$chr),
-                        Position = c('-',thisSNP$pos),
-                        Effect = c(tot.mod$beta,tot.mod$u))
-    return(list(Model = mod.df,
-                Predicted = out$lmm,
-                CVR2 = r2.lmm))
+  mod.df = data.frame(SNP = c(thisSNP$snpid),
+                      Chromosome = c(thisSNP$chr),
+                      Position = c(thisSNP$pos),
+                      Effect = as.numeric(coef(best.model,s = best.lambda))[-1])
+  mod.df = subset(mod.df,Effect!=0)
+  return(list(Model = mod.df,
+              Predicted = pred$pred,
+              CVR2 = r2))
 
   }
-
-  if (r2.enet >= max(r2.lasso,r2.lmm)){
-
-    tot.mod = glmnet::cv.glmnet(y = pheno,
-                                x = t(snpCur),
-                                nfolds = 5,
-                                alpha = 0.5,
-                                parallel = T,
-                                intercept = T)
-    mod.df = data.frame(SNP = c('Intercept',thisSNP$snpid),
-                        Chromosome = c('-',thisSNP$chr),
-                        Position = c('-',thisSNP$pos),
-                        Effect = as.numeric(coef(tot.mod,s='lambda.min')))
-    return(list(Model = subset(mod.df,Effect != 0),
-                Predicted = out$enet,
-                CVR2 = r2.enet))
-
-  }
-
-  if (r2.lasso >= max(r2.enet,r2.lmm)){
-
-    tot.mod = glmnet::cv.glmnet(y = pheno,
-                                x = t(snpCur),
-                                nfolds = 5,
-                                alpha = 1,
-                                parallel = T,
-                                intercept = T)
-    mod.df = data.frame(SNP = c('Intercept',thisSNP$snpid),
-                        Chromosome = c('-',thisSNP$chr),
-                        Position = c('-',thisSNP$pos),
-                        Effect = as.numeric(coef(tot.mod,s='lambda.min')))
-    return(list(Model = subset(mod.df,Effect != 0),
-                Predicted = out$lasso,
-                CVR2 = r2.lasso))
-
-  }
-
-}
