@@ -50,7 +50,14 @@ trainExpression <- function(geneInt,
     fixedEffects[,i] = medTrainList[[i]][2]
   }
 
+  fixedEffects$pheno = pheno
 
+  ctrl = caret::trainControl(method = 'cv', number = 10)
+  lmCVFit <- caret::train(pheno~.,
+                          data = fixedEffects,
+                          method = 'lm',
+                          trControl = ctrl,
+                          metrix = 'Rsquared')
 
 
 

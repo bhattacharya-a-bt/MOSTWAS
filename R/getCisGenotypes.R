@@ -19,9 +19,11 @@ getCisGenotypes <- function(biomInt,
                             snpLocs,
                             cisDist = 1e6){
 
-  locs = subset(locs, grepl(biomInt,snpid))
+  colnames(locs)[1] = 'snpid'
+  colnames(snpLocs)[1] = 'snpid'
 
-  thisSNP = subset(snpLocs, chr == paste0('chr',locs$chr[1]) &
+  locs = subset(locs, grepl(biomInt,snpid))
+  thisSNP = subset(snpLocs, chr == locs$chr[1] &
                      pos < locs$pos[1]+cisDist & pos > locs$pos[1]-cisDist)
   snpCur = subset(snps,SNP %in% thisSNP$snpid)
   snpList = snpCur$SNP

@@ -10,3 +10,5 @@ Description: Enrichment for transcriptome imputation and association studies usi
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Suggests: 
+    testthat
