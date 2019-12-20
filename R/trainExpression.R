@@ -1,3 +1,39 @@
+#' Train and predict gene's predictive model with mediators
+#'
+#' The function trains a predictive model of a given gene using top mediators
+#' as fixed effects and assesses in-sample performance with cross-validation.
+#'
+#' @param geneInt character, identifier for gene of interest
+#' @param snps data frame, SNP dosages
+#' @param snpLocs data frame, MatrixEQTL locations for SNPs
+#' @param mediator data frame, mediator intensities
+#' @param medLocs data frame, MatrixEQTL locations for mediators
+#' @param covariates data frame, covariates
+#' @param qtlFull data frame, all QTLs (cis and trans) between mediators and genes
+#' @param integer numMed, number of top mediators to include
+#' @param seed integer, random seed for splitting
+#' @param k integer, number of training-test splits
+#' @param fileName character, throw away name for PLINK files
+#' @param parallel logical, TRUE/FALSE to run glmnet in parallel
+#' @param prune logical, TRUE/FALSE to LD prune the genotypes
+#' @param windowSize integer, window size for PLINK pruning
+#' @param numSNPShift integer, shifting window for PLINK pruning
+#' @param ldThresh numeric, LD threshold for PLINK pruning
+#' @param cores integer, number of parallel cores
+#' @param outputAll logical, include mediator information
+#'
+#' @return final model for gene along with CV R2 and predicted values
+#'
+#' @importFrom caret createFolds
+#' @importFrom doParallel registerDoParallel
+#' @importFrom data.table fread
+#' @importFrom data.table fwrite
+#' @importFrom glmnet cv.glmnet
+#' @importFrom rrBLUP mixed.solve
+#' @importForm parallel mclapply
+#' @importFrom abind abind
+#'
+#' @export
 trainExpression <- function(geneInt,
                             snps,
                             snpLocs,
@@ -14,7 +50,9 @@ trainExpression <- function(geneInt,
                             prune = T,
                             windowSize = 50,
                             numSNPShift = 5,
-                            ldThresh = .5){
+                            ldThresh = .5,
+                            cores,
+                            outputAll = F){
 
   medList = gatherMediators(geneInt,qtlFull,numMed)
   medTrainList = lapply(medList,
@@ -35,7 +73,8 @@ trainExpression <- function(geneInt,
                         ldThresh = ldThresh,
                         cores = cores)
   names(medTrainList) = medList
-  foreach::registerDoSEQ()
+
+  if (parallel){  foreach::registerDoSEQ() }
 
   if (length(medTrainList) >= 0){
     medTrainList = medTrainList[as.numeric(which(sapply(medTrainList,
@@ -84,22 +123,29 @@ trainExpression <- function(geneInt,
                              seed = seed,
                              k = k,
                              fileName = geneInt,
-                             cisDist = 1e6,
-                             parallel = T,
-                             prune = T,
-                             windowSize = 50,
-                             numSNPShift = 5,
-                             ldThresh = .5,
-                             cores = 5)
+                             cisDist = cisDist,
+                             parallel = parallel,
+                             prune = prune,
+                             windowSize = windowSize,
+                             numSNPShift = numSNPShift,
+                             ldThresh = ldThresh,
+                             cores = cores)
 
   cisGenoMod$Model$Mediator = 'Cis'
   cisGenoMod$Model = rbind(cisGenoMod$Model,trans.mod.df)
   cisGenoMod$CVR2 = cisGenoMod$CVR2 + fe.R2
 
+  if (dir.exists('temp')){
   cleanup = list.files('temp/')
-  file.remove(paste0('temp/',cleanup))
+  file.remove(paste0('temp/',cleanup))}
 
-  return(cisGenoMod)
+  if (!outputAll){
+  return(cisGenoMod)}
+
+  if (outputAll){
+    cisGenoMod$medList = medList
+    cisGenoMod$medTrainList = medTrainList
+  }
 
 
 }

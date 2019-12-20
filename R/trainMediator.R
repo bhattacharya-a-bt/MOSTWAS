@@ -18,6 +18,7 @@
 #' @param windowSize integer, window size for PLINK pruning
 #' @param numSNPShift integer, shifting window for PLINK pruning
 #' @param ldThresh numeric, LD threshold for PLINK pruning
+#' @param cores integer, number of parallel cores
 #'
 #' @return final model for mediator along with CV R2 and predicted values
 #'
@@ -52,8 +53,9 @@ trainMediator <- function(medInt,
   colnames(mediator)[1] = 'Mediator'
   if (is.null(pheno)){ pheno = as.numeric(mediator[mediator$Mediator == medInt,-1]) }
 
+  if (!is.null(covariates)){
   res = as.data.frame(cbind(pheno,t(covariates[,-1])))
-  pheno = as.numeric(resid(lm(pheno~.,data=res)))
+  pheno = as.numeric(resid(lm(pheno~.,data=res)))}
 
   cisGeno = getCisGenotypes(biomInt = medInt,
                             locs = medLocs,

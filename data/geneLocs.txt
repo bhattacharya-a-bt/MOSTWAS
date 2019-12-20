@@ -1,0 +1,2 @@
+c(NA, NA, NA)	chr	left	right
+test	10	8066565427	8066765427

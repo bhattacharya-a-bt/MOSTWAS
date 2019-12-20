@@ -60,6 +60,7 @@ partitionQTL <- function(mediator_file_name,
 
   ## Load covariates
 
+  if (!is.null(covariates_file_name)){
   cvrt = SlicedData$new();
   cvrt$fileDelimiter = "\t";      # the TAB character
   cvrt$fileOmitCharacters = "NA"; # denote missing values;
@@ -67,7 +68,7 @@ partitionQTL <- function(mediator_file_name,
   cvrt$fileSkipColumns = 1;       # one column of row labels
   if(length(covariates_file_name)>0) {
     cvrt$LoadFile(covariates_file_name);
-  }
+  }}
 
   ## Run the analysis
   snpspos = read.table(mediator_location_file_name,
@@ -77,6 +78,7 @@ partitionQTL <- function(mediator_file_name,
                        header = TRUE,
                        stringsAsFactors = FALSE);
 
+  if (!is.null(covariates_file_name)){
   me = Matrix_eQTL_main(
     snps = snps,
     gene = gene,
@@ -93,15 +95,34 @@ partitionQTL <- function(mediator_file_name,
     cisDist = cisDist,
     pvalue.hist = TRUE,
     min.pv.by.genesnp = FALSE,
-    noFDRsaveMemory = FALSE);
+    noFDRsaveMemory = FALSE);}
+
+  if (is.null(covariates_file_name)){
+    me = Matrix_eQTL_main(
+      snps = snps,
+      gene = gene,
+      output_file_name      = output_file_name_tra,
+      pvOutputThreshold     = traP,
+      useModel = useModel,
+      errorCovariance = errorCovariance,
+      verbose = TRUE,
+      output_file_name.cis  = output_file_name_cis,
+      pvOutputThreshold.cis = cisP,
+      snpspos = snpspos,
+      genepos = genepos,
+      cisDist = cisDist,
+      pvalue.hist = TRUE,
+      min.pv.by.genesnp = FALSE,
+      noFDRsaveMemory = FALSE);}
+
 
 
   a = fread(output_file_name_cis)
-  a = subset(a, SNP == gene)
+  a = subset(a, SNP != gene)
   fwrite(a,output_file_name_cis,quote=F,col.names = T,row.names = F,sep='\t')
 
   a = fread(output_file_name_tra)
-  a = subset(a, SNP == gene)
+  a = subset(a, SNP != gene)
   fwrite(a,output_file_name_tra,quote=F,col.names = T,row.names = F,sep='\t')
 
 }
