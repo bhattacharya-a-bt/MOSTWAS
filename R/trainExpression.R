@@ -45,7 +45,7 @@ trainExpression <- function(geneInt,
                             seed,
                             k,
                             fileName,
-                            cisDist = 1e6,
+                            cisDist = 5e5,
                             parallel = T,
                             prune = T,
                             windowSize = 50,
@@ -55,27 +55,8 @@ trainExpression <- function(geneInt,
                             outputAll = F){
 
   medList = gatherMediators(geneInt,qtlFull,numMed)
-  if (parallel){
-    medTrainList = parallel::mclapply(medList,
-                          trainMediator,
-                          mediator = mediator,
-                          medLocs = medLocs,
-                          snps = snps,
-                          snpLocs = snpLocs,
-                          covariates = covariates,
-                          seed = seed,
-                          k = k,
-                          cisDist = cisDist,
-                          parallel = parallel,
-                          prune = prune,
-                          windowSize = windowSize,
-                          numSNPShift = numSNPShift,
-                          ldThresh = ldThresh,
-                          cores = cores,
-                          mc.cores = cores)
-  }
-  if (!parallel){
-    medTrainList = lapply(medList,
+  if (parallel) {
+  medTrainList = parallel::mclapply(medList,
            trainMediator,
            mediator = mediator,
            medLocs = medLocs,
@@ -85,18 +66,32 @@ trainExpression <- function(geneInt,
            seed = seed,
            k = k,
            cisDist = cisDist,
-           parallel = parallel,
            prune = prune,
            windowSize = windowSize,
            numSNPShift = numSNPShift,
            ldThresh = ldThresh,
-           cores = cores)
+           mc.cores = cores)
   }
-
+  if (!parallel){
+    medTrainList = lapply(medList,
+                          trainMediator,
+                          mediator = mediator,
+                          medLocs = medLocs,
+                          snps = snps,
+                          snpLocs = snpLocs,
+                          covariates = covariates,
+                          seed = seed,
+                          k = k,
+                          cisDist = cisDist,
+                          prune = prune,
+                          windowSize = windowSize,
+                          numSNPShift = numSNPShift,
+                          ldThresh = ldThresh)
+  }
   names(medTrainList) = medList
 
-  if (parallel){  foreach::registerDoSEQ() }
-
+  pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
+  fe.R2 = 0
   if (length(medTrainList) >= 0){
     medTrainList = medTrainList[as.numeric(which(sapply(medTrainList,
                                                       function(x) x[3]) >= .01))]
@@ -107,7 +102,6 @@ trainExpression <- function(geneInt,
       for (i in 1:ncol(fixedEffects)){
         fixedEffects[,i] = medTrainList[[i]][2]
         }
-      pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
       fixedEffects$pheno = pheno
       ctrl = caret::trainControl(method = 'cv',
                                  number = k,
@@ -118,7 +112,7 @@ trainExpression <- function(geneInt,
                               trControl = ctrl,
                               metric = 'Rsquared')
 
-      fe.R2 = adjR2(lmCVFit$pred$pred,lmCVFit$pred$obs)
+      fe.R2 = fe.R2 + adjR2(lmCVFit$pred$pred,lmCVFit$pred$obs)
       pheno = as.numeric(resid(lmCVFit))
     }
   }
@@ -144,19 +138,18 @@ trainExpression <- function(geneInt,
                              seed = seed,
                              k = k,
                              cisDist = cisDist,
-                             parallel = parallel,
                              prune = prune,
                              windowSize = windowSize,
                              numSNPShift = numSNPShift,
-                             ldThresh = ldThresh,
-                             cores = cores)
+                             ldThresh = ldThresh)
 
   cisGenoMod$Model$Mediator = 'Cis'
   cisGenoMod$Model = rbind(cisGenoMod$Model,trans.mod.df)
   cisGenoMod$CVR2 = cisGenoMod$CVR2 + fe.R2
+  cisGenoMod$CVR2.cis = cisGenoMod$CVR2 - fe.R2
 
   if (dir.exists('temp')){
-  cleanup = list.files('temp/')
+  cleanup = c(medList,geneInt)
   file.remove(paste0('temp/',cleanup))}
 
   if (!outputAll){
@@ -165,6 +158,7 @@ trainExpression <- function(geneInt,
   if (outputAll){
     cisGenoMod$medList = medList
     cisGenoMod$medTrainList = medTrainList
+    return(cisGenoMod)
   }
 
 

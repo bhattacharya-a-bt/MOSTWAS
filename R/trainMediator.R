@@ -41,13 +41,11 @@ trainMediator <- function(medInt,
                           covariates,
                           seed,
                           k,
-                          cisDist = 1e6,
-                          parallel = T,
+                          cisDist = 5e5,
                           prune = T,
                           windowSize = 50,
                           numSNPShift = 5,
-                          ldThresh = .5,
-                          cores = 5){
+                          ldThresh = .5){
 
   fileName = medInt
   colnames(mediator)[1] = 'Mediator'
@@ -85,27 +83,12 @@ trainMediator <- function(medInt,
   control = caret::trainControl(method = "cv",
                                 number = 5,
                                 savePredictions = 'final')
-
-  if (parallel){
-  suppressWarnings({
-    cl <- parallel::makePSOCKcluster(cores)
-    doParallel::registerDoParallel(cl)
-    model.enet = caret::train(pheno~.,
+  model.enet = caret::train(pheno~.,
                        data = data,
                        method = 'glmnet',
                        trControl=control,
                        tuneLength = 5,
                        metric = 'Rsquared')
-    ParallelLogger::stopCluster(cl)
-  })}
-  if (!parallel) {
-    model.enet = caret::train(pheno~.,
-                              data = data,
-                              method = 'glmnet',
-                              trControl=control,
-                              tuneLength = 5,
-                              metric = 'Rsquared')
-  }
   best.model = model.enet$finalModel
   best.lambda = model.enet$results$lambda[which.max(model.enet$results$Rsquared)]
   best.alpha = model.enet$results$alpha[which.max(model.enet$results$Rsquared)]
