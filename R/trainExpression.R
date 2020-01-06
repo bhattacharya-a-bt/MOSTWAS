@@ -55,22 +55,44 @@ trainExpression <- function(geneInt,
                             outputAll = F){
 
   medList = gatherMediators(geneInt,qtlFull,numMed)
-  medTrainList = lapply(medList,
-                        trainMediator,
-                        mediator = mediator,
-                        medLocs = medLocs,
-                        snps = snps,
-                        snpLocs = snpLocs,
-                        covariates = covariates,
-                        seed = seed,
-                        k = k,
-                        cisDist = cisDist,
-                        parallel = parallel,
-                        prune = parallel,
-                        windowSize = windowSize,
-                        numSNPShift = numSNPShift,
-                        ldThresh = ldThresh,
-                        cores = cores)
+  if (parallel){
+    medTrainList = parallel::mclapply(medList,
+                          trainMediator,
+                          mediator = mediator,
+                          medLocs = medLocs,
+                          snps = snps,
+                          snpLocs = snpLocs,
+                          covariates = covariates,
+                          seed = seed,
+                          k = k,
+                          cisDist = cisDist,
+                          parallel = parallel,
+                          prune = prune,
+                          windowSize = windowSize,
+                          numSNPShift = numSNPShift,
+                          ldThresh = ldThresh,
+                          cores = cores,
+                          mc.cores = cores)
+  }
+  if (!parallel){
+    medTrainList = lapply(medList,
+           trainMediator,
+           mediator = mediator,
+           medLocs = medLocs,
+           snps = snps,
+           snpLocs = snpLocs,
+           covariates = covariates,
+           seed = seed,
+           k = k,
+           cisDist = cisDist,
+           parallel = parallel,
+           prune = prune,
+           windowSize = windowSize,
+           numSNPShift = numSNPShift,
+           ldThresh = ldThresh,
+           cores = cores)
+  }
+
   names(medTrainList) = medList
 
   if (parallel){  foreach::registerDoSEQ() }

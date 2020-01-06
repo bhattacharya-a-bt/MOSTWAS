@@ -61,7 +61,7 @@ trainMediator <- function(medInt,
                             locs = medLocs,
                             snps = snps,
                             snpLocs = snpLocs,
-                            cisDist = 1e6)
+                            cisDist = cisDist)
   snpCur = cisGeno$snpCur
   snpList = cisGeno$snpList
   thisSNP = cisGeno$thisSNP
@@ -85,6 +85,8 @@ trainMediator <- function(medInt,
   control = caret::trainControl(method = "cv",
                                 number = 5,
                                 savePredictions = 'final')
+
+  if (parallel){
   suppressWarnings({
     cl <- parallel::makePSOCKcluster(cores)
     doParallel::registerDoParallel(cl)
@@ -95,7 +97,15 @@ trainMediator <- function(medInt,
                        tuneLength = 5,
                        metric = 'Rsquared')
     ParallelLogger::stopCluster(cl)
-    })
+  })}
+  if (!parallel) {
+    model.enet = caret::train(pheno~.,
+                              data = data,
+                              method = 'glmnet',
+                              trControl=control,
+                              tuneLength = 5,
+                              metric = 'Rsquared')
+  }
   best.model = model.enet$finalModel
   best.lambda = model.enet$results$lambda[which.max(model.enet$results$Rsquared)]
   best.alpha = model.enet$results$alpha[which.max(model.enet$results$Rsquared)]
