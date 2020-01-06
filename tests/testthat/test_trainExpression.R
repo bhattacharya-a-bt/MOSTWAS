@@ -11,7 +11,6 @@ test_that("train expression works", {
                       numMed = 5,
                       seed = 1,
                       k = 5,
-                      fileName = 'test',
                       cisDist = 1e6,
                       parallel = F,
                       prune = F,

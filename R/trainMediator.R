@@ -41,7 +41,6 @@ trainMediator <- function(medInt,
                           covariates,
                           seed,
                           k,
-                          fileName,
                           cisDist = 1e6,
                           parallel = T,
                           prune = T,
@@ -50,6 +49,7 @@ trainMediator <- function(medInt,
                           ldThresh = .5,
                           cores = 5){
 
+  fileName = medInt
   colnames(mediator)[1] = 'Mediator'
   if (is.null(pheno)){ pheno = as.numeric(mediator[mediator$Mediator == medInt,-1]) }
 
