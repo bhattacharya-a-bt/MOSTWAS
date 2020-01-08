@@ -44,7 +44,6 @@ trainExpression <- function(geneInt,
                             numMed = 5,
                             seed,
                             k,
-                            fileName,
                             cisDist = 5e5,
                             parallel = T,
                             prune = T,
@@ -114,19 +113,20 @@ trainExpression <- function(geneInt,
 
       fe.R2 = fe.R2 + adjR2(lmCVFit$pred$pred,lmCVFit$pred$obs)
       pheno = as.numeric(resid(lmCVFit))
+
+      trans.mod.df = as.data.frame(abind::abind(lapply(1:length(medTrainList),
+                                                       amplifyTrans,
+                                                       medTrainList = medTrainList,
+                                                       lmCaretObj = lmCVFit),
+                                                along = 1))
+      trans.mod.df$Effect = as.numeric(as.character(trans.mod.df$Effect))
+      trans.mod.df = subset(trans.mod.df,SNP != 'Intercept')
+      rownames(trans.mod.df) = NULL
     }
   }
 
 
 
-  trans.mod.df = as.data.frame(abind::abind(lapply(1:length(medTrainList),
-                                     amplifyTrans,
-                                     medTrainList = medTrainList,
-                                     lmCaretObj = lmCVFit),
-                              along = 1))
-  trans.mod.df$Effect = as.numeric(as.character(trans.mod.df$Effect))
-  trans.mod.df = subset(trans.mod.df,SNP != 'Intercept')
-  rownames(trans.mod.df) = NULL
 
   cisGenoMod = trainMediator(medInt = geneInt,
                              pheno = pheno,
@@ -144,13 +144,17 @@ trainExpression <- function(geneInt,
                              ldThresh = ldThresh)
 
   cisGenoMod$Model$Mediator = 'Cis'
-  cisGenoMod$Model = rbind(cisGenoMod$Model,trans.mod.df)
+  if (exists('trans.mod.df')){
+    cisGenoMod$Model = rbind(cisGenoMod$Model,trans.mod.df)
+    }
   cisGenoMod$CVR2 = cisGenoMod$CVR2 + fe.R2
   cisGenoMod$CVR2.cis = cisGenoMod$CVR2 - fe.R2
 
   if (dir.exists('temp')){
-  cleanup = c(medList,geneInt)
-  file.remove(paste0('temp/',cleanup))}
+    fff = list.files('temp/')
+    cleanup = c(medList,geneInt)
+    file.remove(paste0('temp/',fff[grepl(paste(cleanup,collapse = '|'),fff)]))
+    }
 
   if (!outputAll){
   return(cisGenoMod)}

@@ -82,7 +82,7 @@ trainMediator <- function(medInt,
 
   set.seed(seed)
   control = caret::trainControl(method = "cv",
-                                number = 5,
+                                number = k,
                                 savePredictions = 'final')
   model.enet = caret::train(pheno~.,
                        data = data,
