@@ -78,6 +78,7 @@ trainMediator <- function(medInt,
   rm(pruneObj)}
 
   data = as.data.frame(cbind(pheno,t(snpCur)))
+  data = data[,!duplicated(colnames(data))]
 
   set.seed(seed)
   control = caret::trainControl(method = "cv",
@@ -94,7 +95,7 @@ trainMediator <- function(medInt,
   best.alpha = model.enet$results$alpha[which.max(model.enet$results$Rsquared)]
   pred = model.enet$pred
   pred = pred[order(pred$rowIndex),]
-  r2 = max(model.enet$results$Rsquared)
+  r2 = adjR2(model.enet$pred$obs,model.enet$pred$pred)
 
   mod.df = data.frame(SNP = c(thisSNP$snpid),
                       Chromosome = c(thisSNP$chr),
