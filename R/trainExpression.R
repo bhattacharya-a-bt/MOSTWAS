@@ -53,6 +53,7 @@ trainExpression <- function(geneInt,
                             cores,
                             outputAll = F){
 
+  set.seed(seed)
   medList = gatherMediators(geneInt,qtlFull,numMed)
   if (parallel) {
   medTrainList = parallel::mclapply(medList,
