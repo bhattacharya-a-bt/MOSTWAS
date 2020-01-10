@@ -114,7 +114,7 @@ trainMediator <- function(medInt,
                       Chromosome = c(thisSNP$chr),
                       Position = c(thisSNP$pos),
                       Effect = as.numeric(coef(fin.model.enet,s = 'lambda.min'))[-1])
-  mod.df.enet = subset(mod.df.enet,Effect!=0)
+  mod.df.enet = subset(mod.df.enet,Effect != 0)
 
   fin.model.blup = rrBLUP::mixed.solve(y = pheno,
                                        Z = t(snpCur))
@@ -122,9 +122,8 @@ trainMediator <- function(medInt,
                            Chromosome = c(thisSNP$chr),
                            Position = c(thisSNP$pos),
                            Effect = as.numeric(fin.model.blup$u))
-  mod.df.blup = subset(mod.df.blup,Effect!=0)
 
-  if (model == 'Elastic net'){
+  if (model == 'Elastic net' & nrow(mod.df.enet) != 0){
 
     return(list(Model = mod.df.enet,
                 Predicted = pred.enet,
