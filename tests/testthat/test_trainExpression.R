@@ -6,7 +6,7 @@ test_that("train expression works", {
                       snps = data.table::fread(file.path(dir,'snps.txt')),
                       snpLocs = data.table::fread(file.path(dir,'snpLocs.txt')),
                       mediator = data.table::fread(file.path(dir,'mediators.txt')),
-                      medLocs = read.table(file.path(dir,'medLocs.txt',header=T)),
+                      medLocs = read.table(file.path(dir,'medLocs.txt'),header=T),
                       covariates = NULL,
                       qtlFull = rbind(data.table::fread(file.path(dir,'testCis.txt')),
                                       data.table::fread(file.path(dir,'testTra.txt'))),
