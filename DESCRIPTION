@@ -1,12 +1,13 @@
 Package: MOSTWAS
 Title: Multi-Omic Strategies for Transcriptome-Wide Association Studies
-Version: 0.0.2
+Version: 0.0.3
 Authors@R:
     person(given = "Arjun",
            family = "Bhattacharya",
            role = c("aut", "cre"),
            email = "bhattacharya.a.bt@gmail.com")
 Description: Enrichment for transcriptome imputation and association studies using mediating biomarkers.
+Imports: caret
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
