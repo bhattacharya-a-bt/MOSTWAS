@@ -15,7 +15,7 @@ amplifyTrans <- function(whichMed,
                          medTrainList,
                          lmCaretObj){
   cur.mod = medTrainList[[whichMed]]$Model
-  cur.mod$Effect[-1] = cur.mod$Effect[-1] * as.numeric(coef(summary(lmCaretObj))[whichMed+1,1])
+  cur.mod$Effect = cur.mod$Effect * as.numeric(coef(summary(lmCaretObj))[whichMed+1,1])
   cur.mod$Mediator = names(medTrainList)[whichMed]
   cur.mod$SNP = as.character(cur.mod$SNP)
   return(cur.mod)

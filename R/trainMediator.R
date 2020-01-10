@@ -81,29 +81,61 @@ trainMediator <- function(medInt,
   data = data[,!duplicated(colnames(data))]
 
   set.seed(seed)
-  control = caret::trainControl(method = "cv",
-                                number = k,
-                                savePredictions = 'final')
-  model.enet = caret::train(pheno~.,
-                       data = data,
-                       method = 'glmnet',
-                       trControl=control,
-                       tuneLength = 5,
-                       metric = 'Rsquared')
-  best.model = model.enet$finalModel
-  best.lambda = model.enet$results$lambda[which.max(model.enet$results$Rsquared)]
-  best.alpha = model.enet$results$alpha[which.max(model.enet$results$Rsquared)]
-  pred = model.enet$pred
-  pred = pred[order(pred$rowIndex),]
-  r2 = adjR2(model.enet$pred$obs,model.enet$pred$pred)
+  train = caret::createFolds(y = pheno,
+                             k=k,
+                             returnTrain = T)
+  set.seed(seed)
+  test = caret::createFolds(y = pheno,
+                            k = k,
+                            returnTrain = F)
 
-  mod.df = data.frame(SNP = c(thisSNP$snpid),
+  pred.blup = pred.enet = vector(mode = 'numeric',length = length(pheno))
+  for (i in 1:k){
+
+    blup = rrBLUP::mixed.solve(y = pheno[train[[i]]],
+                               Z = t(snpCur[,train[[i]]]))
+    pred.blup[test[[i]]] = as.numeric(t(snpCur[,test[[i]]]) %*% blup$u)
+    enet = glmnet::cv.glmnet(y = pheno[train[[i]]],
+                             x = t(snpCur[,train[[i]]]),
+                             nfolds = 5)
+    pred.enet[test[[i]]] = as.numeric(predict(enet,
+                                   newx = t(snpCur[,test[[i]]]),
+                                   s = 'lambda.min'))
+
+  }
+
+  model = ifelse(adjR2(pheno,pred.blup) >= adjR2(pheno,pred.enet),
+                 'LMM','Elastic net')
+
+  fin.model.enet = glmnet::cv.glmnet(y = pheno,
+                                     x = t(snpCur),
+                                     nfolds = 5)
+  mod.df.enet = data.frame(SNP = c(thisSNP$snpid),
                       Chromosome = c(thisSNP$chr),
                       Position = c(thisSNP$pos),
-                      Effect = as.numeric(coef(best.model,s = best.lambda))[-1])
-  mod.df = subset(mod.df,Effect!=0)
-  return(list(Model = mod.df,
-              Predicted = pred$pred,
-              CVR2 = r2))
+                      Effect = as.numeric(coef(fin.model.enet,s = 'lambda.min'))[-1])
+  mod.df.enet = subset(mod.df.enet,Effect!=0)
+
+  fin.model.blup = rrBLUP::mixed.solve(y = pheno,
+                                       Z = t(snpCur))
+  mod.df.blup = data.frame(SNP = c(thisSNP$snpid),
+                           Chromosome = c(thisSNP$chr),
+                           Position = c(thisSNP$pos),
+                           Effect = as.numeric(fin.model.blup$u))
+  mod.df.blup = subset(mod.df.blup,Effect!=0)
+
+  if (model == 'Elastic net'){
+
+    return(list(Model = mod.df.enet,
+                Predicted = pred.enet,
+                CVR2 = adjR2(pheno,pred.enet)))
+  }
+
+  if (model == 'LMM' | nrow(mod.df.enet) == 0){
+
+    return(list(Model = mod.df.blup,
+                Predicted = pred.blup,
+                CVR2 = adjR2(pheno,pred.blup)))
+  }
 
   }

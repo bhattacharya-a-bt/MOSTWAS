@@ -55,23 +55,23 @@ trainExpression <- function(geneInt,
 
   set.seed(seed)
   medList = gatherMediators(geneInt,qtlFull,numMed)
-  if (parallel) {
-  medTrainList = parallel::mclapply(medList,
-           trainMediator,
-           mediator = mediator,
-           medLocs = medLocs,
-           snps = snps,
-           snpLocs = snpLocs,
-           covariates = covariates,
-           seed = seed,
-           k = k,
-           cisDist = cisDist,
-           prune = prune,
-           windowSize = windowSize,
-           numSNPShift = numSNPShift,
-           ldThresh = ldThresh,
-           mc.cores = cores)
-  }
+    if (parallel) {
+    medTrainList = parallel::mclapply(medList,
+             trainMediator,
+             mediator = mediator,
+             medLocs = medLocs,
+             snps = snps,
+             snpLocs = snpLocs,
+             covariates = covariates,
+             seed = seed,
+             k = k,
+             cisDist = cisDist,
+             prune = prune,
+             windowSize = windowSize,
+             numSNPShift = numSNPShift,
+             ldThresh = ldThresh,
+             mc.cores = cores)
+    }
   if (!parallel){
     medTrainList = lapply(medList,
                           trainMediator,
@@ -92,27 +92,22 @@ trainExpression <- function(geneInt,
 
   pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
   fe.R2 = 0
-  if (length(medTrainList) >= 0){
+  if (length(medTrainList) > 0){
     medTrainList = medTrainList[as.numeric(which(sapply(medTrainList,
                                                       function(x) x[3]) >= .01))]
-    if (length(medTrainList) >= 0){
+    if (length(medTrainList) > 0){
       fixedEffects = as.data.frame(matrix(ncol = length(medTrainList),
                                           nrow = ncol(mediator)-1))
       colnames(fixedEffects) = names(medTrainList)
       for (i in 1:ncol(fixedEffects)){
         fixedEffects[,i] = medTrainList[[i]][2]
-        }
+      }
+      fixedEffects = as.data.frame(apply(fixedEffects,2,scale))
       fixedEffects$pheno = pheno
-      ctrl = caret::trainControl(method = 'cv',
-                                 number = k,
-                                 savePredictions = 'final')
-      lmCVFit <- caret::train(pheno~.,
-                              data = fixedEffects,
-                              method = 'lm',
-                              trControl = ctrl,
-                              metric = 'Rsquared')
+      lmCVFit <- lm(pheno~.,
+                    data = fixedEffects)
 
-      fe.R2 = fe.R2 + adjR2(lmCVFit$pred$pred,lmCVFit$pred$obs)
+      fe.R2 = fe.R2 + adjR2(as.numeric(predict(lmCVFit)),pheno)
       pheno = as.numeric(resid(lmCVFit))
 
       trans.mod.df = as.data.frame(abind::abind(lapply(1:length(medTrainList),
