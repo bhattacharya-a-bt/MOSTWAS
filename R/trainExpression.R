@@ -73,7 +73,10 @@ trainExpression <- function(geneInt,
                                cisDist = 5e5,
                                needMed = T,
                                medList = medList,
-                               verbose = verbose)
+                               verbose = verbose,
+                               windowSize = windowSize,
+                               numSNPShift = numSNPShift,
+                               ldThresh = ldThresh)
 
   if (herit$P > h2Pcutoff) {print(paste(geneInt,
                                            'is not germline heritable at P <',
