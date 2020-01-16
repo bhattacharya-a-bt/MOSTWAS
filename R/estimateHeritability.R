@@ -232,6 +232,8 @@ estimateHeritability <- function(biomInt,
                '--out',paste0(bedfile,'_multi')),
          intern = !verbose)
 
+  hsq = data.table::fread(paste0(bedfile,'_multi.hsq'),
+                          fill = T)
   h2 = hsq$Variance[10]
   P = hsq$Variance[17]
   SE = hsq$SE[12]
