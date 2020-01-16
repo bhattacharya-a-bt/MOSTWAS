@@ -17,7 +17,7 @@ getCisGenotypes <- function(biomInt,
                             locs,
                             snps,
                             snpLocs,
-                            cisDist = 1e6){
+                            cisDist = 5e5){
 
   colnames(locs)[1] = 'snpid'
   colnames(snpLocs)[1] = 'snpid'

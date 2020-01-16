@@ -73,7 +73,7 @@ LDprune <- function(W,
   a$V5 = 2
   data.table::fwrite(a,paste0(bedfile,'.fam'),col.names=F,row.names=F,quote=F,sep='\t')
 
-  system(paste('/nas/longleaf/home/abhattac/plink','--bfile',bedfile,
+  system(paste('plink','--bfile',bedfile,
                '--indep-pairwise',windowSize,numSNPShift,ldThresh,
                '--out',outFile))
 

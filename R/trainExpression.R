@@ -10,7 +10,7 @@
 #' @param medLocs data frame, MatrixEQTL locations for mediators
 #' @param covariates data frame, covariates
 #' @param qtlFull data frame, all QTLs (cis and trans) between mediators and genes
-#' @param integer numMed, number of top mediators to include
+#' @param numMed integer, number of top mediators to include
 #' @param seed integer, random seed for splitting
 #' @param k integer, number of training-test splits
 #' @param fileName character, throw away name for PLINK files
