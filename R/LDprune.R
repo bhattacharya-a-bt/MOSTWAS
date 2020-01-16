@@ -68,10 +68,11 @@ LDprune <- function(W,
   write.table(sample,samplefile,row.names=FALSE,
               col.names = TRUE, quote = FALSE)
 
+  if (!verbose) {sink('/dev/null')}
   system(paste('plink',
                '--gen',genfile,
                '--sample',samplefile,
-               '--make-bed',
+               '--make-bed --allow-no-sex',
                '--out',bedfile),
          intern = !verbose)
 
@@ -87,6 +88,8 @@ LDprune <- function(W,
                '--indep-pairwise',windowSize,numSNPShift,ldThresh,
                '--out',outFile),
          intern = !verbose)
+
+  if (!verbose) {sink()}
 
   file.remove(genfile,samplefile)
 
