@@ -53,15 +53,17 @@ trainExpression <- function(geneInt,
                             numSNPShift = 5,
                             ldThresh = .5,
                             cores,
-                            outputAll = F,
-                            verbose = F,
+                            verbose = T,
                             modelDir,
                             ldScrRegion = 200){
 
   set.seed(seed)
+
+  print('GATHERING MEDIATORS')
   pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
   medList = gatherMediators(geneInt,qtlFull,numMed)
 
+  print('ESTIMATING HERITABILITY')
   herit = estimateHeritability(biomInt = geneInt,
                                snps = snps,
                                pheno = pheno,
@@ -85,6 +87,10 @@ trainExpression <- function(geneInt,
                                            'is not germline heritable at P <',
                                            h2Pcutoff))}
   if (herit$P <= h2Pcutoff){
+
+
+    print('TRAINING MEDIATORS')
+
     if (parallel) {
     medTrainList = parallel::mclapply(medList,
              trainMediator,
@@ -120,6 +126,8 @@ trainExpression <- function(geneInt,
   }
   names(medTrainList) = medList
 
+
+  print('FITTING MEDIATORS')
   fe.R2 = 0
   if (length(medTrainList) > 0){
     medTrainList = medTrainList[as.numeric(which(sapply(medTrainList,
@@ -151,8 +159,7 @@ trainExpression <- function(geneInt,
   }
 
 
-
-
+  print('FITTING CIS-GENOTYPES')
   cisGenoMod = trainMediator(medInt = geneInt,
                              pheno = pheno,
                              mediator = mediator,
@@ -189,7 +196,7 @@ trainExpression <- function(geneInt,
   Predicted = cisGenoMod$Predicted
   Mediators = cisGenoMod$medlist
   CisR2 = cisGenoMod$CVR2.cis
-  h2 = herit$h2
+  h2 = abs(herit$h2)
   h2.Pvalue = herit$P
   save(Model,R2,Predicted,Mediators,CisR2,h2,h2.Pvalue,
          paste0(modelDir,geneInt,'.wgt.med.RData'))}
