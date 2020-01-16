@@ -53,6 +53,7 @@ trainExpression <- function(geneInt,
                             outputAll = F){
 
   set.seed(seed)
+  pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
   medList = gatherMediators(geneInt,qtlFull,numMed)
     if (parallel) {
     medTrainList = parallel::mclapply(medList,
@@ -89,7 +90,6 @@ trainExpression <- function(geneInt,
   }
   names(medTrainList) = medList
 
-  pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
   fe.R2 = 0
   if (length(medTrainList) > 0){
     medTrainList = medTrainList[as.numeric(which(sapply(medTrainList,

@@ -27,6 +27,7 @@
 estimateHeritability <- function(biomInt,
                                  geneInt,
                                  snps,
+                                 pheno,
                                  snpLocs,
                                  mediator,
                                  medLocs,
@@ -38,38 +39,49 @@ estimateHeritability <- function(biomInt,
                                  needMed = F,
                                  medList){
 
-  cisGeno = as.data.frame(ifelse(needMed,
-                  abind::abind(lapply(c(biomInt,medList),
-                                      getCisGenotypes,
-                                      locs = medLocs,
-                                      snps = snps,
-                                      snpLocs = snpLocs,
-                                      cisDist = cisDist),
-                               along = 1),
-                  getCisGenotype(biomInt,
-                                 medLocs,
-                                 snps,
-                                 snpLocs,
-                                 cisDist)))
+  if (needMed) {
+    cisGeno = lapply(c(biomInt,medList),
+                     getCisGenotypes,
+                     locs = medLocs,
+                     snps = snps,
+                     snpLocs = snpLocs,
+                     cisDist = cisDist)
+    W = abind::abind(lapply(cisGeno,function(x) x[[1]]),
+                     along=1)
+    snpList = unlist(lapply(cisGeno, function(x) x[[2]]))
+    thisSNP = as.data.frame(abind::abind(lapply(cisGeno,function(x) x[[3]]),
+                                         along=1))
+  }
 
-  W = t(cisGeno$snpCur)
-  snpList = cisGeno$snpList
+  if (!needMed) {
+    cisGeno = getCisGenotypes(biomInt,
+                             medLocs,
+                             snps,
+                             snpLocs,
+                             cisDist)
+    W = cisGeno$snpCur
+    snpList = cisGeno$snpList
+    thisSNP = cisGeno$thisSNP
+  }
 
-  if (!dir.exists('temp/')){ dir.create('temp/') }
-  genfile = paste0('temp/',fileName,'.gen')
-  samplefile = paste0('temp/',fileName,'.sample')
-  bedfile = paste0('temp/',fileName)
-  outFile = paste0('temp/',fileName)
-  phenFile = paste0('temp/',fileName,'.phen')
-  covarFile = paste0('temp/',fileName,'.qcovar')
+  fileName = paste0('h2_',biomInt)
+  tempDir = paste0(biomInt,'_h2_temp/')
+  if (!dir.exists(tempDir)){ dir.create(tempDir) }
+  genfile = paste0(tempDir,fileName,'.gen')
+  samplefile = paste0(tempDir,fileName,'.sample')
+  bedfile = paste0(tempDir,fileName)
+  outFile = paste0(tempDir,fileName)
+  phenFile = paste0(tempDir,fileName,'.phen')
+  covarFile = paste0(tempDir,fileName,'.qcovar')
 
   df = as.data.frame(matrix(nrow = 1,ncol =2))
-  ids = row.names(W)
-  geno = as.data.frame(matrix(ncol=nrow(W)+4,nrow = ncol(W)))
+  ids = colnames(W)
+  geno = as.data.frame(matrix(ncol=ncol(W)+4,nrow = nrow(W)))
   colnames(geno) <- c('SNP','Pos','A1','A2',ids)
-  geno[,5:ncol(geno)] = t(W)
+  geno[,5:ncol(geno)] = W
+  W = W[match(snpList,rownames(W)),]
   geno$SNP = snpList
-  onlyThese <- snpLocs[snpLocs$snpid %in% geno$SNP,]
+  onlyThese <- thisSNP[thisSNP$snpid %in% geno$SNP,]
   geno <- geno[geno$SNP %in% snpLocs$snpid,]
   onlyThese <- onlyThese[match(onlyThese$snpid,geno$SNP),]
   chr <- onlyThese$chr
@@ -95,13 +107,13 @@ estimateHeritability <- function(biomInt,
   sample$ID_2[2:nrow(sample)] <- colnames(chr_dosage)[6:ncol(chr_dosage)]
   sample$missing[2:nrow(sample)] <- 0
   sample$gender[2:nrow(sample)] <- 2
-  sample$pheno[2:nrow(sample)] <- rnorm(nrow(sample)-1)
+  sample$pheno[2:nrow(sample)] <- pheno
   sample[1,] <- c(0,0,0,'D','P')
   write.table(sample,samplefile,row.names=FALSE,
               col.names = TRUE, quote = FALSE)
-  write.table(sample[,c(1,2,6)],phenFile,row.names = F,
+  write.table(sample[-1,c(1,2,5)],phenFile,row.names = F,
               col.names = F, quote = F)
-  write.table(cbind(sample[,1:2],t(covariates[1:dimNumeric,-1])),
+  write.table(cbind(sample[-1,1:2],t(covariates[1:dimNumeric,-1])),
               covarFile,row.names = F,col.names = F,quote=F)
 
   system(paste('plink','--gen',genfile,'--sample',samplefile,'--make-bed','--out',bedfile))
@@ -110,26 +122,102 @@ estimateHeritability <- function(biomInt,
   a$V5 = 2
   data.table::fwrite(a,paste0(bedfile,'.fam'),col.names=F,row.names=F,quote=F,sep='\t')
 
+  system(paste('plink','--bfile',bedfile,
+               '--indep-pairwise',windowSize,numSNPShift,ldThresh,
+               '--out',bedfile))
+
+  system(paste('plink','--bfile',bedfile,
+               '--extract',paste0(bedfile,'.prune.in'),
+               '--make-bed',
+               '--out',paste0(bedfile,'_prune')))
+
+  bedfile = paste0(bedfile,'_prune')
+
   system(paste('gcta64',
                '--bfile',bedfile,
-               '--autosome',
-               '--make-grm',
+               '--ld-score-region',ldScrRegion,
                '--out',bedfile))
+
+
+  lds_seg = read.table(paste0(bedfile,".score.ld"),
+                              header=T,
+                       colClasses=c("character",rep("numeric",8)))
+  quartiles=summary(lds_seg$ldscore_SNP)
+
+  lb1 = which(lds_seg$ldscore_SNP <= quartiles[2])
+  lb2 = which(lds_seg$ldscore_SNP > quartiles[2] & lds_seg$ldscore_SNP <= quartiles[3])
+  lb3 = which(lds_seg$ldscore_SNP > quartiles[3] & lds_seg$ldscore_SNP <= quartiles[5])
+  lb4 = which(lds_seg$ldscore_SNP > quartiles[5])
+
+  lb1_snp = lds_seg$SNP[lb1]
+  lb2_snp = lds_seg$SNP[lb2]
+  lb3_snp = lds_seg$SNP[lb3]
+  lb4_snp = lds_seg$SNP[lb4]
+
+  write.table(lb1_snp,
+              paste0(bedfile,"snp_group1.txt"),
+              row.names=F,
+              quote=F,
+              col.names=F)
+  write.table(lb2_snp,
+              paste0(bedfile,"snp_group2.txt"),
+              row.names=F,
+              quote=F,
+              col.names=F)
+  write.table(lb3_snp,
+              paste0(bedfile,"snp_group3.txt"),
+              row.names=F,
+              quote=F,
+              col.names=F)
+  write.table(lb4_snp,
+              paste0(bedfile,"snp_group4.txt"),
+              row.names=F,
+              quote=F,
+              col.names=F)
+
+  system(paste('gcta64',
+               '--bfile',bedfile,
+               '--extract',paste0(bedfile,"snp_group1.txt"),
+               '--make-grm',
+               '--out',paste0(bedfile,'_group1')))
+  system(paste('gcta64',
+               '--bfile',bedfile,
+               '--extract',paste0(bedfile,"snp_group2.txt"),
+               '--make-grm',
+               '--out',paste0(bedfile,'_group2')))
+  system(paste('gcta64',
+               '--bfile',bedfile,
+               '--extract',paste0(bedfile,"snp_group3.txt"),
+               '--make-grm',
+               '--out',paste0(bedfile,'_group3')))
+  system(paste('gcta64',
+               '--bfile',bedfile,
+               '--extract',paste0(bedfile,"snp_group4.txt"),
+               '--make-grm',
+               '--out',paste0(bedfile,'_group4')))
+
+  write.table(paste0(bedfile,'_group',1:4),
+              paste0(bedfile,'_multiGRM.txt'),
+              col.names = F,
+              row.names = F,
+              quote=F)
+
   system(paste('gcta64',
                '--reml',
-               '--grm',bedfile,
+               '--mgrm',paste0(bedfile,'_multiGRM.txt'),
                '--pheno',phenFile,
-               '--reml-pred-rand',
-               '-qcovar',covFile,
-               '--out',bedfile))
+               '--qcovar',covarFile,
+               '--reml-no-constrain',
+               '--out',paste0(bedfile,'_multi')))
 
-  hsq = data.table::fread(paste0(bedfile,'.hsq'),
-                          fill = T)
+  h2 = hsq$Variance[10]
+  P = hsq$Variance[17]
+  SE = hsq$SE[12]
 
-  h2 = hsq$Variance[4]
-  P = hsq$Variance[9]
+  system(paste('rm -r',
+                tempDir))
 
-  return(list(h2 = h2, P = P))
+  return(list(h2 = h2, P = P, SE = SE))
 
 
 }
