@@ -40,7 +40,7 @@ estimateHeritability <- function(biomInt,
 
   cisGeno = as.data.frame(ifelse(needMed,
                   abind::abind(lapply(c(biomInt,medList),
-                                      getCisGenotypes
+                                      getCisGenotypes,
                                       locs = medLocs,
                                       snps = snps,
                                       snpLocs = snpLocs,

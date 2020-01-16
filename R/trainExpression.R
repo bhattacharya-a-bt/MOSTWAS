@@ -13,7 +13,6 @@
 #' @param numMed integer, number of top mediators to include
 #' @param seed integer, random seed for splitting
 #' @param k integer, number of training-test splits
-#' @param fileName character, throw away name for PLINK files
 #' @param parallel logical, TRUE/FALSE to run glmnet in parallel
 #' @param prune logical, TRUE/FALSE to LD prune the genotypes
 #' @param windowSize integer, window size for PLINK pruning
