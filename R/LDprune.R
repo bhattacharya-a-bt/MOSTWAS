@@ -72,7 +72,8 @@ LDprune <- function(W,
   system(paste('plink',
                '--gen',genfile,
                '--sample',samplefile,
-               '--make-bed --allow-no-sex',
+               '--make-bed',
+               '--allow-no-sex',
                '--out',bedfile),
          intern = !verbose)
 
