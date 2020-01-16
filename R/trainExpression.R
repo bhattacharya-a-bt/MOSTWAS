@@ -54,7 +54,8 @@ trainExpression <- function(geneInt,
                             cores,
                             outputAll = F,
                             verbose = F,
-                            modelDir){
+                            modelDir,
+                            ldScrRegion = 200){
 
   set.seed(seed)
   pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
@@ -76,7 +77,8 @@ trainExpression <- function(geneInt,
                                verbose = verbose,
                                windowSize = windowSize,
                                numSNPShift = numSNPShift,
-                               ldThresh = ldThresh)
+                               ldThresh = ldThresh,
+                               ldScrRegion = ldScrRegion)
 
   if (herit$P > h2Pcutoff) {print(paste(geneInt,
                                            'is not germline heritable at P <',

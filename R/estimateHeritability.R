@@ -40,7 +40,8 @@ estimateHeritability <- function(biomInt,
                                  verbose = F,
                                  windowSize,
                                  numSNPShift,
-                                 ldThresh){
+                                 ldThresh,
+                                 ldScrRegion = 200){
 
   if (needMed) {
     cisGeno = lapply(c(biomInt,medList),
