@@ -189,8 +189,8 @@ trainExpression <- function(geneInt,
   Predicted = cisGenoMod$Predicted
   Mediators = cisGenoMod$medlist
   CisR2 = cisGenoMod$CVR2.cis
-  h2 = h2
-  h2.Pvalue = h2.P
+  h2 = herit$h2
+  h2.Pvalue = herit$P
   save(Model,R2,Predicted,Mediators,CisR2,h2,h2.Pvalue,
          paste0(modelDir,geneInt,'.wgt.med.RData'))}
 
