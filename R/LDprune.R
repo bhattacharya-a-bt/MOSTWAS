@@ -23,7 +23,7 @@ LDprune <- function(W,
                     windowSize,
                     numSNPShift,
                     ldThresh,
-                    verbose = F){
+                    verbose = T){
 
   if (!dir.exists('temp/')){ dir.create('temp/') }
   genfile = paste0('temp/',fileName,'.gen')
