@@ -25,7 +25,6 @@
 #'
 #' @export
 estimateHeritability <- function(biomInt,
-                                 geneInt,
                                  snps,
                                  pheno,
                                  snpLocs,
@@ -37,7 +36,8 @@ estimateHeritability <- function(biomInt,
                                  numMed = 5,
                                  cisDist = 5e5,
                                  needMed = F,
-                                 medList){
+                                 medList,
+                                 verbose = F){
 
   if (needMed) {
     cisGeno = lapply(c(biomInt,medList),
@@ -116,7 +116,17 @@ estimateHeritability <- function(biomInt,
   write.table(cbind(sample[-1,1:2],t(covariates[1:dimNumeric,-1])),
               covarFile,row.names = F,col.names = F,quote=F)
 
-  system(paste('plink','--gen',genfile,'--sample',samplefile,'--make-bed','--out',bedfile))
+  if (!verbose){
+    sink('/dev/null')
+  }
+
+  system(paste('plink',
+               '--gen',genfile,
+               '--sample',samplefile,
+               '--make-bed',
+               '--allow-no-sex',
+               '--out',bedfile),
+         intern = !verbose)
 
   a = data.table::fread(paste0(bedfile,'.fam'))
   a$V5 = 2
@@ -124,19 +134,22 @@ estimateHeritability <- function(biomInt,
 
   system(paste('plink','--bfile',bedfile,
                '--indep-pairwise',windowSize,numSNPShift,ldThresh,
-               '--out',bedfile))
+               '--out',bedfile),
+         intern = !verbose)
 
   system(paste('plink','--bfile',bedfile,
                '--extract',paste0(bedfile,'.prune.in'),
                '--make-bed',
-               '--out',paste0(bedfile,'_prune')))
+               '--out',paste0(bedfile,'_prune')),
+         intern = !verbose)
 
   bedfile = paste0(bedfile,'_prune')
 
   system(paste('gcta64',
                '--bfile',bedfile,
                '--ld-score-region',ldScrRegion,
-               '--out',bedfile))
+               '--out',bedfile),
+         intern = !verbose)
 
 
   lds_seg = read.table(paste0(bedfile,".score.ld"),
@@ -179,22 +192,26 @@ estimateHeritability <- function(biomInt,
                '--bfile',bedfile,
                '--extract',paste0(bedfile,"snp_group1.txt"),
                '--make-grm',
-               '--out',paste0(bedfile,'_group1')))
+               '--out',paste0(bedfile,'_group1')),
+         intern = !verbose)
   system(paste('gcta64',
                '--bfile',bedfile,
                '--extract',paste0(bedfile,"snp_group2.txt"),
                '--make-grm',
-               '--out',paste0(bedfile,'_group2')))
+               '--out',paste0(bedfile,'_group2')),
+         intern = !verbose)
   system(paste('gcta64',
                '--bfile',bedfile,
                '--extract',paste0(bedfile,"snp_group3.txt"),
                '--make-grm',
-               '--out',paste0(bedfile,'_group3')))
+               '--out',paste0(bedfile,'_group3')),
+         intern = !verbose)
   system(paste('gcta64',
                '--bfile',bedfile,
                '--extract',paste0(bedfile,"snp_group4.txt"),
                '--make-grm',
-               '--out',paste0(bedfile,'_group4')))
+               '--out',paste0(bedfile,'_group4')),
+         inter = !verbose)
 
   write.table(paste0(bedfile,'_group',1:4),
               paste0(bedfile,'_multiGRM.txt'),
@@ -208,7 +225,8 @@ estimateHeritability <- function(biomInt,
                '--pheno',phenFile,
                '--qcovar',covarFile,
                '--reml-no-constrain',
-               '--out',paste0(bedfile,'_multi')))
+               '--out',paste0(bedfile,'_multi')),
+         intern = !verbose)
 
   h2 = hsq$Variance[10]
   P = hsq$Variance[17]
@@ -216,6 +234,10 @@ estimateHeritability <- function(biomInt,
 
   system(paste('rm -r',
                 tempDir))
+
+  if (!verbose){
+    sink()
+  }
 
   return(list(h2 = h2, P = P, SE = SE))
 

@@ -22,7 +22,8 @@ LDprune <- function(W,
                     fileName,
                     windowSize,
                     numSNPShift,
-                    ldThresh){
+                    ldThresh,
+                    verbose = F){
 
   if (!dir.exists('temp/')){ dir.create('temp/') }
   genfile = paste0('temp/',fileName,'.gen')
@@ -67,19 +68,31 @@ LDprune <- function(W,
   write.table(sample,samplefile,row.names=FALSE,
               col.names = TRUE, quote = FALSE)
 
-  system(paste('/nas/longleaf/home/abhattac/plink','--gen',genfile,'--sample',samplefile,'--make-bed','--out',bedfile))
+  system(paste('plink',
+               '--gen',genfile,
+               '--sample',samplefile,
+               '--make-bed',
+               '--out',bedfile),
+         intern = !verbose)
 
   a = data.table::fread(paste0(bedfile,'.fam'))
   a$V5 = 2
-  data.table::fwrite(a,paste0(bedfile,'.fam'),col.names=F,row.names=F,quote=F,sep='\t')
+  data.table::fwrite(a,paste0(bedfile,'.fam'),
+                     col.names=F,
+                     row.names=F,
+                     quote=F,
+                     sep='\t')
 
   system(paste('plink','--bfile',bedfile,
                '--indep-pairwise',windowSize,numSNPShift,ldThresh,
-               '--out',outFile))
+               '--out',outFile),
+         intern = !verbose)
 
   file.remove(genfile,samplefile)
 
-  s <- as.character(data.table::fread(paste0(outFile,'.prune.in'),header=F)$V1)
+  s <- as.character(data.table::fread(paste0(outFile,
+                                             '.prune.in'),
+                                      header=F)$V1)
 
   W <- W[,which(snpList %in% s)]
   q <- snpList[snpList %in% s]

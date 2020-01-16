@@ -10,6 +10,7 @@
 #' @param medLocs data frame, MatrixEQTL locations for mediators
 #' @param covariates data frame, covariates
 #' @param qtlFull data frame, all QTLs (cis and trans) between mediators and genes
+#' @param h2Pcutoff numeric, P-value cutoff for heritability
 #' @param numMed integer, number of top mediators to include
 #' @param seed integer, random seed for splitting
 #' @param k integer, number of training-test splits
@@ -40,6 +41,7 @@ trainExpression <- function(geneInt,
                             medLocs,
                             covariates,
                             qtlFull,
+                            h2Pcutoff = 0.1,
                             numMed = 5,
                             seed,
                             k,
@@ -50,11 +52,32 @@ trainExpression <- function(geneInt,
                             numSNPShift = 5,
                             ldThresh = .5,
                             cores,
-                            outputAll = F){
+                            outputAll = F,
+                            verbose = F){
 
   set.seed(seed)
   pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
   medList = gatherMediators(geneInt,qtlFull,numMed)
+
+  herit = estimateHeritability(biomInt = geneInt,
+                               snps = snps,
+                               pheno = pheno,
+                               snpLocs = snpLocs,
+                               mediator = mediator,
+                               medLocs = medLocs,
+                               covariates = covariates,
+                               fileName = geneInt,
+                               dimNumeric = 5,
+                               numMed = 5,
+                               cisDist = 5e5,
+                               needMed = T,
+                               medList = medList,
+                               verbose = verbose)
+
+  if (herit$P > h2Pcutoff) {print(paste(geneInt,
+                                           'is not germline heritable at P <',
+                                           h2Pcutoff))}
+  if (herit$P <= h2Pcutoff){
     if (parallel) {
     medTrainList = parallel::mclapply(medList,
              trainMediator,
@@ -144,6 +167,8 @@ trainExpression <- function(geneInt,
     }
   cisGenoMod$CVR2 = cisGenoMod$CVR2 + fe.R2
   cisGenoMod$CVR2.cis = cisGenoMod$CVR2 - fe.R2
+  cisGenoMod$h2 = herit$h2
+  cisGenoMod$h2.P = herit$P
 
   if (dir.exists('temp')){
     fff = list.files('temp/')
@@ -159,7 +184,7 @@ trainExpression <- function(geneInt,
     cisGenoMod$medTrainList = medTrainList
     return(cisGenoMod)
   }
-
+  }
 
 }
 
