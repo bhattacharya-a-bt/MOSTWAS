@@ -53,7 +53,8 @@ trainExpression <- function(geneInt,
                             ldThresh = .5,
                             cores,
                             outputAll = F,
-                            verbose = F){
+                            verbose = F,
+                            modelDir){
 
   set.seed(seed)
   pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
@@ -174,17 +175,18 @@ trainExpression <- function(geneInt,
     fff = list.files('temp/')
     cleanup = c(medList,geneInt)
     file.remove(paste0('temp/',fff[grepl(paste(cleanup,collapse = '|'),fff)]))
-    }
-
-  if (!outputAll){
-  return(cisGenoMod)}
-
-  if (outputAll){
-    cisGenoMod$medList = medList
-    cisGenoMod$medTrainList = medTrainList
-    return(cisGenoMod)
   }
-  }
+
+
+  Model = cisGenoMod$Model
+  R2 = cisGenoMod$CVR2
+  Predicted = cisGenoMod$Predicted
+  Mediators = cisGenoMod$medlist
+  CisR2 = cisGenoMod$CVR2.cis
+  h2 = h2
+  h2.Pvalue = h2.P
+  save(Model,R2,Predicted,Mediators,CisR2,h2,h2.Pvalue,
+         paste0(modelDir,geneInt,'.wgt.med.RData'))}
 
 }
 
