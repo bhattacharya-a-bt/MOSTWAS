@@ -199,7 +199,7 @@ trainExpression <- function(geneInt,
   h2 = abs(herit$h2)
   h2.Pvalue = herit$P
   save(Model,R2,Predicted,Mediators,CisR2,h2,h2.Pvalue,
-         file = paste0(modelDir,'/',geneInt,'.wgt.med.RData'))
+         file = paste0(modelDir,geneInt,'.wgt.med.RData'))
   }
 
 }
