@@ -25,7 +25,9 @@ getCisGenotypes <- function(biomInt,
   locs = subset(locs, grepl(biomInt,snpid))
   thisSNP = subset(snpLocs, chr == locs$chr[1] &
                      pos < locs$pos[1]+cisDist & pos > locs$pos[1]-cisDist)
+  thisSNP = thisSNP[!duplicated(thisSNP$snpid),]
   snpCur = subset(snps,SNP %in% thisSNP$snpid)
+  snpCur = snpCur[!duplicated(snpCur$SNP),]
   snpList = snpCur$SNP
   snpCur = as.matrix(snpCur[,-1])
   rownames(snpCur) = snpList
