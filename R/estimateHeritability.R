@@ -41,7 +41,8 @@ estimateHeritability <- function(biomInt,
                                  windowSize,
                                  numSNPShift,
                                  ldThresh,
-                                 ldScrRegion = 200){
+                                 ldScrRegion = 200,
+                                 LDMS = F){
 
   if (needMed) {
     cisGeno = lapply(c(biomInt,medList),
@@ -149,6 +150,8 @@ estimateHeritability <- function(biomInt,
 
   bedfile = paste0(bedfile,'_prune')
 
+  if (LDMS){
+
   system(paste('gcta64',
                '--bfile',bedfile,
                '--ld-score-region',ldScrRegion,
@@ -240,10 +243,40 @@ estimateHeritability <- function(biomInt,
 
   system(paste('rm -r',
                 tempDir))
-
-  if (!verbose){
-    sink()
   }
+
+
+  if (!LDMS) {
+
+
+    system(paste('gcta64',
+                 '--bfile',bedfile,
+                 '--autosome --make-grm',
+                 '--out',bedfile),
+           intern = !verbose)
+
+
+    system(paste('gcta64',
+                 '--reml',
+                 '--grm',bedfile,
+                 '--pheno',phenFile,
+                 '--qcovar',covarFile,
+                 '--reml-no-constrain',
+                 '--out',paste0(bedfile,'_multi')),
+           intern = !verbose)
+
+
+
+
+    gcta64  --bfile test  --autosome  --make-grm  --out test
+
+
+  }
+
+
+    if (!verbose){
+      sink()
+    }
 
   return(list(h2 = h2, P = P, SE = SE))
 
