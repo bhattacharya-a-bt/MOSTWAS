@@ -49,6 +49,7 @@ computeTAME <- function(snp,
   alpha_X = c(solve(t(snp) %*% snp) %*% t(snp) %*% mediators)
 
   TME = as.numeric(alpha_X %*% beta_M)
+  mcmc.p = NA
 
   if (mc.p){
 
@@ -72,6 +73,9 @@ computeTAME <- function(snp,
 
   }
 
-  return(TME)
+  ifelse(mc.p,
+         return(list(TME = TME, MCMC.P = mcmc.p)),
+         return(list(TME = TME)))
+
 
 }
