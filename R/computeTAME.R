@@ -1,4 +1,4 @@
-#' Compute total absolute mediation effect
+  #' Compute total absolute mediation effect
 #'
 #' The function takes in a SNP-mediator set-gene triplet
 #' and computes the total absolute mediation effect
@@ -20,39 +20,58 @@ computeTAME <- function(snp,
                         covs,
                         numMed,
                         numCov,
-                        permute = F){
+                        permute = F,
+                        mc.p = F,
+                        mc.rep = 20000){
 
-  snp = as.vector(snp)
-  d = as.data.frame(cbind(as.vector(expression),
-                          as.vector(snp),
-                          mediators,
-                          covs))
+  snp = c(snp)
+
+  if (permute){ snp = sample(snp,replace = T) }
+
+  expression = expression - c(covs %*% solve(t(covs) %*% covs) %*% t(covs) %*% expression)
+  expression = expression - c(snp %*% solve(t(snp) %*% snp) %*% t(snp) %*% expression)
+  for (i in 1:numMed){
+
+    m = c(mediators[,i])
+    mediators[,i] = c(covs %*% solve(t(covs) %*% covs) %*% t(covs) %*% m)
+
+  }
+
+  d = as.data.frame(cbind(expression,
+                          snp,
+                          mediators))
   colnames(d) = c('Gene',
                   'SNP',
-                  paste0('Med',1:numMed),
-                  paste0('Cov',1:numCov))
-
-  if (permute){
-    d$SNP = sample(d$SNP)
-  }
+                  paste0('Med',1:numMed))
 
   reg.tot = lm(Gene ~ .,d)
+  beta_M = c(coefficients(reg.tot)[-c(1:2)])
+  alpha_X = c(solve(t(snp) %*% snp) %*% t(snp) %*% mediators)
 
-  beta_M = as.vector(reg.tot$coefficients[grepl('Med',
-                                                names(reg.tot$coefficients))])
-  alpha_X = vector(length = numMed,
-                   mode = 'numeric')
+  TME = as.numeric(alpha_X %*% beta_M)
 
-  for (j in 1:numMed){
+  if (mc.p){
 
-    med.d = d[,c(paste0('Med',j),'SNP',paste0('Cov',1:numCov))]
-    colnames(med.d)[1] = 'Mediator'
-    med.reg = lm(Mediator~.,med.d)
-    alpha_X[j] = med.reg$coefficients[2]
+
+    cov_beta = vcov(reg.tot)[paste0('Med',1:numMed),paste0('Med',1:numMed)]/nrow(mediators)
+    cov_alpha = (t(mediators) %*%
+                   (diag(rep(1,nrow(mediators))) - snp %*%
+                      solve(t(snp) %*% snp) %*% t(snp)) %*% mediators)/(nrow(mediators)-1)
+    conf = 95
+    pest = c(alpha_X,beta_M)
+    acov = rbind(cbind(cov_alpha,matrix(rep(0,nrow(cov_alpha) * ncol(cov_beta)),
+                                  nrow = nrow(cov_alpha))),
+                 cbind(matrix(rep(0,nrow(cov_beta) * ncol(cov_beta)),
+                              nrow = nrow(cov_beta)),cov_beta))
+    mcmc <- MASS::mvrnorm(mc.rep,pest,acov,empirical=FALSE)
+    ab <- vector(mode='numeric',length = mc.rep)
+    for (i in 1:numMed){
+      ab = ab + mcmc[,i]*mcmc[,i+numMed]
+    }
+    mcmc.p = mean(TME > ab)
 
   }
 
-  TAME = as.numeric(abs(alpha_X) %*% abs(beta_M))
-  return(TAME)
+  return(TME)
 
 }
