@@ -31,7 +31,7 @@ permuteTAME = function(snp,
                             numCov = numCov,
                             permute = F)
 
-  null.dist = replicate(nperms,
+  null.dist = pbapply::pbreplicate(nperms,
                         computeTAME(snp = snp,
                                       expression = expression,
                                       mediators = mediators,
