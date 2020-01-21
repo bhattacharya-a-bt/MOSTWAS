@@ -14,10 +14,9 @@ RepParallel <- function(n,
                         expr,
                         simplify = "array",
                         mc.cores) {
-  answer <-
-    parallel::mclapply(integer(n),
-             eval.parent(substitute(function(...) expr)),
-             mc.cores = mc.cores)
+  answer <- parallel::mclapply(integer(n),
+                               eval.parent(substitute(function(...) expr)),
+                               mc.cores = mc.cores)
   if (!identical(simplify, FALSE) && length(answer))
     return(simplify2array(answer, higher = (simplify == "array")))
   else return(answer)
