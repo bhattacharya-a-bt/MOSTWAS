@@ -23,7 +23,7 @@ permuteTAME = function(snp,
                        numCov,
                        nperms = 1000){
 
-  test.stat = mediationTest(snp = snp,
+  test.stat = computeTAME(snp = snp,
                             expression = expression,
                             mediators = mediators,
                             covs = covs,
@@ -32,7 +32,7 @@ permuteTAME = function(snp,
                             permute = F)
 
   null.dist = replicate(nperms,
-                        mediationTest(snp = snp,
+                        computeTAME(snp = snp,
                                       expression = expression,
                                       mediators = mediators,
                                       covs = covs,
