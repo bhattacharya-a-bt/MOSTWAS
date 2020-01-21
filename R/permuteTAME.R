@@ -21,7 +21,8 @@ permuteTAME = function(snp,
                        covs,
                        numMed,
                        numCov,
-                       nperms = 1000){
+                       nperms = 1000,
+                       cores){
 
   test.stat = computeTAME(snp = snp,
                             expression = expression,
@@ -31,14 +32,15 @@ permuteTAME = function(snp,
                             numCov = numCov,
                             permute = F)
 
-  null.dist = pbapply::pbreplicate(nperms,
-                        computeTAME(snp = snp,
+  null.dist = RepParallel(nperms,
+                          computeTAME(snp = snp,
                                       expression = expression,
                                       mediators = mediators,
                                       covs = covs,
                                       numMed = numMed,
                                       numCov = numCov,
-                                      permute = T))
+                                      permute = T),
+                          mc.cores = cores)
 
   p = mean(abs(test.stat) <= abs(null.dist))
 
