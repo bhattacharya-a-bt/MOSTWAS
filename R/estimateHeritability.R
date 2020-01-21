@@ -266,11 +266,6 @@ estimateHeritability <- function(biomInt,
            intern = !verbose)
 
 
-
-
-    gcta64  --bfile test  --autosome  --make-grm  --out test
-
-
   }
 
 
