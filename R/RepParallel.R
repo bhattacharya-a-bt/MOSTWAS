@@ -13,7 +13,7 @@
 RepParallel <- function(n,
                         expr,
                         simplify = "array",
-                        mc.cores) {
+                        mc.cores = 1) {
   answer <- parallel::mclapply(integer(n),
                                eval.parent(substitute(function(...) expr)),
                                mc.cores = mc.cores)
