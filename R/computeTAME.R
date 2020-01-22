@@ -59,7 +59,7 @@ computeTAME <- function(snp,
                    (diag(rep(1,nrow(mediators))) - snp %*%
                       solve(t(snp) %*% snp) %*% t(snp)) %*% mediators)/(nrow(mediators)-1)
     conf = 95
-    pest = c(alpha_X,beta_M)
+    pest = rep(0,length = length(alpha_X) + length(beta_M))
     acov = rbind(cbind(cov_alpha,matrix(rep(0,nrow(cov_alpha) * ncol(cov_beta)),
                                   nrow = nrow(cov_alpha))),
                  cbind(matrix(rep(0,nrow(cov_beta) * ncol(cov_beta)),
@@ -69,8 +69,6 @@ computeTAME <- function(snp,
     for (i in 1:numMed){
       ab = ab + mcmc[,i]*mcmc[,i+numMed]
     }
-    mcmc.p = mean(abs(TME) > abs(ab))
-
   }
 
   ifelse(mc.p,
