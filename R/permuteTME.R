@@ -14,28 +14,23 @@
 #'
 #' @export
 permuteTME = function(snp,
-                       expression,
-                       mediators,
-                       covs,
-                       nperms = 1000,
-                       cores = 1){
+                      expression,
+                      mediators,
+                      covs,
+                      nperms = 1000,
+                      parallel = 'no'){
 
-  test.stat = computeTME(snp = snp,
-                            expression = expression,
-                            mediators = mediators,
-                            covs = covs)
-
-  boots = replicate(nperms,
-                    sample(snp,replace=T))
-  null.dist = apply(boots,
-                    MARGIN = 2,
-                    FUN = computeTME,
-                    expression = expression,
-                    mediators = mediators,
-                    covs = covs)
-  p = mean(abs(test.stat) <= abs(null.dist))
-
-  return(list(test.stat = test.stat,
+  nc = parallel::detectCores()
+  a = boot::boot(data = snp,
+                 statistic = computeTME,
+                 R = nperms,
+                 expression = expression,
+                 mediators = mediators,
+                 covs = covs,
+                 parallel = parallel,
+                 ncpus = nc)
+  p = mean(abs(a$t0) >= abs(a$t))
+  return(list(test.stat = a$t0,
               p.value = p))
 
 }

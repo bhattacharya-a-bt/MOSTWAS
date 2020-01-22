@@ -12,21 +12,22 @@
 #'
 #' @export
 computeTME <- function(snp,
-                        expression,
-                        mediators,
-                        covs){
+                       expression,
+                       mediators,
+                       covs,
+                       indices){
 
   numMed = ncol(mediators)
   snp = c(snp)
+  snp = snp[indices]
 
-  snp = snp - c(covs %*% solve(t(covs) %*% covs) %*% t(covs) %*% snp)
-  expression = expression - c(covs %*% solve(t(covs) %*% covs) %*% t(covs) %*% expression)
+  snp = t(limma::removeBatchEffect(t(snp),covariates = covs))
+  expression = t(limma::removeBatchEffect(t(snp),covariates = covs))
   mediators = t(limma::removeBatchEffect(t(mediators),
                                          covariates = covs))
 
   beta_M = c(solve(t(mediators) %*% mediators) %*% t(mediators) %*% expression)
   alpha_X = c(solve(t(snp) %*% snp) %*% t(snp) %*% mediators)
 
-  TME = c(alpha_X %*% beta_M)
-  return(TME)
+  return(as.numeric(alpha_X %*% beta_M))
 }
