@@ -25,16 +25,16 @@ permuteTAME = function(snp,
   test.stat = computeTAME(snp = snp,
                             expression = expression,
                             mediators = mediators,
-                            covs = covs,
-                            permute = F)
+                            covs = covs)
 
-  null.dist = RepParallel(nperms,
-                          computeTAME(snp = snp,
-                                      expression = expression,
-                                      mediators = mediators,
-                                      covs = covs,
-                                      permute = T),
-                          mc.cores = cores)
+  boots = replicate(nperms,
+                    sample(snp,replace=T))
+  null.dist = pbapply::pbapply(boots,
+                               MARGIN = 2,
+                               FUN = computeTAME,
+                               expression = expression,
+                               mediators = mediators,
+                               covs = covs)
 
   p = mean(abs(test.stat) <= abs(null.dist))
 
