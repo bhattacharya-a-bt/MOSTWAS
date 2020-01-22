@@ -20,7 +20,7 @@ permuteTME = function(snp,
                        nperms = 1000,
                        cores = 1){
 
-  test.stat = computeTAME(snp = snp,
+  test.stat = computeTME(snp = snp,
                             expression = expression,
                             mediators = mediators,
                             covs = covs)
@@ -29,7 +29,7 @@ permuteTME = function(snp,
                     sample(snp,replace=T))
   null.dist = apply(boots,
                     MARGIN = 2,
-                    FUN = computeTAME,
+                    FUN = computeTME,
                     expression = expression,
                     mediators = mediators,
                     covs = covs)
