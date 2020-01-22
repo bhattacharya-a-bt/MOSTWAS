@@ -18,9 +18,9 @@ permuteTME = function(snp,
                       mediators,
                       covs,
                       nperms = 1000,
-                      parallel = 'no'){
+                      parallel = 'no',
+                      nc){
 
-  nc = parallel::detectCores()
   a = boot::boot(data = snp,
                  statistic = computeTME,
                  R = nperms,
@@ -28,7 +28,7 @@ permuteTME = function(snp,
                  mediators = mediators,
                  covs = covs,
                  parallel = parallel,
-                 ncpus = nc-1)
+                 ncpus = nc)
   p = mean(abs(a$t0) >= abs(a$t))
   return(list(test.stat = a$t0,
               p.value = p))
