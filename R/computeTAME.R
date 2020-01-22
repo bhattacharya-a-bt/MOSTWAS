@@ -8,7 +8,6 @@
 #' @param mediators data frame, mediators of interest
 #' @param covs data frame, covariates
 #' @param numMed integer, number of mediators
-#' @param numCov integer, number of covariates
 #' @param permute logical, permute the SNP genotypes
 #'
 #' @return estimate of TAME

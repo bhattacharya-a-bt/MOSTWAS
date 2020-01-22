@@ -26,8 +26,6 @@ permuteTAME = function(snp,
                             expression = expression,
                             mediators = mediators,
                             covs = covs,
-                            numMed = numMed,
-                            numCov = numCov,
                             permute = F)
 
   null.dist = RepParallel(nperms,
@@ -35,8 +33,6 @@ permuteTAME = function(snp,
                                       expression = expression,
                                       mediators = mediators,
                                       covs = covs,
-                                      numMed = numMed,
-                                      numCov = numCov,
                                       permute = T),
                           mc.cores = cores)
 
