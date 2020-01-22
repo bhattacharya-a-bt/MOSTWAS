@@ -20,9 +20,7 @@ computeTAME <- function(snp,
                         covs,
                         numMed,
                         numCov,
-                        permute = F,
-                        mc.p = F,
-                        mc.rep = 20000){
+                        permute = F){
 
   snp = c(snp)
 
@@ -49,32 +47,7 @@ computeTAME <- function(snp,
   alpha_X = c(solve(t(snp) %*% snp) %*% t(snp) %*% mediators)
 
   TME = as.numeric(alpha_X %*% beta_M)
-  mcmc.p = NA
-
-  if (mc.p){
-
-
-    cov_beta = vcov(reg.tot)[paste0('Med',1:numMed),paste0('Med',1:numMed)]/nrow(mediators)
-    cov_alpha = (t(mediators) %*%
-                   (diag(rep(1,nrow(mediators))) - snp %*%
-                      solve(t(snp) %*% snp) %*% t(snp)) %*% mediators)/(nrow(mediators)-1)
-    conf = 95
-    pest = rep(0,length = length(alpha_X) + length(beta_M))
-    acov = rbind(cbind(cov_alpha,matrix(rep(0,nrow(cov_alpha) * ncol(cov_beta)),
-                                  nrow = nrow(cov_alpha))),
-                 cbind(matrix(rep(0,nrow(cov_beta) * ncol(cov_beta)),
-                              nrow = nrow(cov_beta)),cov_beta))
-    mcmc <- MASS::mvrnorm(mc.rep,pest,acov,empirical=FALSE)
-    ab <- vector(mode='numeric',length = mc.rep)
-    for (i in 1:numMed){
-      ab = ab + mcmc[,i]*mcmc[,i+numMed]
-    }
-    mcmc.p = mean(abs(TME) >= abs(ab))
-  }
-
-  ifelse(mc.p,
-         return(list(TME = TME, MCMC.P = mcmc.p)),
-         return(list(TME = TME)))
+  return(TME)
 
 
 }
