@@ -69,6 +69,7 @@ computeTAME <- function(snp,
     for (i in 1:numMed){
       ab = ab + mcmc[,i]*mcmc[,i+numMed]
     }
+    mcmc.p = mean(abs(TME) >= abs(ab))
   }
 
   ifelse(mc.p,
