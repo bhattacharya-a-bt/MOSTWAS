@@ -19,10 +19,8 @@ permuteTAME = function(snp,
                        expression,
                        mediators,
                        covs,
-                       numMed,
-                       numCov,
                        nperms = 1000,
-                       cores){
+                       cores = 1){
 
   test.stat = computeTAME(snp = snp,
                             expression = expression,

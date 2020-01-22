@@ -18,21 +18,18 @@ computeTAME <- function(snp,
                         expression,
                         mediators,
                         covs,
-                        numMed,
-                        numCov,
                         permute = F){
 
+  numMed = ncol(mediators)
   snp = c(snp)
 
   if (permute){ snp = sample(snp,replace = T) }
 
+  snp = snp - c(covs %*% solve(t(covs) %*% covs) %*% t(covs) %*% expression)
   expression = expression - c(covs %*% solve(t(covs) %*% covs) %*% t(covs) %*% expression)
-  expression = expression - c(snp %*% solve(t(snp) %*% snp) %*% t(snp) %*% expression)
   for (i in 1:numMed){
-
     m = c(mediators[,i])
-    mediators[,i] = c(covs %*% solve(t(covs) %*% covs) %*% t(covs) %*% m)
-
+    mediators[,i] = m - c(covs %*% solve(t(covs) %*% covs) %*% t(covs) %*% m)
   }
 
   d = as.data.frame(cbind(expression,
