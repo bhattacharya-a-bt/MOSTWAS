@@ -23,8 +23,8 @@
 #' @importFrom data.table fwrite
 #' @importFrom abind abind
 #'
-  #' @export
-  estimateHeritability <- function(biomInt,
+#' @export
+estimateHeritability <- function(biomInt,
                                    snps,
                                    pheno,
                                    snpLocs,
