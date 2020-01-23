@@ -23,107 +23,115 @@
 #' @importFrom data.table fwrite
 #' @importFrom abind abind
 #'
-#' @export
-estimateHeritability <- function(biomInt,
-                                 snps,
-                                 pheno,
-                                 snpLocs,
-                                 mediator,
-                                 medLocs,
-                                 covariates,
-                                 fileName,
-                                 dimNumeric,
-                                 numMed = 5,
-                                 cisDist = 5e5,
-                                 needMed = T,
-                                 medList,
-                                 verbose = F,
-                                 windowSize,
-                                 numSNPShift,
-                                 ldThresh,
-                                 ldScrRegion = 200,
-                                 LDMS = F){
+  #' @export
+  estimateHeritability <- function(biomInt,
+                                   snps,
+                                   pheno,
+                                   snpLocs,
+                                   mediator,
+                                   medLocs,
+                                   covariates,
+                                   fileName,
+                                   dimNumeric,
+                                   numMed = 5,
+                                   cisDist = 5e5,
+                                   needMed = T,
+                                   medList,
+                                   verbose = F,
+                                   windowSize,
+                                   numSNPShift,
+                                   ldThresh,
+                                   ldScrRegion = 200,
+                                   LDMS = F,
+                                   supplySNP = F){
 
-  if (needMed) {
-    cisGeno = lapply(c(biomInt,medList),
-                     getCisGenotypes,
-                     locs = medLocs,
-                     snps = snps,
-                     snpLocs = snpLocs,
-                     cisDist = cisDist)
-    W = abind::abind(lapply(cisGeno,function(x) x[[1]]),
-                     along=1)
-    snpList = unlist(lapply(cisGeno, function(x) x[[2]]))
-    thisSNP = as.data.frame(abind::abind(lapply(cisGeno,function(x) x[[3]]),
-                                         along=1))
-  }
+    if (!supplySNP){
+    if (needMed) {
+      cisGeno = lapply(c(biomInt,medList),
+                       getCisGenotypes,
+                       locs = medLocs,
+                       snps = snps,
+                       snpLocs = snpLocs,
+                       cisDist = cisDist)
+      W = abind::abind(lapply(cisGeno,function(x) x[[1]]),
+                       along=1)
+      snpList = unlist(lapply(cisGeno, function(x) x[[2]]))
+      thisSNP = as.data.frame(abind::abind(lapply(cisGeno,function(x) x[[3]]),
+                                           along=1))
+    }
 
-  if (!needMed) {
-    cisGeno = getCisGenotypes(biomInt,
-                             medLocs,
-                             snps,
-                             snpLocs,
-                             cisDist)
-    W = cisGeno$snpCur
-    snpList = cisGeno$snpList
-    thisSNP = cisGeno$thisSNP
-  }
+    if (!needMed) {
+      cisGeno = getCisGenotypes(biomInt,
+                               medLocs,
+                               snps,
+                               snpLocs,
+                               cisDist)
+      W = cisGeno$snpCur
+      snpList = cisGeno$snpList
+      thisSNP = cisGeno$thisSNP
+    }}
 
-  fileName = paste0('h2_',biomInt)
-  tempDir = paste0(biomInt,'_h2_temp/')
-  if (!dir.exists(tempDir)){ dir.create(tempDir) }
-  genfile = paste0(tempDir,fileName,'.gen')
-  samplefile = paste0(tempDir,fileName,'.sample')
-  bedfile = paste0(tempDir,fileName)
-  outFile = paste0(tempDir,fileName)
-  phenFile = paste0(tempDir,fileName,'.phen')
-  covarFile = paste0(tempDir,fileName,'.qcovar')
+    if (supplySNP){
+      W = snps[,-1]
+      snpList = snps$SNP
+      thisSNP = subset(snpLocs,snpid %in% snpList)
+    }
 
-  df = as.data.frame(matrix(nrow = 1,ncol =2))
-  ids = colnames(W)
-  geno = as.data.frame(matrix(ncol=ncol(W)+4,nrow = nrow(W)))
-  colnames(geno) <- c('SNP','Pos','A1','A2',ids)
-  geno[,5:ncol(geno)] = W
-  W = W[match(snpList,rownames(W)),]
-  geno$SNP = snpList
-  onlyThese <- thisSNP[thisSNP$snpid %in% geno$SNP,]
-  geno <- geno[geno$SNP %in% snpLocs$snpid,]
-  onlyThese <- onlyThese[match(onlyThese$snpid,geno$SNP),]
-  chr <- onlyThese$chr
-  geno$Pos <- onlyThese$pos
-  geno$A1 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[3])))
-  geno$A2 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[4])))
-  chr_dosage <- cbind(chr,geno)
-  rm(geno)
+    fileName = paste0('h2_',biomInt)
+    tempDir = paste0(biomInt,'_h2_temp/')
+    if (!dir.exists(tempDir)){ dir.create(tempDir) }
+    genfile = paste0(tempDir,fileName,'.gen')
+    samplefile = paste0(tempDir,fileName,'.sample')
+    bedfile = paste0(tempDir,fileName)
+    outFile = paste0(tempDir,fileName)
+    phenFile = paste0(tempDir,fileName,'.phen')
+    covarFile = paste0(tempDir,fileName,'.qcovar')
 
-  new.levels <- c('1 0 0','0 1 0','0 0 1')
-  matrix.alleles <- as.matrix(chr_dosage[,6:ncol(chr_dosage)] + 1)
-  impute2.format <- matrix(new.levels[matrix.alleles],ncol=ncol(matrix.alleles))
-  gen <- cbind(chr_dosage[,1:5],impute2.format)
-  gen[is.na(gen)] <- '<NA>'
+    df = as.data.frame(matrix(nrow = 1,ncol =2))
+    ids = colnames(W)
+    geno = as.data.frame(matrix(ncol=ncol(W)+4,nrow = nrow(W)))
+    colnames(geno) <- c('SNP','Pos','A1','A2',ids)
+    geno[,5:ncol(geno)] = W
+    W = W[match(snpList,rownames(W)),]
+    geno$SNP = snpList
+    onlyThese <- thisSNP[thisSNP$snpid %in% geno$SNP,]
+    geno <- geno[geno$SNP %in% snpLocs$snpid,]
+    onlyThese <- onlyThese[match(onlyThese$snpid,geno$SNP),]
+    chr <- onlyThese$chr
+    geno$Pos <- onlyThese$pos
+    geno$A1 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[3])))
+    geno$A2 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[4])))
+    chr_dosage <- cbind(chr,geno)
+    rm(geno)
 
-  require(data.table)
-  data.table::fwrite(gen,genfile,row.names=FALSE,
-                     col.names = FALSE, quote = FALSE, sep='\t')
+    new.levels <- c('1 0 0','0 1 0','0 0 1')
+    matrix.alleles <- as.matrix(chr_dosage[,6:ncol(chr_dosage)] + 1)
+    impute2.format <- matrix(new.levels[matrix.alleles],ncol=ncol(matrix.alleles))
+    gen <- cbind(chr_dosage[,1:5],impute2.format)
+    gen[is.na(gen)] <- '<NA>'
 
-  sample <- as.data.frame(matrix(nrow=(ncol(chr_dosage)-4),ncol=5))
-  colnames(sample) <- c('ID_1','ID_2','missing','gender','pheno')
-  sample$ID_1[2:nrow(sample)] <- paste('1A',2:nrow(sample),sep='')
-  sample$ID_2[2:nrow(sample)] <- colnames(chr_dosage)[6:ncol(chr_dosage)]
-  sample$missing[2:nrow(sample)] <- 0
-  sample$gender[2:nrow(sample)] <- 2
-  sample$pheno[2:nrow(sample)] <- pheno
-  sample[1,] <- c(0,0,0,'D','P')
-  write.table(sample,samplefile,row.names=FALSE,
-              col.names = TRUE, quote = FALSE)
-  write.table(sample[-1,c(1,2,5)],phenFile,row.names = F,
-              col.names = F, quote = F)
-  write.table(cbind(sample[-1,1:2],t(covariates[1:dimNumeric,-1])),
-              covarFile,row.names = F,col.names = F,quote=F)
+    require(data.table)
+    data.table::fwrite(gen,genfile,row.names=FALSE,
+                       col.names = FALSE, quote = FALSE, sep='\t')
 
-  if (!verbose){
-    sink('/dev/null')
-  }
+    sample <- as.data.frame(matrix(nrow=(ncol(chr_dosage)-4),ncol=5))
+    colnames(sample) <- c('ID_1','ID_2','missing','gender','pheno')
+    sample$ID_1[2:nrow(sample)] <- paste('1A',2:nrow(sample),sep='')
+    sample$ID_2[2:nrow(sample)] <- colnames(chr_dosage)[6:ncol(chr_dosage)]
+    sample$missing[2:nrow(sample)] <- 0
+    sample$gender[2:nrow(sample)] <- 2
+    sample$pheno[2:nrow(sample)] <- pheno
+    sample[1,] <- c(0,0,0,'D','P')
+    write.table(sample,samplefile,row.names=FALSE,
+                col.names = TRUE, quote = FALSE)
+    write.table(sample[-1,c(1,2,5)],phenFile,row.names = F,
+                col.names = F, quote = F)
+    write.table(cbind(sample[-1,1:2],t(covariates[1:dimNumeric,-1])),
+                covarFile,row.names = F,col.names = F,quote=F)
+
+    if (!verbose){
+      sink('/dev/null')
+    }
 
   system(paste('plink',
                '--gen',genfile,
@@ -239,7 +247,6 @@ estimateHeritability <- function(biomInt,
                           fill = T)
   h2 = hsq$Variance[10]
   P = hsq$Variance[17]
-  SE = hsq$SE[12]
 
   system(paste('rm -r',
                 tempDir))
@@ -265,6 +272,13 @@ estimateHeritability <- function(biomInt,
                  '--out',paste0(bedfile,'_multi')),
            intern = !verbose)
 
+    hsq = data.table::fread(paste0(bedfile,'_multi.hsq'),
+                            fill = T)
+    h2 = hsq$Variance[4]
+    P = hsq$Variance[9]
+
+    system(paste('rm -r',
+                 tempDir))
 
   }
 
@@ -273,7 +287,7 @@ estimateHeritability <- function(biomInt,
       sink()
     }
 
-  return(list(h2 = h2, P = P, SE = SE))
+  return(list(h2 = h2, P = P))
 
 
 }
