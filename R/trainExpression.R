@@ -90,6 +90,23 @@ trainExpression <- function(geneInt,
                                            h2Pcutoff))}
   if (herit$P <= h2Pcutoff){
 
+    print('FITTING CIS-GENOTYPES')
+    cisGenoMod = trainMediator(medInt = geneInt,
+                               pheno = pheno,
+                               mediator = mediator,
+                               medLocs = medLocs,
+                               snps = snps,
+                               snpLocs = snpLocs,
+                               covariates = covariates,
+                               seed = seed,
+                               k = k,
+                               cisDist = cisDist,
+                               prune = prune,
+                               windowSize = windowSize,
+                               numSNPShift = numSNPShift,
+                               ldThresh = ldThresh)
+    pheno = pheno - cisGenoMod$Predicted
+
 
     print('TRAINING MEDIATORS')
 
@@ -161,21 +178,7 @@ trainExpression <- function(geneInt,
   }
 
 
-  print('FITTING CIS-GENOTYPES')
-  cisGenoMod = trainMediator(medInt = geneInt,
-                             pheno = pheno,
-                             mediator = mediator,
-                             medLocs = medLocs,
-                             snps = snps,
-                             snpLocs = snpLocs,
-                             covariates = covariates,
-                             seed = seed,
-                             k = k,
-                             cisDist = cisDist,
-                             prune = prune,
-                             windowSize = windowSize,
-                             numSNPShift = numSNPShift,
-                             ldThresh = ldThresh)
+
 
   cisGenoMod$Model$Mediator = 'Cis'
   if (exists('trans.mod.df')){
