@@ -20,6 +20,7 @@ computeTME <- function(snp,
   numMed = ncol(mediators)
   snp = c(snp)
   snp = snp[indices]
+  expression = expression[indices]
 
   snp = t(limma::removeBatchEffect(t(snp),covariates = covs))
   expression = t(limma::removeBatchEffect(t(snp),covariates = covs))

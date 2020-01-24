@@ -27,6 +27,7 @@ permuteTME = function(snp,
                  expression = expression,
                  mediators = mediators,
                  covs = covs,
+                 sim = 'permutation',
                  parallel = parallel,
                  ncpus = nc)
   p = mean(abs(a$t0) >= abs(a$t))

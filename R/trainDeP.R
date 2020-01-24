@@ -106,14 +106,63 @@ trainDeP <- function(geneInt,
                              numSNPShift = numSNPShift,
                              ldThresh = ldThresh)
 
+  cisR2 = cisGenoMod$CVR2
   pheno = pheno - cisGenoMod$Predicted
 
   print('WEIGHTS FOR DISTAL-GENOTYPES')
   qtMed = subset(qtMed,SNP %in% tra.eSNP)
   if (nrow(qtMed) != 0){
+    transSNPs = subset(snps,SNP %in% qtMed$SNP)
+    TME = TME.P = vector(length = nrow(transSNPs),
+                         mode = 'numeric')
+    for (i in 1:length(TME)){
 
+      thisMed = subset(mediator,Mediator %in% qtMed$gene[qtMed$SNP == transSNPs$S[i]])
+      if (nrow(thisMed) == 0){
+        TME[i] = 0
+        TME.P[i] = 1
+      }
+      if (nrow(thisMed) > 0){
+        test = permuteTME(snp = as.numeric(as.vector(transSNPs[i,-1])),
+                          expression = pheno,
+                          mediators = t(as.matrix(thisMed[,-1])),
+                          covs = t(as.matrix(covariates[,-1])),
+                          nperms = 1000,
+                          nc = 1)
+        TME[i] = test$test.stat
+        TME.P[i] = test$p.value
+        }
 
+    }
+  }
+
+  pen = IHW::ihw(TME.P ~ rowMeans(transSNPs[,-1])/2,alpha = .1)
+  set.seed(seed)
+  train = caret::createFolds(y = pheno,
+                             k=k,
+                             returnTrain = T)
+  set.seed(seed)
+  test = caret::createFolds(y = pheno,
+                            k = k,
+                            returnTrain = F)
+
+  pred.wenet = pred.enet = vector(mode = 'numeric',length = length(pheno))
+  transSNPMat = as.matrix(transSNPs[,-1])
+  rownames(transSNPMat) = transSNPs$SNP
+  wenet = glmnet::cv.glmnet(y = pheno[train[[i]]],
+                            x = t(transSNPMat[,train[[i]]]),
+                            penalty.factor = TME,
+                            nfolds = 10,
+                            type.measure = 'deviance')
+  transLocs = subset(snpLocs,snpid %in% transSNPs$SNP)
+  transLocs = transLocs[match(rownames(transSNPMat),transLocs$snpid),]
+  transMod = data.frame(SNP = transLocs$snpid,
+                        Chromosome = transLocs$chr,
+                        Position = transLocs$pos,
+                        Effect = as.vector(coef(wenet,s = 'lambda.min'))[-1])
 
   }
+
+
 
 }
