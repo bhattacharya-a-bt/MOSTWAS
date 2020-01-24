@@ -164,7 +164,6 @@ trainExpression <- function(geneInt,
                     data = fixedEffects)
 
       fe.R2 = fe.R2 + adjR2(as.numeric(predict(lmCVFit)),pheno)
-      pheno = as.numeric(resid(lmCVFit))
 
       trans.mod.df = as.data.frame(abind::abind(lapply(1:length(medTrainList),
                                                        amplifyTrans,
