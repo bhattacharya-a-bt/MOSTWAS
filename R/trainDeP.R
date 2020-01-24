@@ -161,8 +161,4 @@ trainDeP <- function(geneInt,
                         Position = transLocs$pos,
                         Effect = as.vector(coef(wenet,s = 'lambda.min'))[-1])
 
-  }
-
-
-
 }
