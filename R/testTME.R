@@ -19,7 +19,7 @@ testTME <- function(i,
                       expression = pheno,
                       mediators = t(as.matrix(thisMed[,-1])),
                       covs = t(as.matrix(covariates[,-1])),
-                      nperms = 1000,
+                      nperms = nperms,
                       parallel = parallel,
                       nc = cores)
     TME = test$test.stat

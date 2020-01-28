@@ -50,7 +50,7 @@ trainDeP <- function(geneInt,
                      nperms = 1000,
                      k,
                      parallel,
-                     parType = 'no'
+                     parType = 'no',
                      prune,
                      windowSize = 50,
                      numSNPShift = 5,
@@ -72,39 +72,6 @@ trainDeP <- function(geneInt,
   tra.eSNP = qtlTra$SNP[qtlTra$gene == geneInt]
   snpsThis = subset(snps,
                     SNP %in% c(cisGeno$snpList,tra.eSNP))
-
-
-  print('ASSESSING MEDIATION OF DISTAL-GENOTYPES')
-  qtMed = subset(qtMed,SNP %in% tra.eSNP)
-  if (nrow(qtMed) != 0){
-    transSNPs = subset(snps,SNP %in% qtMed$SNP)
-    if (parallel){
-      medTest = parallel::mclapply(1:nrow(transSNPs),
-                                   testTME,
-                                   mediator = mediator,
-                                   qtMed = qtMed,
-                                   nperms = nperms,
-                                   transSNPs = transSNPs,
-                                   pheno = pheno,
-                                   covariates = covariates,
-                                   cores = cores,
-                                   mc.cores = ceiling(cores/2))
-    }
-    if (!parallel){
-      medTest = pbapply::pblapply(1:nrow(transSNPs),
-                                  testTME,
-                                  mediator = mediator,
-                                  nperms = nperms,
-                                  qtMed = qtMed,
-                                  transSNPs = transSNPs,
-                                  pheno = pheno,
-                                  covariates = covariates,
-                                  cores = cores)
-    }
-    TME = sapply(medTest,function(x) x[[1]])
-    TME.P = sapply(medTest,function(x) x[[2]])
-  }
-
 
   print('ESTIMATING HERITABILITY')
   herit = estimateHeritability(biomInt = geneInt,
@@ -130,97 +97,78 @@ trainDeP <- function(geneInt,
 
   if (herit$P < h2Pcutoff) {return(paste0(geneInt,' is not heritable at P < ',h2Pcutoff))}
 
-  print('FITTING CIS-GENOTYPES')
-  cisGenoMod = trainMediator(medInt = geneInt,
-                             pheno = pheno,
-                             mediator = mediator,
-                             medLocs = medLocs,
-                             snps = snps,
-                             snpLocs = snpLocs,
-                             covariates = covariates,
-                             seed = seed,
-                             k = k,
-                             cisDist = cisDist,
-                             prune = prune,
-                             windowSize = windowSize,
-                             numSNPShift = numSNPShift,
-                             ldThresh = ldThresh)
-
-  CisR2 = cisGenoMod$CVR2
-  R2 = cisGenoMod$R2
-  pheno = pheno - cisGenoMod$Predicted
-  Predicted = cisGenoMod$Predicted
-  Model = cisGenoMod$Model
-  h2 = herit$h2
-  h2.Pvalue = herit$P
-
-  print('WEIGHTS FOR DISTAL-GENOTYPES')
+  print('MEDIATION ANALYSIS ON DISTAL SNPS')
   qtMed = subset(qtMed,SNP %in% tra.eSNP)
   if (nrow(qtMed) != 0){
     transSNPs = subset(snps,SNP %in% qtMed$SNP)
     if (parallel){
-    medTest = parallel::mclapply(1:nrow(transSNPs),
-                                 testTME,
-                                 mediator = mediator,
-                                 qtMed = qtMed,
-                                 nperms = nperms,
-                                 transSNPs = transSNPs,
-                                 pheno = pheno,
-                                 covariates = covariates,
-                                 parallel = parType,
-                                 cores = cores,
-                                 mc.cores = ceiling(cores/2))
+      medTest = parallel::mclapply(1:nrow(transSNPs),
+                                   testTME,
+                                   mediator = mediator,
+                                   qtMed = qtMed,
+                                   nperms = nperms,
+                                   transSNPs = transSNPs,
+                                   pheno = pheno,
+                                   covariates = covariates,
+                                   parallel = parType,
+                                   cores = cores,
+                                   mc.cores = ceiling(cores/2))
     }
     if (!parallel){
       medTest = pbapply::pblapply(1:nrow(transSNPs),
-                       testTME,
-                       mediator = mediator,
-                       nperms = nperms,
-                       qtMed = qtMed,
-                       transSNPs = transSNPs,
-                       pheno = pheno,
-                       covariates = covariates,
-                       cores = cores)
+                                  testTME,
+                                  mediator = mediator,
+                                  nperms = nperms,
+                                  qtMed = qtMed,
+                                  transSNPs = transSNPs,
+                                  pheno = pheno,
+                                  covariates = covariates,
+                                  cores = cores)
     }
     TME = sapply(medTest,function(x) x[[1]])
     TME.P = sapply(medTest,function(x) x[[2]])
+    p_weights = IHW::ihw(TME.P ~ rowMeans(transSNPs[,-1])/2,
+                         alpha = .05)
+    include.trans = transSNPs$SNP[IHW::adj_pvalues(p_weights) < 0.05]
+    snpCur = subset(snps,
+                      SNP %in% c(cisGeno$snpList,include.trans))
+    snpList = snpCur$SNP
+    thisSNP = subset(snpLocs,
+                     snpid %in% snpList)
+    snpCur = as.matrix(snpCur[,-1])
 
-
-    transSNPMat = as.matrix(transSNPs[,-1])
-    rownames(transSNPMat) = transSNPs$SNP
-    wenet = glmnet::cv.glmnet(y = pheno,
-                              x = t(transSNPMat),
-                              penalty.factor = TME*(1-TME.P),
-                              nfolds = 10)
-    transLocs = subset(snpLocs,snpid %in% transSNPs$SNP)
-    transLocs = transLocs[match(rownames(transSNPMat),transLocs$snpid),]
-    transMod = data.frame(SNP = transLocs$snpid,
-                          Chromosome = transLocs$chr,
-                          Position = transLocs$pos,
-                          Effect = as.vector(coef(wenet,s = 'lambda.min'))[-1])
+    print('FITTING FULL MODEL')
+    tot.mods = trainSNPPheno(pheno,
+                             snpCur,
+                             snpList,
+                             thisSnp,
+                             fileName = geneInt,
+                             prune = prune)
 
     print('CROSS-VALIDATION ON DISTAL SNPS')
     set.seed(seed)
     train = caret::createFolds(1:length(pheno),
                                k = 3,
                                returnTrain = T)
-    pred = vector(mode = 'numeric',
-                  length = length(pheno))
+    pred.enet = pred.blup = vector(mode = 'numeric',
+                                   length = length(pheno))
+    rm(snpCur)
 
     for (i in 1:k){
 
-      qtlTra = fread(qtlTra_parts[i])
-      qtMed = fread(qtMed_parts[i])
-      tra.eSNP = qtlTra$SNP[qtlTra$gene == geneInt]
-      qtMed = subset(qtMed,SNP %in% tra.eSNP & FDR < 0.05)
+      qtlTraP = data.table::fread(qtlTra_parts[i])
+      qtMedP = data.table::fread(qtMed_parts[i])
+      tra.eSNP = qtlTra$SNP[qtlTraP$gene == geneInt]
+      rm(qtlTraP)
+      qtMedP = subset(qtMedP,SNP %in% tra.eSNP & FDR < 0.05)
 
-      if (nrow(qtMed) != 0){
-        transSNPs = subset(snps,SNP %in% qtMed$SNP)
+      if (nrow(qtMedP) != 0){
+        transSNPs = subset(snps,SNP %in% qtMedP$SNP)
         if (parallel){
           medTest = parallel::mclapply(1:nrow(transSNPs),
                                        testTME,
                                        mediator = mediator,
-                                       qtMed = qtMed,
+                                       qtMed = qtMedP,
                                        nperms = nperms,
                                        transSNPs = transSNPs,
                                        covariates = covariates,
@@ -233,7 +181,7 @@ trainDeP <- function(geneInt,
                                       testTME,
                                       mediator = mediator,
                                       nperms = nperms,
-                                      qtMed = qtMed,
+                                      qtMed = qtMedP,
                                       pheno = pheno,
                                       transSNPs = transSNPs,
                                       covariates = covariates,
@@ -241,16 +189,17 @@ trainDeP <- function(geneInt,
         }
         TME = sapply(medTest,function(x) x[[1]])
         TME.P = sapply(medTest,function(x) x[[2]])
-        TME.P = ((TME.P * nperms) + 1)/(nperms + 1)
 
+        p_weights = IHW::ihw(TME.P ~ rowMeans(transSNPs[,-1])/2,
+                             alpha = .05)
+        include.trans = transSNPs$SNP[IHW::adj_pvalues(p_weights) < 0.05]
+        snpCur = subset(snps[,c(1,train[[i]]),with=F],
+                        SNP %in% c(cisGeno$snpList,include.trans))
+        snpList = snpCur$SNP
+        thisSNP = subset(snpLocs,
+                         snpid %in% snpList)
+        snpCur = as.matrix(snpCur[,-1])
 
-        transSNPMat = as.matrix(transSNPs[,-1])
-        rownames(transSNPMat) = transSNPs$SNP
-        wenet = glmnet::cv.glmnet(y = pheno[train[[i]]],
-                                  x = t(transSNPMat[,train[[i]]]),
-                                  penalty.factor = TME*(1-TME.P),
-                                  nfolds = 5)
-        pred[-train[[i]]] = c(predict(wenet,newx = t(transSNPMat[,-train[[i]]]),s = 'lambda.min'))
 
       }
     }
