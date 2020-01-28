@@ -27,7 +27,6 @@ permuteTME = function(snp,
                  expression = expression,
                  mediators = mediators,
                  covs = covs,
-                 sim = 'permutation',
                  parallel = parallel,
                  ncpus = nc)
   p = (sum(abs(a$t0) >= abs(a$t))+1)/(nperms + 1)
