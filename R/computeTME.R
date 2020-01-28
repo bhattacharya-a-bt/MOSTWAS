@@ -20,12 +20,12 @@ computeTME <- function(snp,
   numMed = ncol(mediators)
   numCovs = ncol(covs)
   snp = c(snp)
+  snp = snp[indices]
   tot = as.data.frame(cbind(expression,snp,mediators,covs))
   colnames(tot) = c('GE',
                     'SNP',
                     paste0('Med',1:numMed),
                     paste0('Cov',1:numCovs))
-  tot = tot[indices,]
 
   tot.reg = lm(GE ~ ., data = tot)
   beta_M = as.numeric((coef(tot.reg)[paste0('Med',1:numMed)]))
