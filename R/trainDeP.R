@@ -133,32 +133,35 @@ trainDeP <- function(geneInt,
         TME.P[i] = test$p.value
         }
 
+
+      pen = IHW::ihw(TME.P ~ rowMeans(transSNPs[,-1])/2,alpha = .1)
+      set.seed(seed)
+      train = caret::createFolds(y = pheno,
+                                 k=k,
+                                 returnTrain = T)
+      set.seed(seed)
+      test = caret::createFolds(y = pheno,
+                                k = k,
+                                returnTrain = F)
+
+      pred.wenet = pred.enet = vector(mode = 'numeric',
+                                      length = length(pheno))
+      transSNPMat = as.matrix(transSNPs[,-1])
+      rownames(transSNPMat) = transSNPs$SNP
+      wenet = glmnet::cv.glmnet(y = pheno[train[[i]]],
+                                x = t(transSNPMat[,train[[i]]]),
+                                penalty.factor = TME,
+                                nfolds = 10,
+                                type.measure = 'deviance')
+      transLocs = subset(snpLocs,snpid %in% transSNPs$SNP)
+      transLocs = transLocs[match(rownames(transSNPMat),transLocs$snpid),]
+      transMod = data.frame(SNP = transLocs$snpid,
+                            Chromosome = transLocs$chr,
+                            Position = transLocs$pos,
+                            Effect = as.vector(coef(wenet,s = 'lambda.min'))[-1])
+
     }
   }
 
-  pen = IHW::ihw(TME.P ~ rowMeans(transSNPs[,-1])/2,alpha = .1)
-  set.seed(seed)
-  train = caret::createFolds(y = pheno,
-                             k=k,
-                             returnTrain = T)
-  set.seed(seed)
-  test = caret::createFolds(y = pheno,
-                            k = k,
-                            returnTrain = F)
-
-  pred.wenet = pred.enet = vector(mode = 'numeric',length = length(pheno))
-  transSNPMat = as.matrix(transSNPs[,-1])
-  rownames(transSNPMat) = transSNPs$SNP
-  wenet = glmnet::cv.glmnet(y = pheno[train[[i]]],
-                            x = t(transSNPMat[,train[[i]]]),
-                            penalty.factor = TME,
-                            nfolds = 10,
-                            type.measure = 'deviance')
-  transLocs = subset(snpLocs,snpid %in% transSNPs$SNP)
-  transLocs = transLocs[match(rownames(transSNPMat),transLocs$snpid),]
-  transMod = data.frame(SNP = transLocs$snpid,
-                        Chromosome = transLocs$chr,
-                        Position = transLocs$pos,
-                        Effect = as.vector(coef(wenet,s = 'lambda.min'))[-1])
 
 }
