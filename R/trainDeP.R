@@ -47,8 +47,10 @@ trainDeP <- function(geneInt,
                      dimNumeric,
                      verbose,
                      seed,
+                     nperms = 1000,
                      k,
                      parallel,
+                     parType = 'no'
                      prune,
                      windowSize = 50,
                      numSNPShift = 5,
@@ -70,6 +72,39 @@ trainDeP <- function(geneInt,
   tra.eSNP = qtlTra$SNP[qtlTra$gene == geneInt]
   snpsThis = subset(snps,
                     SNP %in% c(cisGeno$snpList,tra.eSNP))
+
+
+  print('ASSESSING MEDIATION OF DISTAL-GENOTYPES')
+  qtMed = subset(qtMed,SNP %in% tra.eSNP)
+  if (nrow(qtMed) != 0){
+    transSNPs = subset(snps,SNP %in% qtMed$SNP)
+    if (parallel){
+      medTest = parallel::mclapply(1:nrow(transSNPs),
+                                   testTME,
+                                   mediator = mediator,
+                                   qtMed = qtMed,
+                                   nperms = nperms,
+                                   transSNPs = transSNPs,
+                                   pheno = pheno,
+                                   covariates = covariates,
+                                   cores = cores,
+                                   mc.cores = ceiling(cores/2))
+    }
+    if (!parallel){
+      medTest = pbapply::pblapply(1:nrow(transSNPs),
+                                  testTME,
+                                  mediator = mediator,
+                                  nperms = nperms,
+                                  qtMed = qtMed,
+                                  transSNPs = transSNPs,
+                                  pheno = pheno,
+                                  covariates = covariates,
+                                  cores = cores)
+    }
+    TME = sapply(medTest,function(x) x[[1]])
+    TME.P = sapply(medTest,function(x) x[[2]])
+  }
+
 
   print('ESTIMATING HERITABILITY')
   herit = estimateHeritability(biomInt = geneInt,
@@ -132,6 +167,7 @@ trainDeP <- function(geneInt,
                                  transSNPs = transSNPs,
                                  pheno = pheno,
                                  covariates = covariates,
+                                 parallel = parType,
                                  cores = cores,
                                  mc.cores = ceiling(cores/2))
     }
@@ -148,7 +184,6 @@ trainDeP <- function(geneInt,
     }
     TME = sapply(medTest,function(x) x[[1]])
     TME.P = sapply(medTest,function(x) x[[2]])
-    TME.P = ((TME.P * nperms) + 1)/(nperms + 1)
 
 
     transSNPMat = as.matrix(transSNPs[,-1])

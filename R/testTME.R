@@ -6,6 +6,7 @@ testTME <- function(i,
                     nperms = 1000,
                     cores,
                     covariates,
+                    parallel = 'no',
                     thisMed){
 
   thisMed = subset(mediator,Mediator %in% qtMed$gene[qtMed$SNP == transSNPs$SNP[i]])
@@ -19,7 +20,8 @@ testTME <- function(i,
                       mediators = t(as.matrix(thisMed[,-1])),
                       covs = t(as.matrix(covariates[,-1])),
                       nperms = 1000,
-                      nc = 1)
+                      parallel = parallel,
+                      nc = cores)
     TME = test$test.stat
     TME.P = test$p.value
   }

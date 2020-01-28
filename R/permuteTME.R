@@ -30,7 +30,7 @@ permuteTME = function(snp,
                  covs = covs,
                  parallel = parallel,
                  ncpus = nc)
-  p = (sum(abs(a$t0) >= abs(a$t))+1)/(nperms + 1)
+  p = (sum(abs(a$t) >= abs(a$t0))+1)/(nperms + 1)
   return(list(test.stat = a$t0,
               p.value = p))
 
