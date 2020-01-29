@@ -1,7 +1,7 @@
 trainSNPPheno <- function(pheno,
                           snpCur,
                           snpList,
-                          thisSnp,
+                          thisSNP,
                           fileName,
                           prune = T,
                           windowSize = 50,

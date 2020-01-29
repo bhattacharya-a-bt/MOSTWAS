@@ -257,4 +257,11 @@ trainDeP <- function(geneInt,
     h2.Pvalue = herit$P
     save(Model,R2,Predicted,h2,h2.Pvalue,
        file = paste0(modelDir,geneInt,'.wgt.med.RData'))
+
+    if (dir.exists('temp')){
+      fff = list.files('temp/')
+      cleanup = geneInt
+      file.remove(paste0('temp/',fff[grepl(geneInt,fff)]))
+    }
+
 }
