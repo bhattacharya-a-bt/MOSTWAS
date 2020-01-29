@@ -11,7 +11,7 @@ trainSNPPheno <- function(pheno,
     pruneObj = LDprune(W = t(snpCur),
                        snpList = snpList,
                        snpLocs = thisSNP,
-                       fileName = geneInt,
+                       fileName = fileName,
                        windowSize = windowSize,
                        numSNPShift = numSNPShift,
                        ldThresh = ldThresh)
