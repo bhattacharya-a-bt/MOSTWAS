@@ -11,7 +11,7 @@ trainSNPPheno <- function(pheno,
     pruneObj = LDprune(W = t(snpCur),
                        snpList = snpList,
                        snpLocs = thisSNP,
-                       fileName = fileName,
+                       fileName = geneInt,
                        windowSize = windowSize,
                        numSNPShift = numSNPShift,
                        ldThresh = ldThresh)
@@ -20,12 +20,13 @@ trainSNPPheno <- function(pheno,
     thisSNP = pruneObj$onlyThese
     rm(pruneObj)}
 
+
   enet = glmnet::cv.glmnet(y = pheno,
                                x = t(snpCur),
                                nfolds = 5)
   blup = rrBLUP::mixed.solve(y = pheno,
                                  Z = t(snpCur),
                                  K = cov(t(snpCur)))
-  return(list(enet = tot.enet,
-              blup = tot.blup))
+  return(list(enet = enet,
+              blup = blup))
 }

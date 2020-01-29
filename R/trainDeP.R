@@ -95,7 +95,7 @@ trainDeP <- function(geneInt,
                                LDMS = F,
                                supplySNP = T)
 
-  if (herit$P < h2Pcutoff) {return(paste0(geneInt,' is not heritable at P < ',h2Pcutoff))}
+  if (herit$P > h2Pcutoff) {return(paste0(geneInt,' is not heritable at P < ',h2Pcutoff))}
 
   print('MEDIATION ANALYSIS ON DISTAL SNPS')
   qtMed = subset(qtMed,SNP %in% tra.eSNP)
@@ -136,14 +136,20 @@ trainDeP <- function(geneInt,
     thisSNP = subset(snpLocs,
                      snpid %in% snpList)
     snpCur = as.matrix(snpCur[,-1])
-
+    rownames(snpCur) = snpList
+  }
     print('FITTING FULL MODEL')
     tot.mods = trainSNPPheno(pheno,
                              snpCur,
                              snpList,
-                             thisSnp,
+                             thisSNP,
                              fileName = geneInt,
                              prune = prune)
+    rm(snpCur)
+    totSNP = subset(thisSNP,
+                    snpid %in% rownames(coef(tot.mods$enet,s='lambda.min'))[-1])
+    totSNP = totSNP[match(rownames(coef(tot.mods$enet,s='lambda.min'))[-1],
+                          totSNP$snpid),]
 
     print('CROSS-VALIDATION ON DISTAL SNPS')
     set.seed(seed)
@@ -152,7 +158,6 @@ trainDeP <- function(geneInt,
                                returnTrain = T)
     pred.enet = pred.blup = vector(mode = 'numeric',
                                    length = length(pheno))
-    rm(snpCur)
 
     for (i in 1:k){
 
@@ -191,22 +196,65 @@ trainDeP <- function(geneInt,
         TME.P = sapply(medTest,function(x) x[[2]])
 
         p_weights = IHW::ihw(TME.P ~ rowMeans(transSNPs[,-1])/2,
-                             alpha = .05)
-        include.trans = transSNPs$SNP[IHW::adj_pvalues(p_weights) < 0.05]
-        snpCur = subset(snps[,c(1,train[[i]]),with=F],
+                             alpha = .10)
+        include.trans = transSNPs$SNP[IHW::adj_pvalues(p_weights) < 0.10]
+        snpCur = subset(snps,
                         SNP %in% c(cisGeno$snpList,include.trans))
         snpList = snpCur$SNP
         thisSNP = subset(snpLocs,
                          snpid %in% snpList)
         snpCur = as.matrix(snpCur[,-1])
 
+        if (prune){
+          pruneObj = LDprune(W = t(snpCur),
+                             snpList = snpList,
+                             snpLocs = thisSNP,
+                             fileName = geneInt,
+                             windowSize = windowSize,
+                             numSNPShift = numSNPShift,
+                             ldThresh = ldThresh)
+          snpCur = t(pruneObj$W)
+          snpList = pruneObj$snpList
+          thisSNP = pruneObj$onlyThese
+          rm(pruneObj)}
+
+        thisMod = trainSNPPheno(pheno = pheno[train[[i]]],
+                                snpCur[,train[[i]]],
+                                snpList,
+                                thisSnp = thisSNP,
+                                fileName = geneInt,
+                                prune = F)
+
+        pred.enet[-train[[i]]] = as.numeric(predict(thisMod$enet,
+                                                    newx = t(snpCur[,-train[[i]]]),
+                                                    s = 'lambda.min'))
+        pred.blup[-train[[i]]] = as.numeric(t(snpCur[,-train[[i]]]) %*% thisMod$blup$u)
+
 
       }
     }
-    Model = rbind(Model,transMod)
-    R2 = CisR2 + adjR2(pheno,pred)
-    Predicted = Predicted + pred
-  }
-  save(Model,R2,Predicted,CisR2,h2,h2.Pvalue,
+
+    if (adjR2(pheno,pred.blup) < adjR2(pheno,pred.enet) | mean(coef(tot.mods$enet,s='lambda.min')[-1,] == 0) != 1){
+      Model = data.frame(SNP = c(totSNP$snpid),
+                         Chromosome = c(totSNP$chr),
+                         Position = c(totSNP$pos),
+                         Effect = as.numeric(coef(tot.mods$enet,
+                                                  s='lambda.min'))[-1])
+      Predicted = pred.enet
+
+      } else {
+        Model = data.frame(SNP = c(totSNP$snpid),
+                           Chromosome = c(totSNP$chr),
+                           Position = c(totSNP$pos),
+                           Effect = as.numeric(tot.mods$blup$u))
+        Predicted = pred.blup
+        }
+
+
+    Model = subset(Model,Effect != 0)
+    R2 = max(adjR2(pheno,pred.blup),adjR2(pheno,pred.enet))
+    h2 = herit$h2
+    h2.Pvalue = herit$P
+    save(Model,R2,Predicted,h2,h2.Pvalue,
        file = paste0(modelDir,geneInt,'.wgt.med.RData'))
 }
