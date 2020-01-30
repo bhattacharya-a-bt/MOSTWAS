@@ -201,7 +201,7 @@ trainDeP <- function(geneInt,
         include.trans = transSNPs$SNP[IHW::adj_pvalues(p_weights) < 0.10]
       } else {include.trans = NULL}
         snpCur = subset(snps,
-                        SNP %in% c(cisGeno$snpList,include.tr ans))
+                        SNP %in% c(cisGeno$snpList,include.trans))
         snpList = snpCur$SNP
         thisSNP = subset(snpLocs,
                          snpid %in% snpList)
