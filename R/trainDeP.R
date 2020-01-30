@@ -25,13 +25,11 @@
 #' @return final model for gene along with CV R2 and predicted values
 #'
 #' @importFrom caret createFolds
-#' @importFrom doParallel registerDoParallel
 #' @importFrom data.table fread
 #' @importFrom data.table fwrite
-#' @importFrom glmnet cv.glmnet
-#' @importFrom rrBLUP mixed.solve
 #' @importForm parallel mclapply
-#' @importFrom abind abind
+#' @importFrom IHW ihw
+#' @importFrom IHW adj_pvalues
 #'
 #' @export
 trainDeP <- function(geneInt,
@@ -117,21 +115,21 @@ trainDeP <- function(geneInt,
                                    mc.cores = ceiling(cores/2))
     }
     if (!parallel){
-      medTest = pbapply::pblapply(1:nrow(transSNPs),
-                                  testTME,
-                                  mediator = mediator,
-                                  nperms = nperms,
-                                  qtMed = qtMed,
-                                  transSNPs = transSNPs,
-                                  pheno = pheno,
-                                  covariates = covariates,
-                                  cores = cores)
+      medTest = lapply(1:nrow(transSNPs),
+                       testTME,
+                       mediator = mediator,
+                       nperms = nperms,
+                       qtMed = qtMed,
+                       transSNPs = transSNPs,
+                       pheno = pheno,
+                       covariates = covariates,
+                       cores = cores)
     }
     TME = sapply(medTest,function(x) x[[1]])
     TME.P = sapply(medTest,function(x) x[[2]])
-    p_weights = IHW::ihw(TME.P ~ rowMeans(transSNPs[,-1])/2,
-                         alpha = .05)
-    include.trans = transSNPs$SNP[IHW::adj_pvalues(p_weights) < 0.05]
+    p_weights = qvalue::qvalue(p = TME.P,
+                               fdr.level = .10)
+    include.trans = transSNPs$SNP[p_weights$qvalues < 0.10]
   } else {include.trans = NULL}
     snpCur = subset(snps,
                       SNP %in% c(cisGeno$snpList,include.trans))
@@ -185,22 +183,21 @@ trainDeP <- function(geneInt,
                                        mc.cores = ceiling(cores/2))
         }
         if (!parallel){
-          medTest = pbapply::pblapply(1:nrow(transSNPs),
-                                      testTME,
-                                      mediator = mediator,
-                                      nperms = nperms,
-                                      qtMed = qtMedP,
-                                      pheno = pheno,
-                                      transSNPs = transSNPs,
-                                      covariates = covariates,
-                                      cores = cores)
+          medTest = lapply(1:nrow(transSNPs),
+                           testTME,
+                           mediator = mediator,
+                           nperms = nperms,
+                           qtMed = qtMedP,
+                           pheno = pheno,
+                           transSNPs = transSNPs,
+                           covariates = covariates,
+                           cores = cores)
         }
         TME = sapply(medTest,function(x) x[[1]])
         TME.P = sapply(medTest,function(x) x[[2]])
-
-        p_weights = IHW::ihw(TME.P ~ rowMeans(transSNPs[,-1])/2,
-                             alpha = .10)
-        include.trans = transSNPs$SNP[IHW::adj_pvalues(p_weights) < 0.10]
+        p_weights = qvalue::qvalue(p = TME.P,
+                                   fdr.level = .10)
+        include.trans = transSNPs$SNP[p_weights$qvalues < 0.10]
       } else {include.trans = NULL}
         snpCur = subset(snps,
                         SNP %in% c(cisGeno$snpList,include.trans))

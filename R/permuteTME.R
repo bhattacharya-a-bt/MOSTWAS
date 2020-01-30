@@ -1,4 +1,4 @@
-#' Perform permutation test for the total absolute mediation effect
+#' Perform permutation test for the total mediation effect
 #'
 #' The function takes in a SNP-mediator set-gene triplet
 #' and computes the total absolute mediation effect and permutation
@@ -9,8 +9,12 @@
 #' @param mediators data frame, mediators of interest
 #' @param covs data frame, covariates
 #' @param nperms integer, number of permutations for the null distribution
+#' @param parallel character, boot parallel input
+#' @param nc integer, number of cores
 #'
-#' @return estimate of TAME and the permutation P-value
+#' @return estimate of TME and the permutation P-value
+#'
+#' @importFrom boot boot
 #'
 #' @export
 permuteTME = function(snp,
