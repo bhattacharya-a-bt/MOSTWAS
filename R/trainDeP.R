@@ -130,6 +130,7 @@ trainDeP <- function(geneInt,
     p_weights = IHW::ihw(TME.P ~ rowMeans(transSNPs[,-1])/2,
                          alpha = .05)
     include.trans = transSNPs$SNP[IHW::adj_pvalues(p_weights) < 0.05]
+  } else {include.trans = NULL}
     snpCur = subset(snps,
                       SNP %in% c(cisGeno$snpList,include.trans))
     snpList = snpCur$SNP
@@ -137,7 +138,7 @@ trainDeP <- function(geneInt,
                      snpid %in% snpList)
     snpCur = as.matrix(snpCur[,-1])
     rownames(snpCur) = snpList
-  }
+
     print('FITTING FULL MODEL')
     tot.mods = trainSNPPheno(pheno,
                              snpCur,
@@ -198,8 +199,9 @@ trainDeP <- function(geneInt,
         p_weights = IHW::ihw(TME.P ~ rowMeans(transSNPs[,-1])/2,
                              alpha = .10)
         include.trans = transSNPs$SNP[IHW::adj_pvalues(p_weights) < 0.10]
+      } else {include.trans = NULL}
         snpCur = subset(snps,
-                        SNP %in% c(cisGeno$snpList,include.trans))
+                        SNP %in% c(cisGeno$snpList,include.tr ans))
         snpList = snpCur$SNP
         thisSNP = subset(snpLocs,
                          snpid %in% snpList)
@@ -229,10 +231,7 @@ trainDeP <- function(geneInt,
                                                     newx = t(snpCur[,-train[[i]]]),
                                                     s = 'lambda.min'))
         pred.blup[-train[[i]]] = as.numeric(t(snpCur[,-train[[i]]]) %*% thisMod$blup$u)
-
-
-      }
-    }
+        }
 
     if (adjR2(pheno,pred.blup) < adjR2(pheno,pred.enet) | mean(coef(tot.mods$enet,s='lambda.min')[-1,] == 0) != 1){
       Model = data.frame(SNP = c(totSNP$snpid),
