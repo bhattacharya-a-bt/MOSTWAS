@@ -12,9 +12,18 @@
 #' @param covariates data frame, covariates
 #' @param numMed integer, number of top mediators to include
 #' @param fileName character, throw away name for PLINK files
+#' @param dimNumeric integer, number of continuous covariates
+#' @param numMed integer, maximum number of mediators to find
 #' @param cisDist numeric, base pair window of cis definition
 #' @param needMed logical, T/F if the biomarker of interest has associated mediators
 #' @param medList character vector,  vector of mediator names
+#' @param verbose logical, T/F for detailed output
+#' @param windowSize integer, window size for PLINK pruning
+#' @param numSNPShift integer, shifting window from PLINK pruning
+#' @param ldThresh numeric, maximum threshold for linkage disequilibrium
+#' @param ldScrRegion numeric, number of SNPs per bin in GCTA-LDMS
+#' @param LDMS logical, T/F to run GCTA-LDMS
+#' @param supplySNP logical, T/F to run GCTA on the full provided snps
 #'
 #'
 #' @return heritability estimate and associated LRT P-value

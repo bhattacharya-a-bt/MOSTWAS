@@ -95,7 +95,9 @@ trainDeP <- function(geneInt,
                                LDMS = F,
                                supplySNP = T)
 
-  if (herit$P > h2Pcutoff) {return(paste0(geneInt,' is not heritable at P < ',h2Pcutoff))}
+  if (herit$P > h2Pcutoff | herit$h2 <= 0) {
+    return(paste0(geneInt,' is not heritable at P < ',h2Pcutoff))
+    }
 
   print('MEDIATION ANALYSIS ON DISTAL SNPS')
   qtMed = subset(qtMed,SNP %in% tra.eSNP)

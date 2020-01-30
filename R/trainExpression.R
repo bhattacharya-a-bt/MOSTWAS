@@ -85,10 +85,11 @@ trainExpression <- function(geneInt,
                                LDMS = T,
                                supplySNP = F)
 
-  if (herit$P > h2Pcutoff) {print(paste(geneInt,
-                                           'is not germline heritable at P <',
-                                           h2Pcutoff))}
-  if (herit$P <= h2Pcutoff){
+  if (herit$P > h2Pcutoff | herit$h2 <= 0) {
+    return(paste(geneInt,
+                 'is not germline heritable at P <',
+                 h2Pcutoff))
+    }
 
     print('FITTING CIS-GENOTYPES')
     cisGenoMod = trainMediator(medInt = geneInt,

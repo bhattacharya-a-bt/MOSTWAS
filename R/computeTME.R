@@ -1,14 +1,15 @@
-#' Compute total absolute mediation effect
+#' Compute total mediation effect
 #'
 #' The function takes in a SNP-mediator set-gene triplet
-#' and computes the total absolute mediation effect
+#' and computes the total mediation effect with boots structure
 #'
 #' @param snp vector, SNP of interest
 #' @param expression vector, gene expression of interest
 #' @param mediators data frame, mediators of interest
 #' @param covs data frame, covariates
+#' @param indices blank, index for boot package
 #'
-#' @return estimate of TAME
+#' @return estimate of TME
 #'
 #' @export
 computeTME <- function(snp,
