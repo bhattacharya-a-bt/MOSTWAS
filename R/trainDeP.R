@@ -91,7 +91,7 @@ trainDeP <- function(geneInt,
                                windowSize = windowSize,
                                numSNPShift = numSNPShift,
                                ldThresh = ldThresh,
-                               ldScrRegion = ldScrRegion,
+                               ldScrRegion = 200,
                                LDMS = F,
                                supplySNP = T)
 

@@ -72,9 +72,9 @@ estimateHeritability <- function(biomInt,
     }}
 
     if (supplySNP){
-      W = snps[,-1]
+      thisSNP = subset(snpLocs,snpid %in% snps$SNP)
+      W = subset(snps,SNP %in% snpList)[,-1]
       snpList = snps$SNP
-      thisSNP = subset(snpLocs,snpid %in% snpList)
     }
 
     fileName = paste0('h2_',biomInt)
