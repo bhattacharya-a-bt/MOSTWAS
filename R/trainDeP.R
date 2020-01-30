@@ -221,7 +221,7 @@ trainDeP <- function(geneInt,
         thisMod = trainSNPPheno(pheno = pheno[train[[i]]],
                                 snpCur[,train[[i]]],
                                 snpList,
-                                thisSnp = thisSNP,
+                                thisSNP = thisSNP,
                                 fileName = geneInt,
                                 prune = F)
 
