@@ -7,8 +7,7 @@ testTME <- function(i,
                     nperms = 1000,
                     cores,
                     covariates,
-                    parallel = 'no',
-                    thisMed){
+                    parallel = 'no'){
 
   thisMed = subset(mediator,Mediator %in% qtMed$gene[qtMed$SNP == transSNPs$SNP[i]])
   if (nrow(thisMed) == 0){

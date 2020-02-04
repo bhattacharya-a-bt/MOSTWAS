@@ -102,8 +102,7 @@ trainDeP <- function(geneInt,
   qtMed = subset(qtMed,SNP %in% tra.eSNP)
   if (nrow(qtMed) != 0){
     transSNPs = subset(snps,SNP %in% qtMed$SNP)
-    if (!sobel){
-      if (parallel){
+    if (parallel){
         medTest = parallel::mclapply(1:nrow(transSNPs),
                                      testTME,
                                      mediator = mediator,
@@ -128,12 +127,12 @@ trainDeP <- function(geneInt,
                          covariates = covariates,
                          cores = cores,
                          sobel = sobel)
-    }
+      }
     TME = sapply(medTest,function(x) x[[1]])
     TME.P = sapply(medTest,function(x) x[[2]])
-    }
     p_weights = qvalue::qvalue(p = TME.P,
-                               fdr.level = .10)
+                               fdr.level = .10,
+                               pi0 = 1)
     include.trans = transSNPs$SNP[p_weights$qvalues < 0.10]
   } else {include.trans = NULL}
     snpCur = subset(snps,
