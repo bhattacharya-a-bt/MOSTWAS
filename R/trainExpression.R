@@ -207,5 +207,3 @@ trainExpression <- function(geneInt,
          file = paste0(modelDir,geneInt,'.wgt.med.RData'))
   }
 
-}
-
