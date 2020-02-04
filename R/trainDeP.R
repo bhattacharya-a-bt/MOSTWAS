@@ -45,6 +45,7 @@ trainDeP <- function(geneInt,
                      dimNumeric,
                      verbose,
                      seed,
+                     sobel = F,
                      nperms = 1000,
                      k,
                      parallel,
@@ -101,32 +102,36 @@ trainDeP <- function(geneInt,
   qtMed = subset(qtMed,SNP %in% tra.eSNP)
   if (nrow(qtMed) != 0){
     transSNPs = subset(snps,SNP %in% qtMed$SNP)
-    if (parallel){
-      medTest = parallel::mclapply(1:nrow(transSNPs),
-                                   testTME,
-                                   mediator = mediator,
-                                   qtMed = qtMed,
-                                   nperms = nperms,
-                                   transSNPs = transSNPs,
-                                   pheno = pheno,
-                                   covariates = covariates,
-                                   parallel = parType,
-                                   cores = cores,
-                                   mc.cores = ceiling(cores/2))
-    }
-    if (!parallel){
-      medTest = lapply(1:nrow(transSNPs),
-                       testTME,
-                       mediator = mediator,
-                       nperms = nperms,
-                       qtMed = qtMed,
-                       transSNPs = transSNPs,
-                       pheno = pheno,
-                       covariates = covariates,
-                       cores = cores)
+    if (!sobel){
+      if (parallel){
+        medTest = parallel::mclapply(1:nrow(transSNPs),
+                                     testTME,
+                                     mediator = mediator,
+                                     qtMed = qtMed,
+                                     nperms = nperms,
+                                     transSNPs = transSNPs,
+                                     pheno = pheno,
+                                     covariates = covariates,
+                                     parallel = parType,
+                                     cores = cores,
+                                     mc.cores = ceiling(cores/2),
+                                     sobel = sobel)
+        }
+      if (!parallel){
+        medTest = lapply(1:nrow(transSNPs),
+                         testTME,
+                         mediator = mediator,
+                         nperms = nperms,
+                         qtMed = qtMed,
+                         transSNPs = transSNPs,
+                         pheno = pheno,
+                         covariates = covariates,
+                         cores = cores,
+                         sobel = sobel)
     }
     TME = sapply(medTest,function(x) x[[1]])
     TME.P = sapply(medTest,function(x) x[[2]])
+    }
     p_weights = qvalue::qvalue(p = TME.P,
                                fdr.level = .10)
     include.trans = transSNPs$SNP[p_weights$qvalues < 0.10]
