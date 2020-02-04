@@ -17,25 +17,12 @@ computeTME <- function(snp,
                        mediators,
                        covs,
                        indices){
-
-  numMed = ncol(mediators)
-  numCovs = ncol(covs)
   snp = c(snp)
   snp = snp[indices]
-  tot = as.data.frame(cbind(expression,snp,mediators,covs))
-  colnames(tot) = c('GE',
-                    'SNP',
-                    paste0('Med',1:numMed),
-                    paste0('Cov',1:numCovs))
+  direct = lm(expression ~ snp + mediators + covs)
+  indirect = lm(mediators ~ snp + covs)
 
-  tot.reg = lm(GE ~ ., data = tot)
-  beta_M = as.numeric((coef(tot.reg)[paste0('Med',1:numMed)]))
-  alpha_X = sapply(1:numMed,function(i) {
-    cur = tot[,c(paste0('Med',i),'SNP',paste0('Cov',1:numCovs))]
-    colnames(cur)[1] = 'Med'
-    return(as.numeric((coef(lm(Med~.,data = cur))['SNP'])))
-  }
-  )
+  TME =  coef(direct)[3:7] %*% coef(indirect)[2,]
 
-  return(as.numeric(alpha_X %*% beta_M))
+  return(as.numeric(TME))
 }
