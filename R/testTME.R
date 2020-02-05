@@ -8,21 +8,23 @@ testTME <- function(i,
                     cores,
                     covariates,
                     parallel = 'no'){
-  print(i)
-  thisMed = subset(mediator,Mediator %in% qtMed$gene[qtMed$SNP == transSNPs$SNP[i]])
+
+  thisMed = subset(mediator,
+                   Mediator %in% qtMed$gene[qtMed$SNP == transSNPs$SNP[i]])
 
   if (nrow(thisMed) == 0){
-    print(list(TME = 0,
+    return(list(TME = 0,
                 TME.P = 1))
   }
+
   if (nrow(thisMed) > 0){
-    if (sobel){
+    if (sobel == T){
         test = sobelTest(snp = as.numeric(as.vector(transSNPs[i,-1])),
                          expression = pheno,
                          mediators = t(as.matrix(thisMed[,-1])),
                          covs = t(as.matrix(covariates[,-1])))
     }
-    if (!sobel){
+    if (sobel == F){
       test = permuteTME(snp = as.numeric(as.vector(transSNPs[i,-1])),
                         expression = pheno,
                         mediators = t(as.matrix(thisMed[,-1])),
@@ -30,8 +32,8 @@ testTME <- function(i,
                         nperms = nperms,
                         parallel = parallel,
                         nc = cores)
-      }
+    }
     return(list(TME = test$test.stat,
-                TME.P = test$p.value))
-      }
+               TME.P = test$p.value))
+  }
 }

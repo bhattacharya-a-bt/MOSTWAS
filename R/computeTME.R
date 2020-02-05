@@ -17,12 +17,22 @@ computeTME <- function(snp,
                        mediators,
                        covs,
                        indices){
+
   snp = c(snp)
   snp = snp[indices]
+
+  if (ncol(mediators) == 0){return(0)}
+
   direct = lm(expression ~ snp + mediators + covs)
   indirect = lm(mediators ~ snp + covs)
+  b = coef(direct)[grepl('mediators',names(coef(direct)))]
+  if (ncol(mediators) > 1){
+    a = coef(indirect)[2,]
+  } else {
+    a = coef(indirect)[2]
+  }
 
-  TME =  coef(direct)[3:7] %*% coef(indirect)[2,]
+  TME = a %*% b
 
   return(as.numeric(TME))
 }

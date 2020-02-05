@@ -186,6 +186,7 @@ trainDeP <- function(geneInt,
                                          covariates = covariates,
                                          pheno = pheno,
                                          cores = cores,
+                                         sobel = sobel,
                                          mc.cores = ceiling(cores/2))
             }
           if (!parallel){
@@ -197,7 +198,8 @@ trainDeP <- function(geneInt,
                              pheno = pheno,
                              transSNPs = transSNPs,
                              covariates = covariates,
-                             cores = cores)
+                             cores = cores,
+                             sobel = sobel)
             }
           TME = sapply(medTest,function(x) x[[1]])
           TME.P = sapply(medTest,function(x) x[[2]])

@@ -13,10 +13,14 @@
 #'
 #' @export
 sobelTest <- function(snp,
-                       expression,
-                       mediators,
-                       covs){
+                      expression,
+                      mediators,
+                      covs){
 
+  if (ncol(mediators) == 0){
+    return(list(test.stat = 0,
+                p.value = 1))
+  }
 
   direct = lm(expression ~ snp + mediators + covs)
   indirect = lm(mediators ~ snp + covs)
