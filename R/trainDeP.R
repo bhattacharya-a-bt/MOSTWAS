@@ -59,6 +59,10 @@ trainDeP <- function(geneInt,
                      qtMed_parts,
                      modelDir){
 
+  if (!verbose){
+    sink('/dev/null')
+  }
+
   set.seed(seed)
   pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
 
@@ -268,6 +272,11 @@ trainDeP <- function(geneInt,
       fff = list.files('temp/')
       cleanup = geneInt
       file.remove(paste0('temp/',fff[grepl(geneInt,fff)]))
+    }
+
+
+    if (!verbose){
+      sink()
     }
 
 }
