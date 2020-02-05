@@ -253,10 +253,17 @@ estimateHeritability <- function(biomInt,
                '--out',paste0(bedfile,'_multi')),
          intern = !verbose)
 
-  hsq = data.table::fread(paste0(bedfile,'_multi.hsq'),
-                          fill = T)
-  h2 = hsq$Variance[10]
-  P = hsq$Variance[17]
+  if (file.exists(paste0(bedfile,'_multi.hsq'))) {
+    hsq = data.table::fread(paste0(bedfile,'_multi.hsq'),
+                            fill = T)
+    h2 = hsq$Variance[10]
+    P = hsq$Variance[17]
+  }
+
+  if (!file.exists(paste0(bedfile,'_multi.hsq'))){
+    h2 = 0
+    P = 1
+  }
 
   system(paste('rm -r',
                 tempDir))
@@ -282,10 +289,18 @@ estimateHeritability <- function(biomInt,
                  '--out',paste0(bedfile,'_multi')),
            intern = !verbose)
 
+    if (file.exists(paste0(bedfile,'_multi.hsq'))){
     hsq = data.table::fread(paste0(bedfile,'_multi.hsq'),
                             fill = T)
     h2 = hsq$Variance[4]
     P = hsq$Variance[9]
+    }
+
+    if (!file.exists(paste0(bedfile,'_multi.hsq'))){
+      h2 = 0
+      P = 1
+    }
+
 
     system(paste('rm -r',
                  tempDir))
