@@ -87,7 +87,7 @@ trainDeP <- function(geneInt,
                                fileName = geneInt,
                                dimNumeric = dimNumeric,
                                numMed = 5,
-                               cisDist = 5e5,
+                               cisDist = cisDist,
                                needMed = F,
                                medList = medList,
                                verbose = verbose,
@@ -242,17 +242,25 @@ trainDeP <- function(geneInt,
                                                     newx = t(snpCur[,-train[[i]]]),
                                                     s = 'lambda.min'))
         pred.blup[-train[[i]]] = as.numeric(t(snpCur[,-train[[i]]]) %*% thisMod$blup$u)
-        }
+    }
 
-    if (adjR2(pheno,pred.blup) < adjR2(pheno,pred.enet) | mean(coef(tot.mods$enet,s='lambda.min')[-1,] == 0) != 1){
+    r2.blup = adjR2(pheno,pred.blup)
+    r2.enet = adjR2(pheno,pred.enet)
+
+    if (r2.blup < r2.enet){
       Model = data.frame(SNP = c(totSNP$snpid),
                          Chromosome = c(totSNP$chr),
                          Position = c(totSNP$pos),
                          Effect = as.numeric(coef(tot.mods$enet,
                                                   s='lambda.min'))[-1])
       Predicted = pred.enet
+      Model = subset(Model,Effect!=0)
+      if (nrow(Model) <= 1){
+        r2.enet = -1
+      }
 
-      } else {
+      }
+    if (r2.blup >= r2.enet){
         Model = data.frame(SNP = c(totSNP$snpid),
                            Chromosome = c(totSNP$chr),
                            Position = c(totSNP$pos),
