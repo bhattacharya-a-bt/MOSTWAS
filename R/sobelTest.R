@@ -32,10 +32,10 @@ sobelTest <- function(snp,
   }
 
   TME = a %*% b
-  direct.cov = vcov(direct)[grepl('mediators',rownames(vcov(direct))),
-                            grepl('mediators',colnames(vcov(direct)))]
-  indirect.cov = vcov(indirect)[grepl('snp',rownames(vcov(indirect))),
-                                grepl('snp',colnames(vcov(indirect)))]
+  direct.cov = as.matrix(vcov(direct)[grepl('mediators',rownames(vcov(direct))),
+                            grepl('mediators',colnames(vcov(direct)))])
+  indirect.cov = as.matrix(vcov(indirect)[grepl('snp',rownames(vcov(indirect))),
+                                grepl('snp',colnames(vcov(indirect)))])
   if (ncol(mediators) > 1){
     zeros = matrix(rep(0,nrow(direct.cov)*ncol(indirect.cov)),
                  nrow = nrow(direct.cov))
