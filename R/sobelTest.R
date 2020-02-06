@@ -48,6 +48,6 @@ sobelTest <- function(snp,
   cov = sqrt(as.numeric(t(c(b,a)) %*% V %*% c(b,a)))
 
   return(list(test.stat = TME,
-              p.value = pnorm(abs(TME/cov))))
+              p.value = 2*pnorm(-abs(TME/cov))))
 
 }
