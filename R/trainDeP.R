@@ -154,7 +154,8 @@ trainDeP <- function(geneInt,
                              snpList,
                              thisSNP,
                              fileName = geneInt,
-                             prune = prune)
+                             prune = prune,
+                             verbose = verbose)
     rm(snpCur)
     totSNP = subset(thisSNP,
                     snpid %in% rownames(coef(tot.mods$enet,s='lambda.min'))[-1])
@@ -237,7 +238,8 @@ trainDeP <- function(geneInt,
                                 snpList,
                                 thisSNP = thisSNP,
                                 fileName = geneInt,
-                                prune = F)
+                                prune = F,
+                                verbose = verbose)
 
         pred.enet[-train[[i]]] = as.numeric(predict(thisMod$enet,
                                                     newx = t(snpCur[,-train[[i]]]),

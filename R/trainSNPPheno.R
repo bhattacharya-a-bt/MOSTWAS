@@ -6,7 +6,8 @@ trainSNPPheno <- function(pheno,
                           prune = T,
                           windowSize = 50,
                           numSNPShift = 5,
-                          ldThresh = .5){
+                          ldThresh = .5,
+                          verbose = T){
   if (prune){
     pruneObj = LDprune(W = t(snpCur),
                        snpList = snpList,
@@ -14,7 +15,8 @@ trainSNPPheno <- function(pheno,
                        fileName = fileName,
                        windowSize = windowSize,
                        numSNPShift = numSNPShift,
-                       ldThresh = ldThresh)
+                       ldThresh = ldThresh,
+                       verbose = verbose)
     snpCur = t(pruneObj$W)
     snpList = pruneObj$snpList
     thisSNP = pruneObj$onlyThese
