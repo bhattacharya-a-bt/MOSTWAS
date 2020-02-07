@@ -98,7 +98,7 @@ trainDeP <- function(geneInt,
                                LDMS = F,
                                supplySNP = T)
 
-  if (herit$P > h2Pcutoff | herit$h2 <= 0) {
+  if (herit$P > h2Pcutoff | herit$h2 <= 0.01) {
     return(paste0(geneInt,' is not heritable at P < ',h2Pcutoff))
   }
 
@@ -225,7 +225,8 @@ trainDeP <- function(geneInt,
                              fileName = geneInt,
                              windowSize = windowSize,
                              numSNPShift = numSNPShift,
-                             ldThresh = ldThresh)
+                             ldThresh = ldThresh,
+                             verbose = verbose)
           snpCur = t(pruneObj$W)
           snpList = pruneObj$snpList
           thisSNP = pruneObj$onlyThese
