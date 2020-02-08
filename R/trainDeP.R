@@ -99,6 +99,9 @@ trainDeP <- function(geneInt,
                                supplySNP = T)
 
   if (herit$P > h2Pcutoff | herit$h2 <= 0.01) {
+    if (!verbose){
+      sink()
+      }
     return(paste0(geneInt,' is not heritable at P < ',h2Pcutoff))
   }
 
