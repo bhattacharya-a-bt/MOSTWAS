@@ -86,6 +86,7 @@ estimateHeritability <- function(biomInt,
       W = subset(snps,SNP %in% snpList)[,-1]
       thisSNP = subset(snpLocs,snpid %in% snps$SNP)
     }
+  if (nrow(W) == 0){return(list(h2 = 0,P = 1))}
 
     fileName = paste0('h2_',biomInt)
     tempDir = paste0(biomInt,'_h2_temp/')
