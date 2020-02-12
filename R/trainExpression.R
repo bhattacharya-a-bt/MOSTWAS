@@ -54,6 +54,7 @@ trainExpression <- function(geneInt,
                             ldThresh = .5,
                             cores,
                             verbose = T,
+                            LDMS = F,
                             modelDir,
                             ldScrRegion = 200){
 
@@ -82,7 +83,7 @@ trainExpression <- function(geneInt,
                                numSNPShift = numSNPShift,
                                ldThresh = ldThresh,
                                ldScrRegion = ldScrRegion,
-                               LDMS = T,
+                               LDMS = LDMS,
                                supplySNP = F)
 
   if (herit$P > h2Pcutoff | herit$h2 <= 0) {
