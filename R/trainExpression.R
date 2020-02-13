@@ -95,26 +95,6 @@ trainExpression <- function(geneInt,
                  'is not germline heritable at P <',
                  h2Pcutoff))
     }
-
-    print('FITTING CIS-GENOTYPES')
-    cisGenoMod = trainMediator(medInt = geneInt,
-                               pheno = pheno,
-                               mediator = mediator,
-                               medLocs = medLocs,
-                               snps = snps,
-                               snpLocs = snpLocs,
-                               covariates = covariates,
-                               seed = seed,
-                               k = k,
-                               cisDist = cisDist,
-                               prune = prune,
-                               windowSize = windowSize,
-                               numSNPShift = numSNPShift,
-                               ldThresh = ldThresh,
-                               snpAnnot = snpAnnot)
-    pheno = pheno - cisGenoMod$Predicted
-
-
     print('TRAINING MEDIATORS')
 
     if (parallel) {
@@ -182,10 +162,27 @@ trainExpression <- function(geneInt,
       trans.mod.df$Effect = as.numeric(as.character(trans.mod.df$Effect))
       trans.mod.df = subset(trans.mod.df,SNP != 'Intercept')
       rownames(trans.mod.df) = NULL
+      pheno = pheno - as.numeric(predict(lmCVFit))
     }
   }
 
 
+  print('FITTING CIS-GENOTYPES')
+  cisGenoMod = trainMediator(medInt = geneInt,
+                             pheno = pheno,
+                             mediator = mediator,
+                             medLocs = medLocs,
+                             snps = snps,
+                             snpLocs = snpLocs,
+                             covariates = covariates,
+                             seed = seed,
+                             k = k,
+                             cisDist = cisDist,
+                             prune = prune,
+                             windowSize = windowSize,
+                             numSNPShift = numSNPShift,
+                             ldThresh = ldThresh,
+                             snpAnnot = snpAnnot)
 
 
   cisGenoMod$Model$Mediator = 'Cis'
