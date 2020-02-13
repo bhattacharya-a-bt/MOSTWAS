@@ -44,7 +44,8 @@ trainMediator <- function(medInt,
                           prune = T,
                           windowSize = 50,
                           numSNPShift = 5,
-                          ldThresh = .5){
+                          ldThresh = .5,
+                          snpAnnot = NULL){
 
   fileName = medInt
   colnames(mediator)[1] = 'Mediator'
