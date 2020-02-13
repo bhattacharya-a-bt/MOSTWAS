@@ -23,7 +23,8 @@ LDprune <- function(W,
                     windowSize,
                     numSNPShift,
                     ldThresh,
-                    verbose = T){
+                    verbose = T,
+                    snpAnnot = NULL){
 
   if (!dir.exists('temp/')){ dir.create('temp/') }
   genfile = paste0('temp/',fileName,'.gen')
@@ -32,38 +33,46 @@ LDprune <- function(W,
   outFile = paste0('temp/',fileName)
 
   df = as.data.frame(matrix(nrow = 1,ncol =2))
-  ids = row.names(W)
-  geno = as.data.frame(matrix(ncol=nrow(W)+4,nrow = ncol(W)))
+  ids = colnames(W)
+  geno = as.data.frame(matrix(ncol=ncol(W)+4,nrow = nrow(W)))
   colnames(geno) <- c('SNP','Pos','A1','A2',ids)
-  geno[,5:ncol(geno)] = t(W)
+  W = W[match(snpList,rownames(W)),]
+  geno[,5:ncol(geno)] = W
   geno$SNP = snpList
-  onlyThese <- snpLocs[snpLocs$snpid %in% geno$SNP,]
+  onlyThese <- thisSNP[thisSNP$snpid %in% geno$SNP,]
   geno <- geno[geno$SNP %in% snpLocs$snpid,]
   onlyThese <- onlyThese[match(onlyThese$snpid,geno$SNP),]
   chr <- onlyThese$chr
   geno$Pos <- onlyThese$pos
-  geno$A1 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[3])))
-  geno$A2 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[4])))
+  if (is.null(snpAnnot)){
+    geno$A1 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[3])))
+    geno$A2 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[4])))}
+  if (!is.null(snpAnnot)){
+    snpA = subset(snpAnnot,SNP %in% geno$SNP)
+    snpA = snpA[order(snpA$SNP),]
+    geno$A1 = snpA$REF
+    geno$A2 = snpA$ALT
+  }
   chr_dosage <- cbind(chr,geno)
   rm(geno)
 
   new.levels <- c('1 0 0','0 1 0','0 0 1')
-  matrix.alleles <- as.matrix(chr_dosage[,6:ncol(chr_dosage)] + 1)
+  matrix.alleles <- round(as.matrix(chr_dosage[,6:ncol(chr_dosage)] + 1))
   impute2.format <- matrix(new.levels[matrix.alleles],ncol=ncol(matrix.alleles))
   gen <- cbind(chr_dosage[,1:5],impute2.format)
   gen[is.na(gen)] <- '<NA>'
 
   require(data.table)
   data.table::fwrite(gen,genfile,row.names=FALSE,
-         col.names = FALSE, quote = FALSE, sep='\t')
+                     col.names = FALSE, quote = FALSE, sep='\t')
 
   sample <- as.data.frame(matrix(nrow=(ncol(chr_dosage)-4),ncol=5))
   colnames(sample) <- c('ID_1','ID_2','missing','gender','pheno')
   sample$ID_1[2:nrow(sample)] <- paste('1A',2:nrow(sample),sep='')
   sample$ID_2[2:nrow(sample)] <- colnames(chr_dosage)[6:ncol(chr_dosage)]
   sample$missing[2:nrow(sample)] <- 0
-  sample$gender[2:nrow(sample)] <- 2
-  sample$pheno[2:nrow(sample)] <- rnorm(nrow(sample)-1)
+  sample$gender[2:nrow(sample)] <- 0
+  sample$pheno[2:nrow(sample)] <- pheno
   sample[1,] <- c(0,0,0,'D','P')
   write.table(sample,samplefile,row.names=FALSE,
               col.names = TRUE, quote = FALSE)

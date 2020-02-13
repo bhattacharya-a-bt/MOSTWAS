@@ -56,7 +56,8 @@ trainExpression <- function(geneInt,
                             verbose = T,
                             LDMS = F,
                             modelDir,
-                            ldScrRegion = 200){
+                            ldScrRegion = 200,
+                            snpAnnot = NULL){
 
   set.seed(seed)
 
@@ -84,7 +85,10 @@ trainExpression <- function(geneInt,
                                ldThresh = ldThresh,
                                ldScrRegion = ldScrRegion,
                                LDMS = LDMS,
-                               supplySNP = F)
+                               supplySNP = F,
+                               prune = prune,
+                               snpAnnot = snpAnnot)
+
 
   if (herit$P > h2Pcutoff | herit$h2 <= 0) {
     return(paste(geneInt,
