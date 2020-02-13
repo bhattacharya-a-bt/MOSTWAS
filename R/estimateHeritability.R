@@ -85,7 +85,8 @@ estimateHeritability <- function(biomInt,
     if (supplySNP){
       snps = snps[!duplicated(snps$SNP),]
       snpList = snps$SNP
-      W = subset(snps,SNP %in% snpList)[,-1]
+      W = as.matrix(subset(snps,SNP %in% snpList)[,-1])
+      rownames(W) = snpList
       thisSNP = subset(snpLocs,snpid %in% snps$SNP)
     }
   if (nrow(W) == 0){return(list(h2 = 0,P = 1))}
@@ -108,6 +109,7 @@ estimateHeritability <- function(biomInt,
     geno[,5:ncol(geno)] = W
     geno$SNP = snpList
     onlyThese <- thisSNP[thisSNP$snpid %in% geno$SNP,]
+    onlyThese = onlyThese[match(rownames(W),onlyThese$snpid),]
     geno <- geno[geno$SNP %in% snpLocs$snpid,]
     onlyThese <- onlyThese[match(onlyThese$snpid,geno$SNP),]
     chr <- onlyThese$chr

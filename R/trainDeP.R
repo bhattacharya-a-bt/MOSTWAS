@@ -57,7 +57,8 @@ trainDeP <- function(geneInt,
                      cores,
                      qtlTra_parts,
                      qtMed_parts,
-                     modelDir){
+                     modelDir,
+                     snpAnnot = NULL){
 
   if (!verbose){
     sink('/dev/null')
@@ -96,7 +97,9 @@ trainDeP <- function(geneInt,
                                ldThresh = ldThresh,
                                ldScrRegion = 200,
                                LDMS = F,
-                               supplySNP = T)
+                               supplySNP = T,
+                               snpAnnot = snpAnnot,
+                               prune = prune)
 
   if (herit$P > h2Pcutoff | herit$h2 <= 0.01) {
     if (!verbose){
