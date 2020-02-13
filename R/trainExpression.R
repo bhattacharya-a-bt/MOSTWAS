@@ -110,7 +110,8 @@ trainExpression <- function(geneInt,
                                prune = prune,
                                windowSize = windowSize,
                                numSNPShift = numSNPShift,
-                               ldThresh = ldThresh)
+                               ldThresh = ldThresh,
+                               snpAnnot = snpAnnot)
     pheno = pheno - cisGenoMod$Predicted
 
 
