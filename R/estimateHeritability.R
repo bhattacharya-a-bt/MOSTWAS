@@ -130,7 +130,7 @@ estimateHeritability <- function(biomInt,
     sample$ID_1[2:nrow(sample)] <- paste('1A',2:nrow(sample),sep='')
     sample$ID_2[2:nrow(sample)] <- colnames(chr_dosage)[6:ncol(chr_dosage)]
     sample$missing[2:nrow(sample)] <- 0
-    sample$gender[2:nrow(sample)] <- 2
+    sample$gender[2:nrow(sample)] <- 0
     sample$pheno[2:nrow(sample)] <- pheno
     sample[1,] <- c(0,0,0,'D','P')
     write.table(sample,samplefile,row.names=FALSE,
@@ -153,7 +153,7 @@ estimateHeritability <- function(biomInt,
          intern = !verbose)
 
   a = data.table::fread(paste0(bedfile,'.fam'))
-  a$V5 = 2
+  a$V5 = 0
   data.table::fwrite(a,paste0(bedfile,'.fam'),col.names=F,row.names=F,quote=F,sep='\t')
 
   system(paste('plink','--bfile',bedfile,
