@@ -76,6 +76,9 @@ trainMediator <- function(medInt,
                   ldThresh = ldThresh,
                   snpAnnot = snpAnnot)
   snpCur = t(pruneObj$W)
+  if (length(pheno) == ncol(pruneObj$W)){
+    snpCur = t(snpCur)
+  }
   snpList = pruneObj$snpList
   thisSNP = pruneObj$onlyThese
   rm(pruneObj)}
@@ -139,5 +142,4 @@ trainMediator <- function(medInt,
                 Predicted = pred.blup,
                 CVR2 = adjR2(pheno,pred.blup)))
   }
-
   }
