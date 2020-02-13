@@ -156,6 +156,7 @@ estimateHeritability <- function(biomInt,
   a$V5 = 0
   data.table::fwrite(a,paste0(bedfile,'.fam'),col.names=F,row.names=F,quote=F,sep='\t')
 
+  if (prune){
   system(paste('plink','--bfile',bedfile,
                '--indep-pairwise',windowSize,numSNPShift,ldThresh,
                '--out',bedfile),
@@ -167,7 +168,7 @@ estimateHeritability <- function(biomInt,
                '--out',paste0(bedfile,'_prune')),
          intern = !verbose)
 
-  bedfile = paste0(bedfile,'_prune')
+  bedfile = paste0(bedfile,'_prune')}
 
   if (LDMS){
 
