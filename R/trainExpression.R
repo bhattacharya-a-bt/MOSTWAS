@@ -63,6 +63,7 @@ trainExpression <- function(geneInt,
 
   print('GATHERING MEDIATORS')
   pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
+  pheno = (pheno - mean(pheno))/sd(pheno)
   medList = gatherMediators(geneInt,qtlFull,numMed)
 
   print('ESTIMATING HERITABILITY')

@@ -66,6 +66,7 @@ trainDeP <- function(geneInt,
 
   set.seed(seed)
   pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
+  pheno = (pheno - mean(pheno))/sd(pheno)
 
   print('GATHERING GENOTYPES')
   cisGeno = getCisGenotypes(biomInt = geneInt,
