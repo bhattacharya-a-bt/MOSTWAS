@@ -34,6 +34,9 @@ LDprune <- function(W,
 
   df = as.data.frame(matrix(nrow = 1,ncol =2))
   ids = colnames(W)
+  if (is.null(rownames(W))){
+    rownames(W) = snpList
+  }
   geno = as.data.frame(matrix(ncol=ncol(W)+4,nrow = nrow(W)))
   colnames(geno) <- c('SNP','Pos','A1','A2',ids)
   W = W[match(snpList,rownames(W)),]

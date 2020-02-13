@@ -161,7 +161,8 @@ trainDeP <- function(geneInt,
                              thisSNP,
                              fileName = geneInt,
                              prune = prune,
-                             verbose = verbose)
+                             verbose = verbose,
+                             snpAnnot = snpAnnot)
     rm(snpCur)
     totSNP = subset(thisSNP,
                     snpid %in% rownames(coef(tot.mods$enet,s='lambda.min'))[-1])
@@ -226,6 +227,9 @@ trainDeP <- function(geneInt,
         snpCur = as.matrix(snpCur[,-1])
 
         if (prune){
+          if (length(snpList) == nrow(snpCur)){
+            snpCur = t(snpCur)
+          }
           pruneObj = LDprune(W = t(snpCur),
                              snpList = snpList,
                              snpLocs = thisSNP,
@@ -233,7 +237,8 @@ trainDeP <- function(geneInt,
                              windowSize = windowSize,
                              numSNPShift = numSNPShift,
                              ldThresh = ldThresh,
-                             verbose = verbose)
+                             verbose = verbose,
+                             snpAnnot = snpAnnot)
           snpCur = t(pruneObj$W)
           snpList = pruneObj$snpList
           thisSNP = pruneObj$onlyThese
@@ -245,7 +250,8 @@ trainDeP <- function(geneInt,
                                 thisSNP = thisSNP,
                                 fileName = geneInt,
                                 prune = F,
-                                verbose = verbose)
+                                verbose = verbose,
+                                snpAnnot = snpAnnot)
 
         pred.enet[-train[[i]]] = as.numeric(predict(thisMod$enet,
                                                     newx = t(snpCur[,-train[[i]]]),

@@ -7,8 +7,12 @@ trainSNPPheno <- function(pheno,
                           windowSize = 50,
                           numSNPShift = 5,
                           ldThresh = .5,
-                          verbose = T){
+                          verbose = T,
+                          snpAnnot = NULL){
   if (prune){
+    if (length(snpList) == nrow(snpCur)){
+      snpCur = t(snpCur)
+    }
     pruneObj = LDprune(W = t(snpCur),
                        snpList = snpList,
                        snpLocs = thisSNP,
@@ -16,7 +20,8 @@ trainSNPPheno <- function(pheno,
                        windowSize = windowSize,
                        numSNPShift = numSNPShift,
                        ldThresh = ldThresh,
-                       verbose = verbose)
+                       verbose = verbose,
+                       snpAnnot = snpAnnot)
     snpCur = t(pruneObj$W)
     snpList = pruneObj$snpList
     thisSNP = pruneObj$onlyThese
