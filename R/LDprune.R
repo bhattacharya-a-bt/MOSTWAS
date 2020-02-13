@@ -107,6 +107,9 @@ LDprune <- function(W,
                                              '.prune.in'),
                                       header=F)$V1)
 
+  if (nrow(W) == length(snpList)){
+    W = t(W)
+  }
   W <- W[,which(snpList %in% s)]
   q <- snpList[snpList %in% s]
   snpList <- q[match(s,q)]

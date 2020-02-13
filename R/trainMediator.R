@@ -64,13 +64,17 @@ trainMediator <- function(medInt,
   thisSNP = cisGeno$thisSNP
 
   if (prune){
+    if (ncol(snpCur) == length(pheno)){
+      snpCur = t(snpCur)
+    }
     pruneObj = LDprune(W = t(snpCur),
                   snpList = snpList,
                   snpLocs = snpLocs,
                   fileName = fileName,
                   windowSize = windowSize,
                   numSNPShift = numSNPShift,
-                  ldThresh = ldThresh)
+                  ldThresh = ldThresh,
+                  snpAnnot = snpAnnot)
   snpCur = t(pruneObj$W)
   snpList = pruneObj$snpList
   thisSNP = pruneObj$onlyThese
