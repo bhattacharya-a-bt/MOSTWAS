@@ -132,6 +132,7 @@ trainExpression <- function(geneInt,
              windowSize = windowSize,
              numSNPShift = numSNPShift,
              ldThresh = ldThresh,
+             snpAnnot = snpAnnot,
              mc.cores = cores)
     }
   if (!parallel){
@@ -148,6 +149,7 @@ trainExpression <- function(geneInt,
                           prune = prune,
                           windowSize = windowSize,
                           numSNPShift = numSNPShift,
+                          snpAnnot = snpAnnot,
                           ldThresh = ldThresh)
   }
   names(medTrainList) = medList

@@ -39,7 +39,7 @@ LDprune <- function(W,
   W = W[match(snpList,rownames(W)),]
   geno[,5:ncol(geno)] = W
   geno$SNP = snpList
-  onlyThese <- thisSNP[thisSNP$snpid %in% geno$SNP,]
+  onlyThese <- snpLocs[snpLocs$snpid %in% geno$SNP,]
   geno <- geno[geno$SNP %in% snpLocs$snpid,]
   onlyThese <- onlyThese[match(onlyThese$snpid,geno$SNP),]
   chr <- onlyThese$chr
