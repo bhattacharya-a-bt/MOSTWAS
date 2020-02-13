@@ -53,7 +53,8 @@ estimateHeritability <- function(biomInt,
                                    ldThresh,
                                    ldScrRegion = 200,
                                    LDMS = F,
-                                   supplySNP = F){
+                                   supplySNP = F,
+                                   snpAnnot = NULL){
 
     if (!supplySNP){
     if (needMed) {
@@ -103,21 +104,28 @@ estimateHeritability <- function(biomInt,
     ids = colnames(W)
     geno = as.data.frame(matrix(ncol=ncol(W)+4,nrow = nrow(W)))
     colnames(geno) <- c('SNP','Pos','A1','A2',ids)
-    geno[,5:ncol(geno)] = W
     W = W[match(snpList,rownames(W)),]
+    geno[,5:ncol(geno)] = W
     geno$SNP = snpList
     onlyThese <- thisSNP[thisSNP$snpid %in% geno$SNP,]
     geno <- geno[geno$SNP %in% snpLocs$snpid,]
     onlyThese <- onlyThese[match(onlyThese$snpid,geno$SNP),]
     chr <- onlyThese$chr
     geno$Pos <- onlyThese$pos
+    if (is.null(snpAnnot)){
     geno$A1 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[3])))
-    geno$A2 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[4])))
+    geno$A2 <- unlist(lapply(strsplit(geno$SNP,':'),function(x) as.character(x[4])))}
+    if (!is.null(snpAnnot)){
+      snpA = subset(snpAnnot,SNP %in% geno$SNP)
+      snpA = snpA[order(snpA$SNP),]
+      geno$A1 = snpA$REF
+      geno$A2 = snpA$ALT
+    }
     chr_dosage <- cbind(chr,geno)
     rm(geno)
 
     new.levels <- c('1 0 0','0 1 0','0 0 1')
-    matrix.alleles <- as.matrix(round(chr_dosage[,6:ncol(chr_dosage)]) + 1)
+    matrix.alleles <- round(as.matrix(chr_dosage[,6:ncol(chr_dosage)] + 1))
     impute2.format <- matrix(new.levels[matrix.alleles],ncol=ncol(matrix.alleles))
     gen <- cbind(chr_dosage[,1:5],impute2.format)
     gen[is.na(gen)] <- '<NA>'
