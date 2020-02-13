@@ -89,6 +89,8 @@ trainExpression <- function(geneInt,
                                prune = prune,
                                snpAnnot = snpAnnot)
 
+  system(paste0('rm -r ',geneInt,'_h2_temp'))
+
 
   if (herit$P > h2Pcutoff | herit$h2 <= 0) {
     return(paste(geneInt,
