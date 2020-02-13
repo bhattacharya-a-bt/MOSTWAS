@@ -72,7 +72,7 @@ LDprune <- function(W,
   sample$ID_2[2:nrow(sample)] <- colnames(chr_dosage)[6:ncol(chr_dosage)]
   sample$missing[2:nrow(sample)] <- 0
   sample$gender[2:nrow(sample)] <- 0
-  sample$pheno[2:nrow(sample)] <- pheno
+  sample$pheno[2:nrow(sample)] <- rnorm(nrow(sample)-1)
   sample[1,] <- c(0,0,0,'D','P')
   write.table(sample,samplefile,row.names=FALSE,
               col.names = TRUE, quote = FALSE)
