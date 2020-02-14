@@ -65,7 +65,7 @@ trainDeP <- function(geneInt,
   }
 
   set.seed(seed)
-  colnames(mediator)[1] = Mediator
+  colnames(mediator)[1] = 'Mediator'
   pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
   pheno = (pheno - mean(pheno))/sd(pheno)
 
