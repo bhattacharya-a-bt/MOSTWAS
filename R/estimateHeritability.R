@@ -298,7 +298,7 @@ estimateHeritability <- function(biomInt,
                  '--grm',bedfile,
                  '--pheno',phenFile,
                  '--qcovar',covarFile,
-                 '--reml-no-constrain',
+                 '--reml-no-constrain --reml-bendV',
                  '--out',paste0(bedfile,'_multi')),
            intern = !verbose)
 
