@@ -23,8 +23,14 @@ computeTME <- function(snp,
 
   if (ncol(mediators) == 0){return(0)}
 
-  direct = lm(expression ~ snp + mediators + covs)
-  indirect = lm(mediators ~ snp + covs)
+  if (!is.null(covs)){
+    direct = lm(expression ~ snp + mediators + covs)
+    indirect = lm(mediators ~ snp + covs)
+    }
+  if (is.null(covs)){
+    direct = lm(expression ~ snp + mediators)
+    indirect = lm(mediators ~ snp)
+  }
   b = coef(direct)[grepl('mediators',names(coef(direct)))]
   if (ncol(mediators) > 1){
     a = coef(indirect)[2,]
