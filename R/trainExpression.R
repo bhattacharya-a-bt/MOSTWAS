@@ -97,7 +97,8 @@ trainExpression <- function(geneInt,
     return(paste(geneInt,
                  'is not germline heritable at P <',
                  h2Pcutoff))
-    }
+  }
+
     print('TRAINING MEDIATORS')
 
     if (parallel) {
@@ -211,7 +212,9 @@ trainExpression <- function(geneInt,
   CisR2 = cisGenoMod$CVR2.cis
   h2 = abs(herit$h2)
   h2.Pvalue = herit$P
-  save(Model,R2,Predicted,Mediators,CisR2,h2,h2.Pvalue,
+  ## REMOVE THE NEXT LINE
+  CorMat = cor(cbind(Predicted,fixedEffects))^2
+  save(Model,R2,Predicted,Mediators,CisR2,h2,h2.Pvalue,CorMat,
          file = paste0(modelDir,geneInt,'.wgt.med.RData'))
   }
 
