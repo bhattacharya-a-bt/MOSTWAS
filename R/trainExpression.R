@@ -213,7 +213,7 @@ trainExpression <- function(geneInt,
   h2 = abs(herit$h2)
   h2.Pvalue = herit$P
   ## REMOVE THE NEXT LINE
-  CorMat = cor(cbind(Predicted,fixedEffects))^2
+  CorMat = cbind(Predicted,fixedEffects)
   save(Model,R2,Predicted,Mediators,CisR2,h2,h2.Pvalue,CorMat,
          file = paste0(modelDir,geneInt,'.wgt.med.RData'))
   }
