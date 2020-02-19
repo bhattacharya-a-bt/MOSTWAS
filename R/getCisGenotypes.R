@@ -22,7 +22,7 @@ getCisGenotypes <- function(biomInt,
   colnames(locs)[1] = 'snpid'
   colnames(snpLocs)[1] = 'snpid'
 
-  locs = subset(locs, grepl(biomInt,snpid))
+  locs = subset(locs, snpid == biomInt)
   thisSNP = subset(snpLocs, chr == locs$chr[1] &
                      pos < locs$pos[1]+cisDist & pos > locs$pos[1]-cisDist)
   thisSNP = thisSNP[!duplicated(thisSNP$snpid),]
