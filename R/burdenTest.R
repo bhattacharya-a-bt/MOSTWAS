@@ -12,6 +12,11 @@ burdenTest <- function(wgt,
 
 
   load(wgt)
+
+  pieces = strsplit(wgt,'/')
+  fn = pieces[[1]][length(pieces[[1]])]
+  geneInt = strsplit(fn,'[.]')[[1]][1]
+
   if (R2 <= R2cutoff){
     return(paste0(geneInt,
                   ' is not predicted at R2 > ',
@@ -22,9 +27,6 @@ burdenTest <- function(wgt,
     sumStats$GenPos = paste(sumStats$Chromosome,sumStats$Position,sep = ':')
   }
 
-  pieces = strsplit(wgt,'/')
-  fn = pieces[[1]][length(pieces[[1]])]
-  geneInt = strsplit(fn,'[.]')[[1]][1]
 
   if (onlyCis){
 
