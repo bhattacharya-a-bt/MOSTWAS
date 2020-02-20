@@ -25,10 +25,16 @@ burdenTest <- function(wgt,
   fn = pieces[[1]][length(pieces[[1]])]
   geneInt = strsplit(fn,'[.]')[[1]][1]
 
+  if (onlyCis){
+
+    Model = subset(Model,Mediator == 'Cis')
+
+  }
+
   Model = with(Model,aggregate(Effect,
                                list(SNP,
-                                    Chromosome
-                                    ,Position),
+                                    Chromosome,
+                                    Position),
                                sum))
   colnames(Model) = c('SNP','Chromosome','Position','Effect')
   Model$GenPos = paste(Model$Chromosome,Model$Position,sep = ':')
