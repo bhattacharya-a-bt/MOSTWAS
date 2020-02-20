@@ -48,7 +48,6 @@ burdenTest <- function(wgt,
   colnames(sumS)[which(colnames(sumS) == chr)] = 'Chromosome'
   colnames(sumS)[which(colnames(sumS) == pos)] = 'Position'
   colnames(sumS)[which(colnames(sumS) == ref)] = 'REF'
-  colnames(sumS)[which(colnames(sumS) == alt)] = 'ALT'
   Model = subset(Model,GenPos %in% sumS$GenPos)
 
   sumS = sumS[match(Model$GenPos,sumS$GenPos),]
