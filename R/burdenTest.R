@@ -78,6 +78,10 @@ burdenTest <- function(wgt,
 
   sumS = sumS[match(Model$GenPos,sumS$GenPos),]
 
+  if (nrow(sumS) == 0){
+    return('SNPs not found.')
+  }
+
   if (is.null(snpAnnot)){
 
     snpAnnot = as.data.frame(matrix(nrow = nrow(Model),
