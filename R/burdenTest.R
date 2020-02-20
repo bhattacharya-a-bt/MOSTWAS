@@ -1,3 +1,24 @@
+#' Compute weighted burden test
+#'
+#' The function takes in a gene expression model in MOSTWAS form
+#' and GWAS summary statistics and
+#' carries out the weighted burden Z-test for a trait
+#'
+#' @param wgt character, name of expression model .RData file
+#' @param snps data.frame, reference panel SNPs
+#' @param sumStats data frame, GWAS summary statistics
+#' @param snpAnnot data.frame, SNP REF/ALT annotations
+#' @param onlyCis logical, T/F to consider only cis-component
+#' @param beta character, colnames in sumStats that keeps the effect sizes
+#' @param se character, colnames in sumStats that keeps the standard errors
+#' @param chr character, colnames in sumStats that keeps the chromosome
+#' @param pos character, colnames in sumStats that keeps the position
+#' @param ref character, colnames in sumStats that keeps the reference allele
+#' @param R2cutoff numeric, predictive R2 cutoff
+#'
+#' @return estimate of TME
+#'
+#' @export
 burdenTest <- function(wgt,
                        snps,
                        sumStats,
