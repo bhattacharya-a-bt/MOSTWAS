@@ -60,12 +60,19 @@ burdenTest <- function(wgt,
 
   }
 
-  Model = with(Model,aggregate(Effect,
-                               list(SNP,
-                                    Chromosome,
-                                    Position),
-                               sum))
-  colnames(Model) = c('SNP','Chromosome','Position','Effect')
+  require(dplyr)
+  if ('Mediator' %in% colnames(Model)){
+    Model =
+      as.data.frame(Model %>%
+                      dplyr::group_by(SNP,Chromosome,Position,Mediator) %>%
+                      dplyr::summarize(sum(Effect)))
+    colnames(Model) = c('SNP','Chromosome','Position','Mediator','Effect')
+  } else {
+  Model =
+    as.data.frame(Model %>%
+                    dplyr::group_by(SNP,Chromosome,Position) %>%
+                    dplyr::summarize(sum(Effect)))
+  colnames(Model) = c('SNP','Chromosome','Position','Effect')}
   Model$GenPos = paste(Model$Chromosome,Model$Position,sep = ':')
 
   sumS = subset(sumStats,GenPos %in% Model$GenPos)
