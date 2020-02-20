@@ -7,6 +7,7 @@ burdenTest <- function(wgt,
                        se,
                        chr,
                        pos,
+                       ref,
                        R2cutoff){
 
 
@@ -40,6 +41,12 @@ burdenTest <- function(wgt,
   Model$GenPos = paste(Model$Chromosome,Model$Position,sep = ':')
 
   sumS = subset(sumStats,GenPos %in% Model$GenPos)
+  colnames(sumS)[which(colnames(sumS) == beta)] = 'Beta'
+  colnames(sumS)[which(colnames(sumS) == se)] = 'SE'
+  colnames(sumS)[which(colnames(sumS) == chr)] = 'Chromosome'
+  colnames(sumS)[which(colnames(sumS) == pos)] = 'Position'
+  colnames(sumS)[which(colnames(sumS) == ref)] = 'REF'
+  colnames(sumS)[which(colnames(sumS) == alt)] = 'ALT'
   Model = subset(Model,GenPos %in% sumS$GenPos)
 
   sumS = sumS[match(Model$GenPos,sumS$GenPos),]
@@ -70,7 +77,7 @@ burdenTest <- function(wgt,
 
     search = sumS[i,]
     ref = annot[annot$GenPos == search$GenPos,]
-    if (ref$REF[1] != search$Effect_allele[1]){
+    if (ref$REF[1] != search$REF[1]){
       return(-1*search$Beta[1])
     } else {return(search$Beta)}
 
