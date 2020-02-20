@@ -92,14 +92,14 @@ burdenTest <- function(wgt,
   snpCur = subset(snps, SNP %in% Model$SNP)
   twasZ = as.numeric(Model$Effect %*% Z)
   genos = as.matrix(snpCur[,-1])
-  LD = cur.genos %*% t(cur.genos) / (ncol(cur.genos)-1)
+  LD = genos %*% t(genos) / (ncol(genos)-1)
   twasr2pred = as.numeric(Model$Effect %*% LD %*% Model$Effect)
 
   if (twasr2pred <= 0){
     return(paste0(geneInt,' has zero predictive accuracy. Try a different model. There
     are plenty these days.'))
   } else {
-    twas = as.matrix(twasZ/sqrt(twasr2pred))
+    twas = as.numeric(twasZ/sqrt(twasr2pred))
     return(list(Gene = geneInt,
                 Z = twas,
                 P = 2*pnorm(-abs(twas))))
