@@ -34,7 +34,6 @@ burdenTest <- function(wgt,
                        nperms = 1e3){
 
 
-  bigZ = abs(qnorm(alpha))
   load(wgt)
 
   pieces = strsplit(wgt,'/')
@@ -128,30 +127,41 @@ burdenTest <- function(wgt,
                      snpAnnot = annot,
                      sumS = sumS)
 
+  calculateTWAS <- function(effects,
+                            Z,
+                            LD,
+                            indices){
+    effects = effects[indices]
+    twasZ = as.numeric(effects %*% Z)
+    twasr2pred = as.numeric(effects %*% LD %*% effects)
+    if (twasr2pred > 0){
+      twas = as.numeric(twasZ/sqrt(twasr2pred))
+    } else {
+        twas = 0
+    }
+    return(twas)
+  }
+
   Z = as.numeric(sumS$Flip)/as.numeric(sumS$SE)
   snpCur = subset(snps, SNP %in% Model$SNP)
-  twasZ = as.numeric(Model$Effect %*% Z)
   genos = as.matrix(snpCur[,-1])
   LD = genos %*% t(genos) / (ncol(genos)-1)
-  twasr2pred = as.numeric(Model$Effect %*% LD %*% Model$Effect)
 
-  if (twasr2pred <= 0){
-    return(paste0(geneInt,' has zero predictive accuracy. Try a different model. There
-    are plenty these days.'))
-  } else {
-    twas = as.numeric(twasZ/sqrt(twasr2pred))
-    permute.p = 1
-    if (abs(twas) >= bigZ){
-      perms = replicate(nperms,sample(Model$Effect,
-                                      replace = F))
-      nullZ = t(perms) %*% Z
-      permute.p = mean(as.numeric(abs(twas)) <= as.vector(nullZ))
-      }
-    return(list(Gene = geneInt,
+  permutation = boot::boot(data = Model$Effect,
+                           statistic = calculateTWAS,
+                           R = nperms,
+                           sim = 'permutation',
+                           Z = Z,
+                           LD = LD)
+
+  twas = permutation$t0
+  P = 2*pnorm(-abs(twas))
+  if (P < alpha){
+    permute.p = mean(abs(permutation$t) > abs(permutation$t0))
+    } else {permute.p = 1}
+
+  return(list(Gene = geneInt,
                 Z = twas,
                 P = 2*pnorm(-abs(twas)),
                 permute.P = permute.p))
-  }
-
-
 }
