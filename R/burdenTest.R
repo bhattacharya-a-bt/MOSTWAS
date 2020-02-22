@@ -140,7 +140,7 @@ burdenTest <- function(wgt,
     are plenty these days.'))
   } else {
     twas = as.numeric(twasZ/sqrt(twasr2pred))
-    permute.p = NA
+    permute.p = 1
     if (abs(twas) >= bigZ){
       perms = replicate(nperms,sample(Model$Effect,
                                       replace = F))
@@ -150,7 +150,7 @@ burdenTest <- function(wgt,
     return(list(Gene = geneInt,
                 Z = twas,
                 P = 2*pnorm(-abs(twas)),
-                permute.P = permute.P))
+                permute.P = permute.p))
   }
 
 
