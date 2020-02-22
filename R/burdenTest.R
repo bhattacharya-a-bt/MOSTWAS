@@ -30,7 +30,8 @@ burdenTest <- function(wgt,
                        pos,
                        ref,
                        R2cutoff,
-                       alpha){
+                       alpha,
+                       nperms = 1e3){
 
 
   bigZ = abs(qnorm(alpha))
