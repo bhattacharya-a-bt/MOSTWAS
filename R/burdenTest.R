@@ -64,9 +64,9 @@ burdenTest <- function(wgt,
   if ('Mediator' %in% colnames(Model)){
     Model =
       as.data.frame(Model %>%
-                      dplyr::group_by(SNP,Chromosome,Position,Mediator) %>%
+                      dplyr::group_by(SNP,Chromosome,Position) %>%
                       dplyr::summarize(sum(Effect)))
-    colnames(Model) = c('SNP','Chromosome','Position','Mediator','Effect')
+    colnames(Model) = c('SNP','Chromosome','Position','Effect')
   } else {
   Model =
     as.data.frame(Model %>%
