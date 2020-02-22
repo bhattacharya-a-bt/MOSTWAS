@@ -29,9 +29,11 @@ burdenTest <- function(wgt,
                        chr,
                        pos,
                        ref,
-                       R2cutoff){
+                       R2cutoff,
+                       alpha){
 
 
+  bigZ = abs(qnorm(alpha))
   load(wgt)
 
   pieces = strsplit(wgt,'/')
@@ -137,9 +139,17 @@ burdenTest <- function(wgt,
     are plenty these days.'))
   } else {
     twas = as.numeric(twasZ/sqrt(twasr2pred))
+    permute.p = NA
+    if (abs(twas) >= bigZ){
+      perms = replicate(nperms,sample(Model$Effect,
+                                      replace = F))
+      nullZ = t(perms) %*% Z
+      permute.p = mean(as.numeric(abs(twas)) <= as.vector(nullZ))
+      }
     return(list(Gene = geneInt,
                 Z = twas,
-                P = 2*pnorm(-abs(twas))))
+                P = 2*pnorm(-abs(twas)),
+                permute.P = permute.P))
   }
 
 
