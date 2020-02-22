@@ -95,9 +95,8 @@ burdenTest <- function(wgt,
                                     ncol = 3))
     colnames(snpAnnot) = c('SNP','REF','ALT')
     snpAnnot$SNP = Model$SNP
-    snpAnnot$REF = sapply(strsplit(snpAnnot$SNP,':'),
-                          function(x) x[3])
-    snpAnnot$ALT = sapply(strsplit(snpAnnot$SNP,':'),
+    snpAnnot$REF = sumS$REF
+    snpAnnot$ALT = sapply(strsplit(as.character(snpAnnot$SNP),':'),
                           function(x) x[4])
     }
 
@@ -126,7 +125,7 @@ burdenTest <- function(wgt,
                      snpAnnot = annot,
                      sumS = sumS)
 
-  Z = sumS$Flip/sumS$SE
+  Z = as.numeric(sumS$Flip)/as.numeric(sumS$SE)
   snpCur = subset(snps, SNP %in% Model$SNP)
   twasZ = as.numeric(Model$Effect %*% Z)
   genos = as.matrix(snpCur[,-1])
