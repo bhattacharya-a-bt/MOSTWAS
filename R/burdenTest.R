@@ -31,7 +31,8 @@ burdenTest <- function(wgt,
                        ref,
                        R2cutoff,
                        alpha,
-                       nperms = 1e3){
+                       nperms = 1e3,
+                       diffTest = F){
 
 
   load(wgt)
@@ -144,6 +145,7 @@ burdenTest <- function(wgt,
 
   Z = as.numeric(sumS$Flip)/as.numeric(sumS$SE)
   snpCur = subset(snps, SNP %in% Model$SNP)
+  snpCur = snpCur[match(Model$SNP,snpCur$SNP),]
   genos = as.matrix(snpCur[,-1])
   LD = genos %*% t(genos) / (ncol(genos)-1)
 
@@ -158,7 +160,7 @@ burdenTest <- function(wgt,
   P = 2*pnorm(-abs(twas))
   if (P < alpha){
     permute.p = mean(abs(permutation$t) > abs(permutation$t0))
-    } else {permute.p = 1}
+  } else {permute.p = 1}
 
   return(list(Gene = geneInt,
                 Z = twas,
