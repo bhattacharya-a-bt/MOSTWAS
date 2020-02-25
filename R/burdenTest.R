@@ -29,6 +29,7 @@ burdenTest <- function(wgt,
                        chr,
                        pos,
                        ref,
+                       pval,
                        R2cutoff,
                        alpha,
                        nperms = 1e3,
@@ -84,6 +85,7 @@ burdenTest <- function(wgt,
   colnames(sumS)[which(colnames(sumS) == chr)] = 'Chromosome'
   colnames(sumS)[which(colnames(sumS) == pos)] = 'Position'
   colnames(sumS)[which(colnames(sumS) == ref)] = 'REF'
+  colnames(sumS)[which(colnames(sumS) == pval)] = 'P'
   Model = subset(Model,GenPos %in% sumS$GenPos)
 
   sumS = sumS[match(Model$GenPos,sumS$GenPos),]
@@ -157,13 +159,16 @@ burdenTest <- function(wgt,
                            LD = LD)
 
   twasLD = permutationLD$t0
+  P = 2*pnorm(-abs(twasLD))
 
   if (P < alpha){
     permute.p = mean(abs(permutation$t) > abs(permutation$t0))
   } else {permute.p = 1}
 
   return(list(Gene = geneInt,
-                Z = twasLD,
-                P = 2*pnorm(-abs(twas)),
-                permute.P = permute.p))
+              Z = twasLD,
+              P = 2*pnorm(-abs(twasLD)),
+              permute.P = permute.p,
+              topSNP = sumS$GenPos[which.min(sumS$P)],
+              topSNP.P = min(sumS$P)))
 }
