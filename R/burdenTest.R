@@ -149,34 +149,18 @@ burdenTest <- function(wgt,
   genos = as.matrix(snpCur[,-1])
   LD = genos %*% t(genos) / (ncol(genos)-1)
 
-  permutation = boot::boot(data = Model$Effect,
+  permutationLD = boot::boot(data = Model$Effect,
                            statistic = calculateTWAS,
                            R = nperms,
                            sim = 'permutation',
                            Z = Z,
                            LD = LD)
 
-  twas = permutation$t0
-  P = 2*pnorm(-abs(twas))
+  twasLD = permutationLD$t0
+
   if (P < alpha){
     permute.p = mean(abs(permutation$t) > abs(permutation$t0))
   } else {permute.p = 1}
-
-  if (diffTest){
-
-    locChrom = names(which.max(table(Model$Chromosome)))
-    ModelLoc = subset(Model, Chromosome == locChrom)
-    sumSLoc = subset(sumS, Chromosome == locChrom)
-    ZLoc = as.numeric(sumSLoc$Flip)/as.numeric(sumSLoc$SE)
-    snpCurLoc = subset(snps, SNP %in% ModelLoc$SNP)
-    snpCurLoc = snpCurLoc[match(as.character(ModelLoc$SNP),snpCurLoc$SNP),]
-    genosLoc = as.matrix(snpCurLoc[,-1])
-    LDLoc = genosLoc %*% t(genosLoc) / (ncol(genosLoc)-1)
-    twasLoc = as.numeric(as.numeric(ModelLoc$Effect %*% ZLoc)/sqrt(as.numeric(ModelLoc$Effect %*% LDLoc %*% ModelLoc$Effect)))
-
-
-
-  }
 
   return(list(Gene = geneInt,
                 Z = twas,
