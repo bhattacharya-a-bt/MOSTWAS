@@ -162,7 +162,7 @@ burdenTest <- function(wgt,
   P = 2*pnorm(-abs(twasLD))
 
   if (P < alpha){
-    permute.p = mean(abs(permutation$t) > abs(permutation$t0))
+    permute.p = mean(abs(permutationLD$t) > abs(permutationLD$t0))
   } else {permute.p = 1}
 
   return(list(Gene = geneInt,
