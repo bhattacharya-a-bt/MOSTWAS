@@ -163,7 +163,7 @@ burdenTest <- function(wgt,
   } else {permute.p = 1}
 
   return(list(Gene = geneInt,
-                Z = twas,
+                Z = twasLD,
                 P = 2*pnorm(-abs(twas)),
                 permute.P = permute.p))
 }
