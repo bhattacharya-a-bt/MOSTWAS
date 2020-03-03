@@ -193,7 +193,7 @@ burdenTest <- function(wgt,
 
   twasDist = NA
   PDist = NA
-  if (nestPerm){
+  if (diffTest){
 
     locChrom = names(which.max(table(sumS$Chromosome)))
     ZLocal = Z[sumS$Chromosome == locChrom]
