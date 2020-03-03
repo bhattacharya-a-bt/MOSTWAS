@@ -165,32 +165,6 @@ burdenTest <- function(wgt,
     permute.p = mean(abs(permutationLD$t) > abs(permutationLD$t0))
   } else {permute.p = 1}
 
-  calculateTWASDiff <- function(effects,
-                            Z,
-                            LD,
-                            indices,
-                            chr){
-    effects = effects[indices]
-    twasZ = as.numeric(effects %*% Z)
-    twasr2pred = as.numeric(effects %*% LD %*% effects)
-    if (twasr2pred > 0){
-      twas = as.numeric(twasZ/sqrt(twasr2pred))
-    } else {
-      twas = 0
-    }
-
-    thisChr = names(which.max(table(chr)))
-    ZLocal = Z[as.character(chr) == as.character(thisChr)]
-    LDLocal = LD[as.character(chr) == as.character(thisChr),
-                      as.character(chr) == as.character(thisChr)]
-    effectsLocal = effects[as.character(chr) == as.character(thisChr)]
-    twasZLocal = as.numeric(effectsLocal %*% ZLocal)
-    twasr2predLocal = as.numeric(effectsLocal %*% LDLocal %*% effectsLocal)
-    twasLocal = as.numeric(twasZLocal/sqrt(twasr2predLocal))
-
-    return(twas - twasLocal)
-  }
-
   twasDist = NA
   PDist = NA
   if (diffTest){
@@ -215,10 +189,18 @@ burdenTest <- function(wgt,
     MeanCond = CovLocalDist * (1/CovLocal) * obsZ
     VarCond = CovDist - CovLocalDist * (1/CovDist) * CovLocalDist
 
-    twasDist = (wDist %*% ZDist)/sqrt(wDist %*% LDDist %*% wDist)
-    PDist = 2*pnorm(-abs(twasLD),
-                mean = MeanCond,
-                sd = sqrt(VarCond))
+    if (VarCond < 0){
+      twasDist = 0
+      PDist = 1
+    } else {
+      twasDist = (wDist %*% ZDist)/sqrt(wDist %*% LDDist %*% wDist)
+      PDist = min(1-pnorm(-abs(twasDist),
+                           mean = MeanCond,
+                           sd = sqrt(VarCond)),
+                pnorm(-abs(twasDist),
+                      mean = MeanCond,
+                      sd = sqrt(VarCond)))
+      }
 
   }
 
