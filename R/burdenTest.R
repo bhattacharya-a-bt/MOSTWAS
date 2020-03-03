@@ -165,10 +165,69 @@ burdenTest <- function(wgt,
     permute.p = mean(abs(permutationLD$t) > abs(permutationLD$t0))
   } else {permute.p = 1}
 
+  calculateTWASDiff <- function(effects,
+                            Z,
+                            LD,
+                            indices,
+                            chr){
+    effects = effects[indices]
+    twasZ = as.numeric(effects %*% Z)
+    twasr2pred = as.numeric(effects %*% LD %*% effects)
+    if (twasr2pred > 0){
+      twas = as.numeric(twasZ/sqrt(twasr2pred))
+    } else {
+      twas = 0
+    }
+
+    thisChr = names(which.max(table(chr)))
+    ZLocal = Z[as.character(chr) == as.character(thisChr)]
+    LDLocal = LD[as.character(chr) == as.character(thisChr),
+                      as.character(chr) == as.character(thisChr)]
+    effectsLocal = effects[as.character(chr) == as.character(thisChr)]
+    twasZLocal = as.numeric(effectsLocal %*% ZLocal)
+    twasr2predLocal = as.numeric(effectsLocal %*% LDLocal %*% effectsLocal)
+    twasLocal = as.numeric(twasZLocal/sqrt(twasr2predLocal))
+
+    return(twas - twasLocal)
+  }
+
+  twasDist = NA
+  PDist = NA
+  if (nestPerm){
+
+    locChrom = names(which.max(table(sumS$Chromosome)))
+    ZLocal = Z[sumS$Chromosome == locChrom]
+    ZDist = Z[sumS$Chromosome != locChrom]
+    wLocal = Model$Effect[Model$Chromosome == locChrom]
+    wDist = Model$Effect[Model$Chromosome != locChrom]
+    LDLocal = LD[sumS$Chromosome == locChrom,
+                 sumS$Chromosome == locChrom]
+    LDDist = LD[sumS$Chromosome != locChrom,
+                sumS$Chromosome != locChrom]
+    LDCov = LD[sumS$Chromosome == locChrom,
+               sumS$Chromosome != locChrom]
+
+    obsZ = (wLocal %*% ZLocal)/sqrt(wLocal %*% LDLocal %*% wLocal)
+
+    CovLocal = wLocal %*% LDLocal %*% wLocal
+    CovLocalDist = wLocal %*% LDCov %*% wDist
+    CovDist = wDist %*% LDDist %*% wDist
+    MeanCond = CovLocalDist * (1/CovLocal) * obsZ
+    VarCond = CovDist - CovLocalDist * (1/CovDist) * CovLocalDist
+
+    twasDist = (wDist %*% ZDist)/sqrt(wDist %*% LDDist %*% wDist)
+    PDist = 2*pnorm(-abs(twasLD),
+                mean = MeanCond,
+                sd = sqrt(VarCond))
+
+  }
+
   return(list(Gene = geneInt,
               Z = twasLD,
               P = 2*pnorm(-abs(twasLD)),
               permute.P = permute.p,
               topSNP = sumS$GenPos[which.min(sumS$P)],
-              topSNP.P = min(sumS$P)))
+              topSNP.P = min(sumS$P),
+              Z.Dist = twasDist,
+              P.Dist = PDist))
 }
