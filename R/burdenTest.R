@@ -206,6 +206,6 @@ burdenTest <- function(wgt,
               permute.P = permute.p,
               topSNP = sumS$GenPos[which.min(sumS$P)],
               topSNP.P = min(sumS$P),
-              Z.Dist = twasDist,
+              Z.Dist = twasLD - twasLocal,
               P.Dist = PDist))
 }
