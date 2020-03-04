@@ -195,7 +195,7 @@ burdenTest <- function(wgt,
       PDist = 1
     } else {
       twasDist = (topDist - MeanCond)/sqrt(VarCond)
-      PDist = 2*pnorm(-abs(twasDist))
+      PDist = pnorm(-abs(twasDist))
       }
 
   }
