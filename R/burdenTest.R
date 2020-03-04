@@ -170,31 +170,31 @@ burdenTest <- function(wgt,
   if (diffTest){
 
     locChrom = names(which.max(table(sumS$Chromosome)))
-    ZLocal = Z[sumS$Chromosome == locChrom]
-    ZDist = Z[sumS$Chromosome != locChrom]
-    wLocal = Model$Effect[Model$Chromosome == locChrom]
-    wDist = Model$Effect[Model$Chromosome != locChrom]
-    LDLocal = LD[sumS$Chromosome == locChrom,
-                 sumS$Chromosome == locChrom]
-    LDDist = LD[sumS$Chromosome != locChrom,
-                sumS$Chromosome != locChrom]
-    LDCov = LD[sumS$Chromosome == locChrom,
-               sumS$Chromosome != locChrom]
+    ZLocal = Z[which(sumS$Chromosome == locChrom)]
+    ZDist = Z[which(sumS$Chromosome != locChrom)]
+    wLocal = Model$Effect[which(Model$Chromosome == locChrom)]
+    wDist = Model$Effect[which(Model$Chromosome != locChrom)]
+    LDLocal = LD[which(sumS$Chromosome == locChrom),
+                 which(sumS$Chromosome == locChrom)]
+    LDDist = LD[which(sumS$Chromosome != locChrom),
+                which(sumS$Chromosome != locChrom)]
+    LDCov = LD[which(sumS$Chromosome == locChrom),
+               which(sumS$Chromosome != locChrom)]
 
-    twasLocal = (wLocal %*% ZLocal)/sqrt(wLocal %*% LDLocal %*% wLocal)
-    twasDist = (wDist %*% ZDist)/sqrt(wDist %*% LDDist %*% wDist)
+    topLocal = (wLocal %*% ZLocal)
+    topDist = (wDist %*% ZDist)
 
     CovLocal = wLocal %*% LDLocal %*% wLocal
     CovLocalDist = wLocal %*% LDCov %*% wDist
     CovDist = wDist %*% LDDist %*% wDist
-    MeanCond = CovLocalDist * (1/CovLocal) * twasLocal
-    VarCond = CovDist - CovLocalDist * (1/CovDist) * CovLocalDist
+    MeanCond = CovLocalDist * (1/CovLocal) * topLocal
+    VarCond = CovDist - CovLocalDist * (1/CovLocal) * CovLocalDist
 
     if (VarCond < 0){
       twasDist = 0
       PDist = 1
     } else {
-      twasDist = ((twasLD - twasLocal) - MeanCond)/sqrt(VarCond)
+      twasDist = (topDist - MeanCond)/sqrt(VarCond)
       PDist = 2*pnorm(-abs(twasDist))
       }
 
@@ -206,6 +206,6 @@ burdenTest <- function(wgt,
               permute.P = permute.p,
               topSNP = sumS$GenPos[which.min(sumS$P)],
               topSNP.P = min(sumS$P),
-              Z.Dist = twasLD - twasLocal,
+              Z.Dist = twasDist,
               P.Dist = PDist))
 }
