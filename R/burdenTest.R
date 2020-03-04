@@ -181,19 +181,20 @@ burdenTest <- function(wgt,
     LDCov = LD[sumS$Chromosome == locChrom,
                sumS$Chromosome != locChrom]
 
-    obsZ = (wLocal %*% ZLocal)/sqrt(wLocal %*% LDLocal %*% wLocal)
+    twasLocal = (wLocal %*% ZLocal)/sqrt(wLocal %*% LDLocal %*% wLocal)
+    twasDist = (wDist %*% ZDist)/sqrt(wDist %*% LDDist %*% wDist)
 
     CovLocal = wLocal %*% LDLocal %*% wLocal
     CovLocalDist = wLocal %*% LDCov %*% wDist
     CovDist = wDist %*% LDDist %*% wDist
-    MeanCond = CovLocalDist * (1/CovLocal) * obsZ
+    MeanCond = CovLocalDist * (1/CovLocal) * twasLocal
     VarCond = CovDist - CovLocalDist * (1/CovDist) * CovLocalDist
 
     if (VarCond < 0){
       twasDist = 0
       PDist = 1
     } else {
-      twasDist = ((wDist %*% ZDist)/sqrt(wDist %*% LDDist %*% wDist) - MeanCond)/sqrt(VarCond)
+      twasDist = ((twasLD - twasLocal) - MeanCond)/sqrt(VarCond)
       PDist = 2*pnorm(-abs(twasDist))
       }
 
