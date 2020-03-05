@@ -50,17 +50,6 @@ addedLastTest <- function(wgt,
   }
 
 
-  if (onlyCis){
-
-    Model = subset(Model,Mediator == 'Cis')
-    if (CisR2 <= R2cutoff){
-      return(paste0(geneInt,
-                    ' is not locally predicted at R2 > ',
-                    R2cutoff))
-    }
-
-  }
-
   require(dplyr)
   if ('Mediator' %in% colnames(Model)){
     Model =
