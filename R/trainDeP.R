@@ -103,7 +103,7 @@ trainDeP <- function(geneInt,
                                snpAnnot = snpAnnot,
                                prune = prune)
 
-  if (herit$P > h2Pcutoff | herit$h2 <= 0.01) {
+  if (herit$P > h2Pcutoff) {
     if (!verbose){
       sink()
       }

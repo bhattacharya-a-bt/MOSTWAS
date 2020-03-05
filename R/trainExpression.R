@@ -93,7 +93,7 @@ trainExpression <- function(geneInt,
   system(paste0('rm -r ',geneInt,'_h2_temp'))
 
 
-  if (herit$P > h2Pcutoff | herit$h2 <= 0) {
+  if (herit$P > h2Pcutoff) {
     return(paste(geneInt,
                  'is not germline heritable at P <',
                  h2Pcutoff))
