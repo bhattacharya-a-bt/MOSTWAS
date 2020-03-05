@@ -8,24 +8,21 @@
 #' @param snps data.frame, reference panel SNPs
 #' @param sumStats data frame, GWAS summary statistics
 #' @param snpAnnot data.frame, SNP REF/ALT annotations
-#' @param onlyCis logical, T/F to consider only cis-component
 #' @param beta character, colnames in sumStats that keeps the effect sizes
 #' @param se character, colnames in sumStats that keeps the standard errors
 #' @param chr character, colnames in sumStats that keeps the chromosome
 #' @param pos character, colnames in sumStats that keeps the position
 #' @param ref character, colnames in sumStats that keeps the reference allele
 #' @param R2cutoff numeric, predictive R2 cutoff
-#' @param alpha numeric, P-value threshold for permutation testing
-#' @param nperms numeric, number of permutations
+#' @param locChrom character, chromosome of gene of interest
 #'
-#' @return list of results for burden and permutation tests
+#' @return Z-score and P-value of added last test
 #'
 #' @export
-burdenTest <- function(wgt,
+addedLastTest <- function(wgt,
                        snps,
                        sumStats,
                        snpAnnot = NULL,
-                       onlyCis = F,
                        beta,
                        se,
                        chr,
@@ -33,8 +30,7 @@ burdenTest <- function(wgt,
                        ref,
                        pval,
                        R2cutoff,
-                       alpha,
-                       nperms = 1e3){
+                       locChrom){
 
 
   load(wgt)
@@ -73,11 +69,11 @@ burdenTest <- function(wgt,
                       dplyr::summarize(sum(Effect)))
     colnames(Model) = c('SNP','Chromosome','Position','Effect')
   } else {
-  Model =
-    as.data.frame(Model %>%
-                    dplyr::group_by(SNP,Chromosome,Position) %>%
-                    dplyr::summarize(sum(Effect)))
-  colnames(Model) = c('SNP','Chromosome','Position','Effect')}
+    Model =
+      as.data.frame(Model %>%
+                      dplyr::group_by(SNP,Chromosome,Position) %>%
+                      dplyr::summarize(sum(Effect)))
+    colnames(Model) = c('SNP','Chromosome','Position','Effect')}
   Model$GenPos = paste(Model$Chromosome,Model$Position,sep = ':')
 
   sumS = subset(sumStats,GenPos %in% Model$GenPos)
@@ -104,7 +100,7 @@ burdenTest <- function(wgt,
     snpAnnot$REF = sumS$REF
     snpAnnot$ALT = sapply(strsplit(as.character(snpAnnot$SNP),':'),
                           function(x) x[4])
-    }
+  }
 
   annot = subset(snpAnnot, SNP %in% Model$SNP)
   Model = subset(Model, SNP %in% annot$SNP)
@@ -131,45 +127,53 @@ burdenTest <- function(wgt,
                      snpAnnot = annot,
                      sumS = sumS)
 
-  calculateTWAS <- function(effects,
-                            Z,
-                            LD,
-                            indices){
-    effects = effects[indices]
-    twasZ = as.numeric(effects %*% Z)
-    twasr2pred = as.numeric(effects %*% LD %*% effects)
-    if (twasr2pred > 0){
-      twas = as.numeric(twasZ/sqrt(twasr2pred))
-    } else {
-        twas = 0
-    }
-    return(twas)
-  }
-
   Z = as.numeric(sumS$Flip)/as.numeric(sumS$SE)
   snpCur = subset(snps, SNP %in% Model$SNP)
   snpCur = snpCur[match(as.character(Model$SNP),snpCur$SNP),]
   genos = as.matrix(snpCur[,-1])
   LD = genos %*% t(genos) / (ncol(genos)-1)
 
-  permutationLD = boot::boot(data = Model$Effect,
-                           statistic = calculateTWAS,
-                           R = nperms,
-                           sim = 'permutation',
-                           Z = Z,
-                           LD = LD)
+  twasDist = NA
+  PDist = NA
 
-  twasLD = permutationLD$t0
-  P = 2*pnorm(-abs(twasLD))
+  ZLocal = Z[which(sumS$Chromosome == locChrom)]
+  ZDist = Z[which(sumS$Chromosome != locChrom)]
+  wLocal = Model$Effect[which(Model$Chromosome == locChrom)]
+  wDist = Model$Effect[which(Model$Chromosome != locChrom)]
+  LDLocal = LD[which(sumS$Chromosome == locChrom),
+               which(sumS$Chromosome == locChrom)]
+  LDDist = LD[which(sumS$Chromosome != locChrom),
+              which(sumS$Chromosome != locChrom)]
+  LDCov = LD[which(sumS$Chromosome == locChrom),
+             which(sumS$Chromosome != locChrom)]
 
-  if (P < alpha){
-    permute.p = mean(abs(permutationLD$t) > abs(permutationLD$t0))
-  } else {permute.p = 1}
+  topLocal = (wLocal %*% ZLocal)
+  topDist = (wDist %*% ZDist)
 
-  return(list(Gene = geneInt,
-              Z = twasLD,
-              P = 2*pnorm(-abs(twasLD)),
-              permute.P = permute.p,
-              topSNP = sumS$GenPos[which.min(sumS$P)],
-              topSNP.P = min(sumS$P)))
+  CovLocal = wLocal %*% LDLocal %*% wLocal
+  CovLocalDist = wLocal %*% LDCov %*% wDist
+  CovDist = wDist %*% LDDist %*% wDist
+  MeanCond = CovLocalDist * (1/CovLocal) * topLocal
+  VarCond = CovDist - CovLocalDist * (1/CovLocal) * CovLocalDist
+
+  if (length(ZLocal) == 0){
+    MeanCond = 0
+    VarCond = CovDist
+  }
+
+  if (length(ZDist) == 0){
+    return('No distal SNPs in model.')
+  }
+
+  if (VarCond < 0){
+    twasDist = 0
+    PDist = 1
+    } else {
+      twasDist = (topDist - MeanCond)/sqrt(VarCond)
+      PDist = pnorm(-abs(twasDist))
+    }
+
+
+  return(list(Z.Dist = twasDist,
+              P.Dist = PDist))
 }
