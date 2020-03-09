@@ -42,9 +42,15 @@ LDprune <- function(W,
   W = W[match(snpList,rownames(W)),]
   geno[,5:ncol(geno)] = W
   geno$SNP = snpList
-  onlyThese <- snpLocs[snpLocs$snpid %in% geno$SNP,]
+  onlyThese <- thisSNP[thisSNP$snpid %in% geno$SNP,]
+  onlyThese = onlyThese[match(rownames(W),onlyThese$snpid),]
   geno <- geno[geno$SNP %in% snpLocs$snpid,]
   onlyThese <- onlyThese[match(onlyThese$snpid,geno$SNP),]
+  geno = geno[!duplicated(geno$SNP),]
+  onlyThese = onlyThese[!is.na(onlyThese$snpid),]
+  onlyThese = onlyThese[!duplicated(onlyThese$snpid),]
+  onlyThese = subset(onlyThese,snpid %in% geno$SNP)
+  geno = subset(geno,SNP %in% onlyThese$snpid)
   chr <- onlyThese$chr
   geno$Pos <- onlyThese$pos
   if (is.null(snpAnnot)){

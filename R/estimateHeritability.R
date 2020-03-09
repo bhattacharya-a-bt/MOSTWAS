@@ -88,8 +88,8 @@ estimateHeritability <- function(biomInt,
       W = as.matrix(subset(snps,SNP %in% snpList)[,-1])
       rownames(W) = snpList
       thisSNP = subset(snpLocs,snpid %in% snps$SNP)
-    }
-  if (nrow(W) == 0){return(list(h2 = 0,P = 1))}
+      }
+    if (nrow(W) == 0){return(list(h2 = 0,P = 1))}
 
     fileName = paste0('h2_',biomInt)
     tempDir = paste0(biomInt,'_h2_temp/')
@@ -112,6 +112,11 @@ estimateHeritability <- function(biomInt,
     onlyThese = onlyThese[match(rownames(W),onlyThese$snpid),]
     geno <- geno[geno$SNP %in% snpLocs$snpid,]
     onlyThese <- onlyThese[match(onlyThese$snpid,geno$SNP),]
+    geno = geno[!duplicated(geno$SNP),]
+    onlyThese = onlyThese[!is.na(onlyThese$snpid),]
+    onlyThese = onlyThese[!duplicated(onlyThese$snpid),]
+    onlyThese = subset(onlyThese,snpid %in% geno$SNP)
+    geno = subset(geno,SNP %in% onlyThese$snpid)
     chr <- onlyThese$chr
     geno$Pos <- onlyThese$pos
     if (is.null(snpAnnot)){
