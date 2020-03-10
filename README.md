@@ -106,7 +106,8 @@ All MOSTWAS models output:
 
 We recommend training genes with both MeTWAS
 and DePMA and prioritizing the model with
-greater cross-validation *R*<sup>2<sup> for association testing.
+greater cross-validation *R*<sup>2<sup> 
+for association testing.
 
 
 # Using MOSTWAS
