@@ -44,7 +44,7 @@ below.
 ![](vignettes/mostwas_scheme.png)
 
 * MeTWAS first
-identifies $m$ mediators
+identifies *m* mediators
 (e.g. CpG sites,
 miRNAs, gene coding
 for transcription
@@ -83,7 +83,7 @@ the total mediation effect (TME)
 of the eQTL on the gene
 through the set of mediators
 and test the two-sided
-hypothesis of $H_0: TME = 0$.
+hypothesis that *TME = 0*.
 Any distal-eSNP with a significant
 TME is included with the SNPs
 local to the gene of interest
@@ -99,14 +99,14 @@ for more details).
 All MOSTWAS models output:
 
 * the SNP-gene effect sizes (i.e. the model),
-* cross-validation $R^2$,
+* cross-validation *R*<sup>2<sup>,
 * heritability estimate from GCTA,
-* $P$-value for the likelihood ratio test for heritability, and
+* *P*-value for the likelihood ratio test for heritability, and
 * predicted expression in the reference panel.
 
 We recommend training genes with both MeTWAS
 and DePMA and prioritizing the model with
-greater cross-validation $R^2$ for association testing.
+greater cross-validation *R*<sup>2<sup> for association testing.
 
 
 # Using MOSTWAS
@@ -150,7 +150,7 @@ devtools::install_github('bhattacharya-a-bt/MOSTWAS')
 
 ## Necessary input files
 
-Let's assume that the reference eQTL panel has $n$ samples.
+Let's assume that the reference eQTL panel has *n* samples.
 MOSTWAS, at the very least, requires the input
 files for the following:
 
@@ -169,9 +169,9 @@ MOSTWAS uses files that are formatted
 in the `MatrixEQTL` format (see the
 [MatrixEQTL](http://www.bios.unc.edu/research/genomic_software/Matrix_eQTL/) 
 documentation). Briefly, SNP dosage, gene expression,
-and mediator intensity files all have $n+1$ columns, where
+and mediator intensity files all have *n+1* columns, where
 the first column is an identifier for the biomarker (SNP, gene, or mediator)
-and the last $n$ columns are the scaled values for that biomarker.
+and the last *n* columns are the scaled values for that biomarker.
 The location files have columns (in order) for the identifier,
 the chromosome, and the base-pair position of the biomarker.
 Gene location files have a fourth column with the end location of the gene.
@@ -179,22 +179,9 @@ Gene location files have a fourth column with the end location of the gene.
 We recommend that the file that contains the covariates include principal
 components of the SNP dosage matrix (in the range of 5-20, depending
 on the dataset). Relevant clinical covariates can be included as well.
-This file has $n+1$ columns, where the first column is the identifier
-for the covariate and the last $n$ columns contain
-the values for the covariates across the $n$ samples.
-
-Here's an example of what a SNP dosage file looks like:
-
-```{r, echo=F}
-head(data.table::fread('C:/Users/Arjun/OneDrive - University of North Carolina at Chapel Hill/MOSTWAS/inst/extdata/snps.txt'))[,1:10]
-```
-
-Here's an example of what a SNP location file looks like:
-
-```{r, echo=F}
-head(data.table::fread('C:/Users/Arjun/OneDrive - University of North Carolina at Chapel Hill/MOSTWAS/inst/extdata/snpLocs.txt'))
-```
-
+This file has *n+1* columns, where the first column is the identifier
+for the covariate and the last *n* columns contain
+the values for the covariates across the *n* samples.
 
 The `convertToDosage()` function
 can convert a .vcf or binary PLINK format (BED/BIM/FAM) into 
@@ -279,7 +266,7 @@ A few notes on these options:
 are genotype PCs for heritability estimation using GCTA.
 * `qtlFull` takes in the QTL results, as a `data.frame` or `data.table` 
 that give associations between mediators and genes.
-* `h2Pcutoff` gives a $P$-value cutoff for heritability estimation using GCTA
+* `h2Pcutoff` gives a *P*-value cutoff for heritability estimation using GCTA
 * `numMed` gives an upper limit to the number of top gene-associated mediators to limit
 computational time
 * `parallel` toggles parallel fitting of the `numMed` local-only models of mediators with
@@ -337,7 +324,7 @@ A few notes on these options:
 * `qtlTra` and `qtMed` take in outputs from `eQTL_MOSTWAS` if the `DePMA = T` toggle
 is set. These are `data.frame` or `data.table` objects that contain
 the MatrixEQTL output for associations between distal SNPs and genes and those distal-eQTLs
-and any local mediators. For cross-validation (generally $k < 5$ folds), you
+and any local mediators. For cross-validation (generally *k < 5* folds), you
 must also run fold-wise QTL analysis and input these filenames in
 `qtlTra_parts` and `qtMed_parts` as character vectors.
 * `sobel` toggles whether the asymptotic Sobel test is used, instead of the permutation
@@ -404,7 +391,7 @@ A comment on permutation testing:
 
 * Permutation testing assess wheter the TWAS association persists when conditioning on
 large GWAS effect sizes. This test is meant to be conservatively used, so we recommend
-imposing a stringent $P$-value cutoff to prioritize a gene for permutation
+imposing a stringent *P*-value cutoff to prioritize a gene for permutation
 testing (i.e. `alpha` at the Bonferroni cutoff).
 
 ## Distal-SNPs added last test
