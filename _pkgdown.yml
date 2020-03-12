@@ -1,1 +1,45 @@
 destination: docs
+template:
+  params:
+    bootswatch: cerulean
+reference:
+  - title: "Fitting MOSTWAS models"
+    desc: >
+      Functions to fit MeTWAS and DePMA
+    contents:
+    - trainMeTWAS
+    - trainDePMA
+  - title: "Miscellaneous functions used in MOSTWAS model training"
+    desc: >
+      Functions used internally by MOSTWAS
+    contents:
+    - adjR2
+    - amplifyTrans
+    - computeTME
+    - CVFitMediator
+    - estimateHeritability
+    - gatherMediators
+    - getCisGenotypes
+    - LDprune
+    - permuteTME
+    - RepParallel
+    - sobelTest
+    - testTME
+    - trainMediator
+    - trainSNPPheno
+  - title: "TWAS association testing"
+    desc: >
+      Functions to perform TWAS with MOSTWAS models
+    contents:
+    - burdenTest
+    - addedLastTest
+  - title: "Simulation framework"
+    desc: >
+      Functions to perform simulation studies for TWAS
+    contents:
+    - regress
+    - simBeta
+    - simEQTL
+    - simGeno
+    - simGWAS
+    - simTrait
