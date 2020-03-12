@@ -1,3 +1,20 @@
+#' Run TME tests through a data.frame of mediators
+#'
+#' The function runs Sobel or permutation testing
+#'
+#' @param i integer, row of data.frame
+#' @param mediator data.frame, mediator intensities
+#' @param qtMed data.frame, mediator QTL results
+#' @param transSNPs vector, character vector of distal-eSNPs
+#' @param sobel logical, T/F to use Sobel test
+#' @param nperms integer, number of permutations
+#' @param cores integer, number of parallel ocres
+#' @param covariates data.frame, covariates
+#' @param parallel character, boots input for parallelization
+#'
+#' @return list with TME and P-value
+#'
+#' @export
 testTME <- function(i,
                     mediator,
                     qtMed,

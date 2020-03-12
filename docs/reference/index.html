@@ -12,7 +12,7 @@
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/cerulean/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
@@ -124,17 +124,115 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-prior-to-twas" class="hasAnchor"><a href="#section-prior-to-twas" class="anchor"></a>Prior to TWAS</h2>
+          <p class="section-desc"><p>Functions for file formatting and eQTL analysis</p></p>
         </th>
       </tr>
       <tr>
         
         <td>
-          <p><code><a href="addedLastTest.html">addedLastTest()</a></code> </p>
+          <p><code><a href="convertToDosage.html">convertToDosage()</a></code> </p>
+        </td>
+        <td><p>Train and predict gene's predictive model with mediators</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="eQTL_MOSTWAS.html">eQTL_MOSTWAS()</a></code> </p>
+        </td>
+        <td><p>LD prune a genotype matrix</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-mostwas-modeling" class="hasAnchor"><a href="#section-mostwas-modeling" class="anchor"></a>MOSTWAS modeling</h2>
+          <p class="section-desc"><p>Main wrapper functions for MOSTWAS expression models</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="trainExpression.html">trainExpression()</a></code> </p>
+        </td>
+        <td><p>Train and predict gene's predictive model with mediators</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="trainDeP.html">trainDeP()</a></code> </p>
+        </td>
+        <td><p>Train and predict gene's predictive model with mediators</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-association-testing" class="hasAnchor"><a href="#section-association-testing" class="anchor"></a>Association testing</h2>
+          <p class="section-desc"><p>Functions from TWAS association testing</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="burdenTest.html">burdenTest()</a></code> </p>
         </td>
         <td><p>Compute weighted burden test</p></td>
       </tr><tr>
+        
+        <td>
+          <p><code><a href="addedLastTest.html">addedLastTest()</a></code> </p>
+        </td>
+        <td><p>Compute weighted burden test</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-simulation-framework" class="hasAnchor"><a href="#section-simulation-framework" class="anchor"></a>Simulation framework</h2>
+          <p class="section-desc"><p>Functions from running simulation analysis</p></p>
+        </th>
+      </tr>
+      <tr>
+        
+        <td>
+          <p><code><a href="regress.html">regress()</a></code> </p>
+        </td>
+        <td><p>Generate summary statistics for genotype-trait association</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="simBeta.html">simBeta()</a></code> </p>
+        </td>
+        <td><p>Simulate eQTL effect sizes</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="simEQTL.html">simEQTL()</a></code> </p>
+        </td>
+        <td><p>Simulate eQTL reference panel</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="simGeno.html">simGeno()</a></code> </p>
+        </td>
+        <td><p>Simulate genotypes from reference data</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="simGWAS.html">simGWAS()</a></code> </p>
+        </td>
+        <td><p>Simulate eQTL reference panel</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="simTrait.html">simTrait()</a></code> </p>
+        </td>
+        <td><p>Simulate trait from latent genetic values</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-miscellaneous" class="hasAnchor"><a href="#section-miscellaneous" class="anchor"></a>Miscellaneous</h2>
+          <p class="section-desc"><p>Functions used internally in MOSTWAS</p></p>
+        </th>
+      </tr>
+      <tr>
         
         <td>
           <p><code><a href="adjR2.html">adjR2()</a></code> </p>
@@ -149,33 +247,15 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="burdenTest.html">burdenTest()</a></code> </p>
-        </td>
-        <td><p>Compute weighted burden test</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="computeTME.html">computeTME()</a></code> </p>
         </td>
         <td><p>Compute total mediation effect</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="convertToDosage.html">convertToDosage()</a></code> </p>
-        </td>
-        <td><p>Train and predict gene's predictive model with mediators</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="CVFitMediator.html">CVFitMediator()</a></code> </p>
         </td>
         <td><p>Fit a single split in cross-validation for a given biomarker</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="eQTL_MOSTWAS.html">eQTL_MOSTWAS()</a></code> </p>
-        </td>
-        <td><p>LD prune a genotype matrix</p></td>
       </tr><tr>
         
         <td>
@@ -209,63 +289,15 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="regress.html">regress()</a></code> </p>
-        </td>
-        <td><p>Generate summary statistics for genotype-trait association</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="RepParallel.html">RepParallel()</a></code> </p>
         </td>
         <td><p>Parallel implementation of replicate()</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="simBeta.html">simBeta()</a></code> </p>
-        </td>
-        <td><p>Simulate eQTL effect sizes</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="simEQTL.html">simEQTL()</a></code> </p>
-        </td>
-        <td><p>Simulate eQTL reference panel</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="simGeno.html">simGeno()</a></code> </p>
-        </td>
-        <td><p>Simulate genotypes from reference data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="simGWAS.html">simGWAS()</a></code> </p>
-        </td>
-        <td><p>Simulate eQTL reference panel</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="simTrait.html">simTrait()</a></code> </p>
-        </td>
-        <td><p>Simulate trait from latent genetic values</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="sobelTest.html">sobelTest()</a></code> </p>
         </td>
         <td><p>Compute total mediation effect</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="trainDeP.html">trainDeP()</a></code> </p>
-        </td>
-        <td><p>Train and predict gene's predictive model with mediators</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="trainExpression.html">trainExpression()</a></code> </p>
-        </td>
-        <td><p>Train and predict gene's predictive model with mediators</p></td>
       </tr><tr>
         
         <td>
@@ -280,7 +312,11 @@
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#section-prior-to-twas">Prior to TWAS</a></li>
+      <li><a href="#section-mostwas-modeling">MOSTWAS modeling</a></li>
+      <li><a href="#section-association-testing">Association testing</a></li>
+      <li><a href="#section-simulation-framework">Simulation framework</a></li>
+      <li><a href="#section-miscellaneous">Miscellaneous</a></li>
     </ul>
   </div>
 </div>

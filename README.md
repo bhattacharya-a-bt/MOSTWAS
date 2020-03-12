@@ -39,7 +39,7 @@ via mediation analysis (DePMA). These
 methods are summarized graphically
 below.
 
-![](vignettes/mostwas_scheme.png)
+<img src="vignettes/mostwas_scheme.png" alt="drawing" align="middle" width="800"/>
 
 * MeTWAS first
 identifies *m* mediators

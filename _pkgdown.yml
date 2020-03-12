@@ -1,4 +1,51 @@
 destination: docs
 template:
   params:
-    bootswatch: darkly
+    bootswatch: flatly
+reference:
+  - title: "Prior to TWAS"
+    desc: >
+      Functions for file formatting and eQTL analysis
+    contents:
+      - convertToDosage
+      - eQTL_MOSTWAS
+  - title: "MOSTWAS modeling"
+    desc: >
+      Main wrapper functions for MOSTWAS expression models
+    contents:
+      - trainExpression
+      - trainDeP
+  - title: "Association testing"
+    desc: >
+      Functions from TWAS association testing
+    contents:
+      - burdenTest
+      - addedLastTest
+  - title: "Simulation framework"
+    desc: >
+      Functions from running simulation analysis
+    contents:
+      - regress
+      - simBeta
+      - simEQTL
+      - simGeno
+      - simGWAS
+      - simTrait
+  - title: "Miscellaneous"
+    desc: >
+      Functions used internally in MOSTWAS
+    contents:
+      - adjR2
+      - amplifyTrans
+      - computeTME
+      - CVFitMediator
+      - estimateHeritability
+      - gatherMediators
+      - getCisGenotypes
+      - LDprune
+      - permuteTME
+      - RepParallel
+      - sobelTest
+      - testTME
+      - trainMediator
+      - trainSNPPheno

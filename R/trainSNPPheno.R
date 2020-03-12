@@ -1,3 +1,25 @@
+#' Train a local-only model for a phenotype
+#'
+#' The function runs FUSION-type local-only modeling for a phenotype
+#'
+#' @param pheno vector, phenotypes
+#' @param snpCur matrix, SNP dosages
+#' @param snpList vector, vector of SNP identifiers
+#' @param thisSNP data.frame, SNP locations
+#' @param fileName character, prefix for LDprune
+#' @param prune logical, T/F to LD prune
+#' @param windowSize numeric, PLINK LD prune window size
+#' @param numSNPShift integer, PLINK LD shifting interval
+#' @param ldThresh numeric, LD threshold
+#' @param verbose logical, T/F for verbosity
+#' @param snpAnnot data.frame, SNP annotations
+#'
+#' @return list with TME and P-value
+#'
+#' @importFrom glmnet cv.glmnet
+#' @importFrom rrBLUP mixed.solve
+#'
+#' @export
 trainSNPPheno <- function(pheno,
                           snpCur,
                           snpList,
