@@ -2,7 +2,7 @@
 % Please edit documentation in R/trainExpression.R
 \name{trainExpression}
 \alias{trainExpression}
-\title{Train and predict gene's predictive model with mediators}
+\title{Train and predict gene's predictive model with mediators using MeTWAS}
 \usage{
 trainExpression(geneInt, snps, snpLocs, mediator, medLocs, covariates,
   dimNumeric, qtlFull, h2Pcutoff = 0.1, numMed = 5, seed, k,

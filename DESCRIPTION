@@ -15,4 +15,5 @@ VignetteBuilder: knitr
 Suggests: 
     testthat, knitr, rmarkdown
 RoxygenNote: 6.1.1
+URL: https://bhattacharya-a-bt.github.io/MOSTWAS https://www.github.com/bhattacharya-a-bt/MOSTWAS
 

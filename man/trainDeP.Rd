@@ -2,7 +2,7 @@
 % Please edit documentation in R/trainDeP.R
 \name{trainDeP}
 \alias{trainDeP}
-\title{Train and predict gene's predictive model with mediators}
+\title{Train and predict gene's predictive model with mediators using DePMA}
 \usage{
 trainDeP(geneInt, snps, snpLocs, mediator, medLocs, covariates,
   cisDist = 5e+05, qtlTra, qtMed, h2Pcutoff, dimNumeric, verbose, seed,
