@@ -27,7 +27,7 @@
 #' @importFrom caret createFolds
 #' @importFrom data.table fread
 #' @importFrom data.table fwrite
-#' @importForm parallel mclapply
+#' @importFrom parallel mclapply
 #' @importFrom IHW ihw
 #' @importFrom IHW adj_pvalues
 #'

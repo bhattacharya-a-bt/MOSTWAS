@@ -27,7 +27,7 @@
 #' @importFrom data.table fwrite
 #' @importFrom glmnet cv.glmnet
 #' @importFrom rrBLUP mixed.solve
-#' @importForm parallel mclapply
+#' @importFrom parallel mclapply
 #' @importFrom abind abind
 #'
 #' @export
