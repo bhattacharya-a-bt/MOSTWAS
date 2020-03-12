@@ -53,13 +53,7 @@ MOSTWAS incorporates two
 methods to include distal-eQTLs
 in transcriptomic prediction: Mediator-enriched
 TWAS (MeTWAS) and distal-eQTL prioritization
-via mediation analysis (DePMA). These
-methods are summarized graphically
-below.
-
-```{r, out.width = "700px", echo=F}
-knitr::include_graphics("mostwas_scheme.png")
-```
+via mediation analysis (DePMA). 
 
 * MeTWAS first
 identifies $m$ mediators
