@@ -5,4 +5,10 @@ We have developed **M**ulti-**O**mic
 an intuitive suite of tools to prioritize distal
 variants in transcriptomic prediction and conduct
 TWAS-like association testing using GWAS summary statistics.
-Read about it [here](https://bhattacharya-a-bt.github.io/MOSTWAS).
+
+Click [here for documentation](https://bhattacharya-a-bt.github.io/MOSTWAS).
+
+Get started by installing the latest version:
+```
+devtools::install_github('bhattacharya-a-bt/MOSTWAS')
+```
