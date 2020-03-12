@@ -74,28 +74,10 @@
 <div id="multi-omic-strategies-for-transcriptome-wide-association-studies-mostwas" class="section level2">
 <h2 class="hasAnchor">
 <a href="#multi-omic-strategies-for-transcriptome-wide-association-studies-mostwas" class="anchor"></a>Multi-Omic Strategies for Transcriptome-Wide Association Studies (MOSTWAS)</h2>
-<p>TWAS are techniques that were concurrently created by <a href="https://www.ncbi.nlm.nih.gov/pubmed/26258848">Gamazon et al, 2015</a> and <a href="https://www.ncbi.nlm.nih.gov/pubmed/26854917">Gusev et al, 2016</a> to leverage eQTLs to identify gene-trait associations. A traditional TWAS pipeline is as follows:</p>
-<ol>
-<li>In a tissue that is relevant to a phenotype of interest (i.e. breast tumor for breast cancer outcomes or the pre-frontal cortex for neuropsychiatric disorders), we train predictive models of tissue-specific expression from genotype.</li>
-<li>Then, in a large GWAS cohort, we use these predictive models to impute tissue-specific genetically regulated expression to detect gene-trait associations.</li>
-</ol>
-<p>In training predictive expression models, most TWAS methods (e.g. <a href="https://www.ncbi.nlm.nih.gov/pubmed/26258848">PrediXcan</a>, <a href="https://www.ncbi.nlm.nih.gov/pubmed/26854917">FUSION</a>, <a href="https://www.ncbi.nlm.nih.gov/pubmed/31230719">TIGAR</a>, <a href="https://www.nature.com/articles/s41467-019-11874-7">EpiXcan</a>, etc) focus on local genetic variation around the gene of interest (0.5 to 1 Megabase around the gene). However, <a href="https://www.ncbi.nlm.nih.gov/pubmed/28622505">Boyle et al, 2017</a> and <a href="https://www.ncbi.nlm.nih.gov/pubmed/31051098">Liu et al, 2019</a> have proposed that up to 70% of gene expression can be attributed to distal variation in the genome, suggesting that the inclusion of these distal variants in TWAS models may improve prediction and power to detect gene-trait associations.</p>
-<p>For this reason, we have developed <strong>M</strong>ulti-<strong>O</strong>mic <strong>S</strong>trategies for <strong>TWAS</strong> (<strong>MOSTWAS</strong>), an intuitive suite of tools to prioritize distal variants in transcriptomic prediction and conduct TWAS-like association testing using GWAS summary statistics. MOSTWAS incorporates two methods to include distal-eQTLs in transcriptomic prediction: Mediator-enriched TWAS (MeTWAS) and distal-eQTL prioritization via mediation analysis (DePMA). These methods are summarized graphically below.</p>
-<p><img src="articles/mostwas_scheme.png" alt="drawing" align="middle" width="800"></p>
-<ul>
-<li><p>MeTWAS first identifies <em>m</em> mediators (e.g. CpG sites, miRNAs, gene coding for transcription factors, etc) such that the intensity (methylation or expression levels) of these mediators are associated to the mRNA expression. A model for the genetically regulated intensities (GRIn) is estimated using the local SNPs to these mediators, and the GRIn of these mediators are imputed into the training set. The final gene expression model is estimated by incorporating the GRIn of the mediators as fixed effects and the local SNPs to the gene as regularized effects (see Methods for more details).</p></li>
-<li><p>DePMA first identified testing triplets of the gene of interest, a distal eSNP (SNP in an eQTL) to the gene, and any associated mediators local to the eQTL. We estimate the total mediation effect (TME) of the eQTL on the gene through the set of mediators and test the two-sided hypothesis that <em>TME = 0</em>. Any distal-eSNP with a significant TME is included with the SNPs local to the gene of interest to form the final design matrix. A model including all local SNPs and all significant distal-eSNPs is fit to the expression of the gene using either elastic net or linear mixed modeling (see Methods for more details).</p></li>
-</ul>
-<p>All MOSTWAS models output:</p>
-<ul>
-<li>the SNP-gene effect sizes (i.e. the model),</li>
-<li>predictive performance in cross-validation,</li>
-<li>heritability estimate from GCTA,</li>
-<li>
-<em>P</em>-value for the likelihood ratio test for heritability, and</li>
-<li>predicted expression in the reference panel.</li>
-</ul>
-<p>We recommend training genes with both MeTWAS and DePMA and prioritizing for association testing the model with better cross-validation performance.</p>
+<p>We have developed <strong>M</strong>ulti-<strong>O</strong>mic <strong>S</strong>trategies for <strong>TWAS</strong> (<strong>MOSTWAS</strong>), an intuitive suite of tools to prioritize distal variants in transcriptomic prediction and conduct TWAS-like association testing using GWAS summary statistics.</p>
+<p>Click <a href="https://bhattacharya-a-bt.github.io/MOSTWAS">here for documentation</a>.</p>
+<p>Get started by installing the latest version:</p>
+<pre><code><a href="https://devtools.r-lib.org//reference/remote-reexports.html">devtools::install_github('bhattacharya-a-bt/MOSTWAS')</a></code></pre>
 </div>
   </div>
 

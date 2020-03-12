@@ -1,7 +1,5 @@
 ---
 title: "Multi-Omic Strategies for TWAS (MOSTWAS)"
-author: "Arjun Bhattacharya"
-date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Vignette Title}
@@ -16,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# Introduction to transcriptome-wide association studies (TWAS)
+## Introduction to transcriptome-wide association studies (TWAS)
 
 TWAS are techniques that were concurrently
 created by [Gamazon et al, 2015](https://www.ncbi.nlm.nih.gov/pubmed/26258848)
@@ -121,7 +119,7 @@ and DePMA and prioritizing the model with
 greater cross-validation $R^2$ for association testing.
 
 
-# Using MOSTWAS
+## Using MOSTWAS
 
 MOSTWAS is meant to be run on a high-performance cluster (HPC)
 and integrates with [PLINK](http://zzz.bwh.harvard.edu/plink/) 
@@ -151,7 +149,7 @@ module add gcta
 
 Now, we can go to `R` to use MOSTWAS.
 
-## Installing MOSTWAS
+### Installing MOSTWAS
 
 MOSTWAS is available freely on Github.
 To install the package:
@@ -160,7 +158,7 @@ To install the package:
 devtools::install_github('bhattacharya-a-bt/MOSTWAS')
 ```
 
-## Necessary input files
+### Necessary input files
 
 Let's assume that the reference eQTL panel has $n$ samples.
 MOSTWAS, at the very least, requires the input
@@ -216,7 +214,7 @@ The `convertToDosage()` function
 can convert a .vcf or binary PLINK format (BED/BIM/FAM) into 
 the dosage files needed for MOSTWAS.
 
-## eQTL analysis
+### eQTL analysis
 
 MeTWAS and DePMA require results for QTL analysis:
 
@@ -255,7 +253,7 @@ can easily code your own analyses.
 
 **Please cite [Shabalin 2012](https://www.ncbi.nlm.nih.gov/pubmed/22492648) if you use MOSTWAS!**
 
-## Training models with MeTWAS
+### Training models with MeTWAS
 
 MOSTWAS wrapper functions have multiple options to provide
 users with freedom in training predictive models. It may get a little
@@ -316,7 +314,7 @@ with `LDMS = T`. We recommend this generally for imputed SNP panels.
 is generally needed if the SNP identifiers are not in 1000GP form (i.e. chrom:position:REF:ALT).
 
 
-## Training models with DePMA
+### Training models with DePMA
 
 You can run DePMA all in one, for a given gene (call this gene `test`). Many
 of the options are similar, so we'll highlight the different
@@ -370,7 +368,7 @@ Sobel test is less powerful yet much faster compared to the permutation test.
 of resamplings in permutation test, and `parType` sets the parallelization
 method as in the `boot` package.
 
-## Running multiple genes in parallel
+### Running multiple genes in parallel
 
 Usually, you'll need to train models for 15,000+ genes in
 an RNA-seq panel. Serially running both MeTWAS and DePMA is very slow, even
@@ -400,7 +398,7 @@ or [snakemake](https://snakemake.readthedocs.io/en/stable/).
 With `slurm_apply()`, we were able to fit a whole RNA-seq panel
 using both MeTWAS and DePMA in roughly 28 hours.
 
-## FUSION-like association testing
+### FUSION-like association testing
 We provide functions for testing as well.
 The function `burdenTest()` does the weighted burned test
 of association
@@ -432,7 +430,7 @@ large GWAS effect sizes. This test is meant to be conservatively used, so we rec
 imposing a stringent $P$-value cutoff to prioritize a gene for permutation
 testing (i.e. `alpha` at the Bonferroni cutoff).
 
-## Distal-SNPs added last test
+### Distal-SNPs added last test
 
 For genes with significant TWAS associations from `burdenTest()`,
 we may be interested in assessing whether the distal SNPs provide
