@@ -108,7 +108,7 @@ We recommend training genes with both MeTWAS
 and DePMA and prioritizing for association testing the model with
 better cross-validation performance.
 
-For a full vignette on using MOSTWAS, click ![here](http://htmlpreview.github.io/?https://github.com/bhattacharya-a-bt/MOSTWAS/blob/master/vignettes/MOSTWAS_vignette.html).
+For a full vignette on using MOSTWAS, click [here](http://htmlpreview.github.io/?https://github.com/bhattacharya-a-bt/MOSTWAS/blob/master/vignettes/MOSTWAS_vignette.html).
 
 
 # Using MOSTWAS
