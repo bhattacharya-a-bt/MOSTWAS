@@ -18,7 +18,9 @@ Get started by installing:
 devtools::install_github('bhattacharya-a-bt/MOSTWAS')
 ```
 
-This site contains documentation and a tutorial for using MOSTWAS.
 Email [Arjun Bhattacharya](mailto:bhattacharya.a.bt@gmail.com)
 with questions or submit an isse on the 
 [Github repo](https://github.com/bhattacharya-a-bt/MOSTWAS).
+
+Click for [documentation](https://bhattacharya-a-bt.github.io/MOSTWAS/reference/index.html) 
+and a [tutorial](https://bhattacharya-a-bt.github.io/MOSTWAS/articles/MOSTWAS_vignette.html).
