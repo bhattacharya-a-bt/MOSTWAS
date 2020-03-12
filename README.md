@@ -99,14 +99,16 @@ for more details).
 All MOSTWAS models output:
 
 * the SNP-gene effect sizes (i.e. the model),
-* cross-validation *R*<sup>2<sup>,
+* predictive performance in cross-validation,
 * heritability estimate from GCTA,
 * *P*-value for the likelihood ratio test for heritability, and
 * predicted expression in the reference panel.
 
 We recommend training genes with both MeTWAS
 and DePMA and prioritizing for association testing the model with
-greater cross-validation *R*<sup>2<sup>.
+better cross-validation performance.
+
+For a full vignette on using MOSTWAS, click ![here](vignettes/MOSTWAS_vignette.html).
 
 
 # Using MOSTWAS
