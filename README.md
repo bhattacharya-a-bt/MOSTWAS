@@ -5,7 +5,20 @@ We have developed **M**ulti-**O**mic
 an intuitive suite of tools to prioritize distal
 variants in transcriptomic prediction and conduct
 TWAS-like association testing using GWAS summary statistics.
+MOSTWAS includes two methods:
 
-Click [here for documentation](https://bhattacharya-a-bt.github.io/MOSTWAS/reference/index.html).
+* Mediator-enriched TWAS (MeTWAS) and,
+* Distal-eQTL prioritization via mediation analysis (DePMA).
 
-Click [here for a tutorial](https://bhattacharya-a-bt.github.io/MOSTWAS/articles/MOSTWAS_vignette.html) on using MOSTWAS for TWAS.
+<img src="vignettes/mostwas_scheme.png" alt="MOSTWAS scheme" width="800" align="middle">
+
+Get started by installing:
+
+```
+devtools::install_github('bhattacharya-a-bt/MOSTWAS')
+```
+
+This site contains documentation and a tutorial for using MOSTWAS.
+Email [Arjun Bhattacharya](mailto:bhattacharya.a.bt@gmail.com)
+with questions or submit an isse on the 
+[Github repo](https://github.com/bhattacharya-a-bt/MOSTWAS).
