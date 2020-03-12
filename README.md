@@ -8,7 +8,5 @@ TWAS-like association testing using GWAS summary statistics.
 
 Click [here for documentation](https://bhattacharya-a-bt.github.io/MOSTWAS).
 
-Get started by installing the latest version:
-```
-devtools::install_github('bhattacharya-a-bt/MOSTWAS')
-```
+Click [here for a tutorial](https:://bhattacharya-a-bt.github.io/MOSTWAS) on using MOSTWAS
+for TWAS.
