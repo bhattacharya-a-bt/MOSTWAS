@@ -1,5 +1,7 @@
 ## Multi-Omic Strategies for Transcriptome-Wide Association Studies (MOSTWAS)
 
+Read about it [here](https://bhattacharya-a-bt.github.io/MOSTWAS).
+
 TWAS are techniques that were concurrently
 created by [Gamazon et al, 2015](https://www.ncbi.nlm.nih.gov/pubmed/26258848)
 and [Gusev et al, 2016](https://www.ncbi.nlm.nih.gov/pubmed/26854917)
