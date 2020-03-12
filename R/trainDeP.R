@@ -32,7 +32,7 @@
 #' @importFrom IHW adj_pvalues
 #'
 #' @export
-trainDePMA <- function(geneInt,
+trainDeP <- function(geneInt,
                      snps,
                      snpLocs,
                      mediator,

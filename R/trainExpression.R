@@ -34,7 +34,7 @@
 #' @importFrom abind abind
 #'
 #' @export
-trainMeTWAS <- function(geneInt,
+trainExpression <- function(geneInt,
                             snps,
                             snpLocs,
                             mediator,
