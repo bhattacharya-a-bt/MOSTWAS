@@ -1,4 +1,4 @@
-#' Train and predict gene's predictive model with mediators
+#' Train and predict gene's predictive model with mediators using MeTWAS
 #'
 #' The function trains a predictive model of a given gene using top mediators
 #' as fixed effects and assesses in-sample performance with cross-validation.
