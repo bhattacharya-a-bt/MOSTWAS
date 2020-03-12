@@ -6,7 +6,6 @@ an intuitive suite of tools to prioritize distal
 variants in transcriptomic prediction and conduct
 TWAS-like association testing using GWAS summary statistics.
 
-Click [here for documentation](https://bhattacharya-a-bt.github.io/MOSTWAS).
+Click [here for documentation](https://bhattacharya-a-bt.github.io/MOSTWAS/reference/index.html).
 
-Click [here for a tutorial](https:://bhattacharya-a-bt.github.io/MOSTWAS) on using MOSTWAS
-for TWAS.
+Click [here for a tutorial](https://bhattacharya-a-bt.github.io/MOSTWAS/articles/MOSTWAS_vignette.html) on using MOSTWAS for TWAS.
