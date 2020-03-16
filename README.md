@@ -19,7 +19,7 @@ devtools::install_github('bhattacharya-a-bt/MOSTWAS')
 ```
 
 Email [Arjun Bhattacharya](mailto:bhattacharya.a.bt@gmail.com)
-with questions or submit an isse on the 
+with questions or submit an issue on the 
 [Github repo](https://github.com/bhattacharya-a-bt/MOSTWAS).
 
 Click for [documentation](https://bhattacharya-a-bt.github.io/MOSTWAS/reference/index.html) 
