@@ -98,7 +98,7 @@ eQTL_MOSTWAS <- function(SNP_file_name,
     min.pv.by.genesnp = FALSE,
     noFDRsaveMemory = FALSE)
 
-  if (DEPMA){
+  if (DePMA){
 
   a = data.table::fread(output_file_name_dis_qtl)
   snp_dis = a$SNP
