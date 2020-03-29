@@ -1,0 +1,68 @@
+\documentclass[review]{elsarticle}
+\usepackage[margin=1in]{geometry}
+\usepackage{lineno,hyperref}
+\usepackage{amsmath}
+\usepackage{xr-hyper}
+\makeatletter
+\newcommand*{\addFileDependency}[1]{% argument=file name and extension
+  \typeout{(#1)}
+  \@addtofilelist{#1}
+  \IfFileExists{#1}{}{\typeout{No file #1.}}
+}
+\makeatother
+
+\newcommand*{\myexternaldocument}[1]{%
+    \externaldocument{#1}%
+    \addFileDependency{#1.tex}%
+    \addFileDependency{#1.aux}%
+}
+\myexternaldocument{supplement}
+
+\usepackage{endfloat}
+
+\journal{American Journal of Human Genetics}
+
+
+\bibliographystyle{elsarticle-num}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{Multi-omic strategies for transcriptome-wide prediction
+    and association studies}
+
+%% Group authors per affiliation:
+\author{Arjun Bhattacharya\fnref{myfootnote}}
+\fntext[myfootnote]{Department of Biostatistics,
+University of North Carolina at Chapel Hill}
+
+\author{Michael I. Love\fnref{myfootnote,myfootnote2}\corref{mycorrespondingauthor}}
+\fntext[myfootnote2]{Department of Genetics,
+University of North Carolina at Chapel Hill}
+
+\cortext[mycorrespondingauthor]{Corresponding author}
+\ead{milove@email.unc.edu}
+
+\input{sections/abstract}
+
+\end{frontmatter}
+
+\section{Introduction}
+\input{sections/intro}
+
+\section{Material and Methods}
+\input{sections/methods}
+
+\section{Results}
+\input{sections/results}
+
+\section{Discussion}
+\input{sections/discussion}
+
+\input{sections/post}
+
+\bibliography{library}
+
+\end{document}

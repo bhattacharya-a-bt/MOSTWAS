@@ -1,0 +1,686 @@
+
+
+We first outline the two methods
+proposed in this work, (1) mediator-enriched transcriptome-wide
+prediction (MeTWAS) and (2) distal-eQTL 
+prioritization via mediation analysis (DePMA). 
+MeTWAS and DePMA are combined
+in the MOSTWAS R package,
+available freely at \url{https://bhattacharya-a-bt.github.io/MOSTWAS}.
+
+\subsection{Mediator-enriched TWAS (MeTWAS)}
+
+\subsubsection{Transcriptomic prediction using MeTWAS}
+
+Here, we present mediator-enriched TWAS, or MeTWAS
+one of the two tools presented in the MOSTWAS R package.
+Across $n$ samples, consider the vector $Y_G$ 
+of expression a gene $G$ 
+of interest, the matrix $\mathbf{X}_G$ 
+of local SNPs dosages
+in a 500 kilobase window around gene $G$, and 
+$m_G$ mediating biomarkers that
+we estimate to be significantly associated
+with the expression of gene $G$ via a
+relevant one-way test of association. These
+mediating biomarkers can be DNA methylation sites,
+microRNAs, or transcription factors. Accordingly,
+let the matrix $\mathbf{X}_{M_j}$ be the 
+local-genotype dosages in a 500 kilobase
+window around mediator $j,~1 \leq j \leq m_G$. Furthermore,
+let $M_j$ be the intensity of mediator $j$ 
+(i.e. methylation $M$-value if $j$ is a CpG site or
+expression if $j$ is a miRNA or a gene).
+Prior to any modelling, we scale $Y_G$ and all 
+$M_j,~1 \leq j \leq m_G$ to zero mean and
+unit variance. We also residualize
+$M_j,~1 \leq j \leq m_G$ and $Y_G$ 
+with the covariate matrix $\mathbf{X}_C$
+to account for population stratification using
+principal components of the global genotype matrix
+and relevant clinical covariates to obtain
+$\tilde{M}_j,~1 \leq j \leq m_G$ and $\tilde{Y}_G$.
+
+Transcriptome prediction in MeTWAS draws from
+two-step regression, as summarized in \textbf{Figure \ref{fig:ch4_fig1}}.
+First, in the training set
+for a given training-test split,
+for $1 \leq j \leq m_G$, we model the residualized 
+intensity $\tilde{M}_j$ of training-set specific 
+mediator $j$ with
+the following additive model:
+
+\begin{equation}
+	\tilde{M}_j = \mathbf{X}_{M_j,train}w_j +
+	\varepsilon_m,
+\end{equation}
+
+\noindent where $w_j$ is the effect-sizes of
+the SNPs in $\mathbf{X}_{M_j,train}$ on $\tilde{M}_j$
+in the training set.
+As in traditional transcriptomic
+imputation models \cite{Gamazon2015,Gusev2016},
+we find $\hat{w}_m$ using
+one of the two following methods
+with the largest predicted adjusted $R^2$: 
+(1) elastic net regression with mixing parameter $\alpha = 0.5$
+and $\lambda$ tuned over 5-fold cross validation
+using glmnet \cite{Friedman2010}, or
+(2) linear mixed modelling assuming random effects
+for $\mathbf{X}_{M_j}$ using rrBLUP \cite{Endelman2011}.
+
+For all $j$, using these optimized predictive
+models for $M_j$ as denoted
+by $\hat{w}_{M_j}$, 
+we estimate the genetically regulated
+intensity (GRIn) of the mediator $m_j$, denoted
+GRIn$_{m_j}$, in the test set. Denote
+$\mathbf{\hat{M}}$ as the $n \times m$
+matrix of estimated GRIn, such that
+the $j$th column of $\mathbf{\hat{M}}_j$ is
+GRIn$_{m_j}$ across all $n$ samples. 
+
+Next, we consider
+the following additive model for
+the residualized expression of gene $G$:
+
+$$\tilde{Y}_G = \mathbf{\hat{M}}\beta_M + \mathbf{X}_Gw_G + \varepsilon_{Y_G},$$
+
+\noindent where $\beta_M$ is the fixed effect-sizes
+of GRIn$_{m_j}$ on $\tilde{Y}_G$, $\hat{\mathbf{M}}$
+is the matrix of estimated GRIn for
+all $m_j$ mediators, $\mathbf{X}_G$
+are the local-SNPs to gene $G$, and $w_G$
+are the ``random'' or regularized 
+effect sizes of the local-SNPs.
+We estimate $\beta_M$ by
+traditional ordinary least squares, where
+$\hat{\beta}_M = \left(\mathbf{\hat{M}}'\mathbf{\hat{M}}\right)^{-1}\mathbf{\hat{M}}'E_g$.
+Next, using one of the methods outlined above
+when estimating $\hat{w}_{M_j}$, we
+can generate estimated effect sizes $\hat{w}_G$ 
+of the local-SNPs on $\tilde{Y}_G$, residualized
+with $\hat{\mathbf{M}}$.
+
+\subsubsection{Transcriptomic imputation with MeTWAS}
+In an external GWAS panel, if individual SNPs are 
+available, we construct the mediator-enriched genetically regulated
+expression (MeGReX) of gene $G$
+directly using $\hat{w}_G$ and $(\hat{w}_j,\hat{\beta}_j),~1 \leq j \leq m_G$:
+
+$$MeGReX_G = \sum_{j =two 1}^{m_G}{\mathbf{X}_{M_j,GWAS}\hat{w}_{M_j}\hat{\beta}_{M,j}} + 
+\mathbf{X}_{G,GWAS}\hat{w}_G,$$
+
+\noindent where $\mathbf{X}_{M_j,GWAS}$ and $\mathbf{X}_{G,GWAS}$ 
+are the SNPs in the GWAS
+panel local to mediator $j$ and gene $G$, respectively.
+$MeGREX_G$ can be used in downstream tests of association. 
+
+
+\subsection{Distal-eQTL prioritization via mediation analysis (DePMA)}
+
+\subsubsection{Transcriptomic prediction using DePMA}
+
+Expression prediction in DePMA hinges on
+up-weighting distal-eQTLs to the gene of interest
+via mediation analysis, adopting
+methods from previous studies \cite{Pierce2014,Shan2019,Yang2017}. 
+We first split data for
+gene expression, SNP dosages, and any potential mediators
+into $k$ training-testing splits. Based on the 
+minor allele frequencies of SNPs and sample size,
+we recommend a low number of splits (i.e. $k \leq 5$).
+
+In the training set, we identify mediation test triplets
+that consist of (1) a gene of interest $G$
+with expression $Y_G$ (scaled to zero mean
+and unit variance), (2)
+a distal eSNP $s$ in association
+with $G$ at a user-defined $P$-value
+threshold (default of $P = 10^{-6}$)
+with dosages $X_s$, and (3)
+a set of $m$ biomarkers local 
+to $s$ that are associated
+with $s$ at a user-defined $P$-value threshold
+(default of FDR-adjusted $P = 0.05$)
+with intensities in the $m$ columns of 
+$\mathbf{M}$. The columns of $\mathbf{M}$
+are scaled to zero mean and unit variance.
+Consider the following
+mediation model for $1 \leq j \leq m$:
+
+\begin{equation}\label{mediation}
+\begin{split}
+Y_G & = X_s\beta_s + \mathbf{M}\beta_{\mathbf{M}} + \mathbf{X}_C\beta_{C} + \varepsilon_{Y_G} \\
+M_j & = X_s\alpha_{M_j} + \mathbf{X}_C\alpha_{C,j} + \varepsilon_{M_j}.
+\end{split}
+\end{equation}
+
+Here, we have $\beta_{\mathbf{M}}$ as the
+effects of the $M$ mediators local to $s$ on $Y_G$ adjusting
+for the effects from $s$ and the covariates and 
+$\alpha_{\mathbf{M}} = (\alpha_{M_1},\ldots,\alpha_{M_m})'$
+as the effects of $s$ on mediators $M_j$, for $1 \leq j \leq m$.
+We assume that $\varepsilon_{Y_G} \sim N(0,\sigma^2)$ and 
+$\varepsilon_{\mathbf{M}} \sim \mathbf{N}_m\left(0,\mathbf{\Sigma}_M\right)$,
+where $\mathbf{\Sigma}_M$ may have non-zero off-diagonal
+elements that
+represent non-zero covariance between mediator
+intensities. 
+Further, we assume that $\varepsilon_{Y_G}$ and
+$\varepsilon_{\mathbf{M}}$ are independent.
+We define the total mediation effect
+(TME) 
+\cite{Sobel1982AsymptoticModels} of SNP $s$
+as 
+
+$$TME = \alpha_{\mathbf{M}}^T\beta_{\mathbf{M}}.$$
+
+\noindent We are interested in SNPs with large TME, which
+we prioritize with the test of $H_0:~TME = 0$.
+We assess this hypothesis with a permutation test, as
+more direct methods of computing standard errors
+for the estimated TME are often biased \cite{Mackinnon2004,Shan2019},
+obtaining a permutation $P$-value.
+We also provide an option to estimate
+an asymptotic approximation to the
+standard error of $TME$ 
+and conduct a Wald-type test for
+$TME = 0$. This asymptotic option 
+is significantly faster at
+the cost of inflated false positives 
+(see \textbf{Supplemental Materials}
+and 
+\textbf{Supplemental Figure \ref{fig:ch4_fig2}}).
+Corresponding to the $t$ testing triplets identified, 
+we obtain a vectors of length $t$ of TMEs and $P$-values
+for each distal eSNP to $G$. We estimate
+Storey et al's $q$-value for each test to adjust
+for multiple testing.
+For the predictive model, we select distal
+SNPs with $TME \neq 0$ 
+at a given $q$-value threshold ($q < 0.10$
+as a default)
+and include them with all local SNPs in
+a design matrix. We then find estimated SNP
+weights using either elastic net or weighted least
+squared regression.
+
+\subsubsection{Transcriptomic imputation with DePMA}
+In an external GWAS panel, if individual SNPs are 
+available, we construct the genetically regulated
+expression (GReX) of gene $G$
+directly using $\hat{w}_G$ and $\hat{w}_t$:
+
+$$GReX_G = \mathbf{X}_{t,GWAS}\hat{w}_{t} + 
+\mathbf{X}_{G,GWAS}\hat{w}_G,$$
+
+\noindent where $\mathbf{X}_{t,GWAS}$ is the matrix of dosages of the
+$t$ distal-SNPs and $\mathbf{X}_{G,GWAS}$ is the matrix of 
+dosages of the local SNPs to gene $G$ in the external GWAS
+panel. $GREX_G$ can be used in downstream tests of association.
+If individual SNPs are not available, the weighted
+burden test can be employed using summary statistics with
+permutation follow-up
+test \cite{Gusev2016}.
+
+\subsection{Tests of associations}
+
+
+If individual SNPs are not available, then the weighted burden
+$Z$-test proposed by Gusev et al can be employed \cite{Gusev2016} 
+using
+summary statistics. Briefly, we compute
+
+\begin{equation}\label{wbtest}
+\begin{split}
+\tilde{Z} & = \frac{\mathbf{W}Z}{(\mathbf{W}\Sigma_{s,s}\mathbf{W}^T)^{1/2}}.
+\end{split}
+\end{equation}
+
+Here, $Z$ is the vector of $Z$-scores of SNP-trait
+associations for SNPs used in estimating $\hat{w}_{M_j}$
+and $\hat{w}_G$. The matrix $W$ is defined as 
+$\Sigma_{e,s}\Sigma_{s,s}^{-1}$, the product of
+the covariance matrix between all SNPs
+and the expression of gene $G$ and the covariance
+matrix among all SNPs. These covariance matrices
+are estimated from the reference panel used to estimate
+$\hat{w}_{M_j}$
+and $\hat{w}_G$.
+and $\hat{w}_G$. The test statistic $\tilde{Z}$
+can be compared to the standard Normal distribution
+for inference.
+We implement a permutation
+test conditioning
+on the GWAS effect sizes to assess
+whether the same distribution
+of $\hat{w}_G$ effect
+sizes could yield a significant
+association by chance \cite{Gusev2016}. 
+We
+permute $\hat{w}_G$ 1,000
+times without replacement
+and recompute the weighted
+burden test statistic
+to generate a permutation
+null distribution for $\tilde{Z}$.
+This permutation test
+is only conducted for
+overall associations
+at a user-defined significance
+level. 
+
+Lastly, we also 
+implement a test to assess
+the information added from distal-eSNPs
+in the weighted burden test beyond
+what we find from local SNPs.
+This added-last test
+can be thought of as
+a group added-last test
+in regression analysis, applied
+here to GWAS summary statistics.
+Let $Z_l$ and 
+$Z_d$  be the vector of $Z$-scores
+from GWAS summary statistics
+from
+local and distal-SNPs identified
+by a MOSTWAS model. 
+The local
+and distal-SNP effects
+from the MOSTWAS model are represented
+in $\mathbf{w}_l$ and 
+$\mathbf{w}_d$.
+Formally, we test
+whether the weighted $Z$-score $\tilde{Z}_d \equiv \mathbf{w}_d^TZ_d$
+from distal-SNPs is significantly
+larger than 0 given the observed
+weighted $Z$-score from local SNPs $\tilde{Z}_{l} \equiv \mathbf{w}_l^TZ_l$,
+drawing from the assumption that
+$(\tilde{Z}_l,\tilde{Z}_d)$
+follow a bivariate Normal distribution. Namely, we
+conduct a two-sided
+Wald-type test for the null
+hypothesis:
+
+$$H_0: \mathbf{w}_d^T\mathbf{Z}_d | \mathbf{w}_l^T\mathbf{Z}_l = \tilde{Z}_{l,\text{obs}} = 0.$$
+
+Under the null hypothesis,
+we can derive that the
+distribution of $\tilde{Z}_d|\tilde{Z}_l = \tilde{Z}_{l,\text{obs}}$
+is normally distributed
+with mean and variance
+determined from the observed
+local $\tilde{Z}_l$-score,
+the SNP-effect size
+vectors $\mathbf{w}_l$
+and $\mathbf{w}_d$,
+and components of the linkage
+disequilibrium as estimated
+from the reference panel \cite{Pasaniuc2014FastEnrichment}.
+Full details and derivation
+for this added-last test
+are given in \textbf{Supplemental
+Methods}.
+
+\subsection{Simulation framework}
+
+We first conducted simulations to assess
+the predictive capability
+and power to detect
+gene-trait associations
+under various phenotype ($h^2_p$),
+local heritability of expression ($h^2_{e,l}$),
+distal heritability of expression ($h^2_{e,d}$),
+and proportion of causal local ($p_{c,l}$)
+and distal ($p_{c,e}$) SNPs
+for MeTWAS and DePMA.
+We considered two scenarios for each
+combination of $(h^2_p, h^2_{e,l}, h^2_{e,d}, p_{c,l},
+p_{c,e})$: (1) the leveraged association
+between the distal-SNP and gene of interest
+exists in both the reference
+and imputation panel, and (2) the leveraged association 
+between distal-SNP and gene of interest
+exists in the reference panel but is null
+in the imputation panel.
+
+Using TCGA data, we 
+extracted 2,592 SNPs local to
+the gene \emph{ESR1} 
+on Chromosome 6 and 1,431 SNPs
+local to the gene \emph{FOXA1}.
+We generated (1) a reference panel with sample
+size 400 with
+simulated SNPs, expressions,
+and one mediators 
+and (2) a GWAS panel of
+1,500 samples with simulated SNPs
+and phenotypes using the following data
+generating process, modified
+from Mancuso et al's framework
+\cite{Mancuso2019ProbabilisticStudies}:
+
+We estimated the linkage disequilibrium $LD$
+matrix of the SNPs $X_G$ with $n$
+samples and $p$ SNPs, as follows
+with regularization to ensure $LD$ is positive semi-definite:
+
+$$LD = \frac{1}{n}X_G^TX_G + \frac{1}{10}I_p.$$ 
+
+We computed the Cholesky decomposition of
+$LD$ for faster sampling
+\cite{Mancuso2019ProbabilisticStudies}.
+We simulated SNPs for a 400-sample
+reference panel $X_{g,ref}$ and 
+1,500-sample GWAS panel $X_{g,GWAS}$.
+
+We then simulated
+effect sizes for $p_{c,l}$ of
+the 2,592 local
+SNPs $w_{g,l}$ 
+from a standard Normal distribution.
+We generated locally heritable
+expression 
+
+$$E_{g,l} = X_{G,ref}^Tw_{g,l} + \varepsilon_l,$$
+
+with $\varepsilon_l \sim N(0,1-h^2_{e,l})$
+and $w_{g,l}$ scaled to ensure the given $h^2_{e,l}$.
+Similarly, we simulated effect sizes
+for $p_{c,d}$ of the 1,431 distal-SNPs
+$w_{g,d}$ and generated the distally heritable
+intensity of the mediator $M_{g,d}$. We constructd
+the distally heritable expression $E_{g,d}$
+by scaling $M_{g,d}$ by $\beta \sim N(0,1)$ and adding random noise
+that scales distal heritability to $h^2_{e,d}$.
+We lastly formed the total expression $E_g = E_{g,l} + E{g,d}$.
+
+Next, we simulated the phenotype
+in the GWAS panel such that
+the variance explained in the phenotype reflects
+only that due to genetics. We drew a
+causal effect size from gene expression $\alpha \sim N(0,1)$.
+We computed the ``unobserved'' gene expression
+in the GWAS panel as 
+
+$$E_{g,GWAS} = X_{g,GWAS,local}^Tw_{g,l} + 
+X_{g,GWAS,distal}^Tw_{g,d}\beta.$$
+
+Here, we also considered a ``null'' case as well, where the
+distal eQTLs are not detected in the GWAS panel (i.e. $w_{g,d} = 0$
+for all distal-SNPs). GWAS summary statistics
+were computed in this step for downstream weighted
+burden testing.
+We then fitted predictive models using MeTWAS, DePMA,
+and local-only models (i.e. FUSION \cite{Gusev2016}),
+computed the adjusted predictive $R^2$
+in the reference panel, and tested
+the gene-trait association in the GWAS panel
+using a weighted burden test.
+The association study power was defined
+as the proportion of gene-trait association
+tests with $P < 2.5 \times 10^{-6}$,
+the Bonferroni-corrected significance threshold
+for testing 20,000 independent genes.
+With these simulated datasets,
+we also assessed the power
+of the distal added-last test
+by computing the proportion
+of significant distal associations
+conditional on the local association
+at FDR-adjusted $P < 0.05$.
+
+\subsection{Data acquisition}
+
+\subsubsection{Multi-omic data from TCGA-BRCA}
+
+We retrieved genotype, RNA expression,
+miRNA expression, and DNA methylation data
+for breast cancer indications in The Cancer Genome Atlas.
+Birdseed genotype files of 914 subject were downloaded
+from the Genome Data Commons (GDC)
+legacy (GRCh37/hg19) archive. Genotype
+files were merged into a single binary PLINK
+file format (BED/FAM/BIM) and imputed
+using the October 2014 (v.3) release of the 1000 Genomes
+Project dataset as a reference panel in
+the standard two-stage imputation approach,
+using SHAPEIT v2.87 for phasing and IMPUTE
+v2.3.2 for imputation
+\cite{OConnell2014,Delaneau2012,Howie2009}.
+We excluded variants (1) with a minor
+allele frequency of less that 1\% based on
+genotype
+dosage, (2) that deviated significantly from
+Hardy-Weinberg equilibrium ($P < 10^{-8}$)
+using appropriate functions in PLINK v1.90b3
+\cite{Wigginton2005,Purcell2007}, and
+(3) located on sex chromosomes.  
+Final TCGA genotype data was coded as dosages,
+with reference and alternative allele coding as in
+dbSNP.
+
+TCGA level-3 normalized RNA-seq expression data,
+miRNA-seq expression data, and DNA methylation
+data collected on Illumina Infinium HumanMethylation450 BeadChip were downloaded
+from the Broad Institute's GDAC Firehose (2016/1/28
+analysis archive). We intersected to the subset
+of samples assayed for
+genotype (4,564,962 variants), 
+RNA-seq (15,568 genes), 
+miRNA-seq (1,046 miRNAs),
+and DNA methylation (485,578 CpG sites), 
+resulting in a total
+of 563 samples. We only consider
+the autosome in our analyses.
+We adjusted gene and miRNA expression
+and DNA methylation by relevant
+covariates (5 principal 
+components of the genotype 
+matrix, tumor stage at diagnosis,
+and age).
+
+\subsubsection{Multi-omic data from ROS/MAP}
+
+We retrieved imputed genotype, RNA expression,
+miRNA expression, and DNA methylation data
+from The Religious Orders Study and Memory and Aging Project (ROS/MAP) Study
+for samples derived from human pre-frontal cortex
+\cite{A.Bennett2013OverviewStudy,A.Bennett2013OverviewProject,DeJager2012ADecline}.We excluded variants (1) with a minor
+allele frequency of less that 1\% based on
+genotype
+dosage, (2) that deviated significantly from
+Hardy-Weinberg equilibrium ($P < 10^{-8}$)
+using appropriate functions in PLINK v1.90b3
+\cite{Wigginton2005,Purcell2007}, and
+(3) located on sex chromosomes. 
+Final ROS/MAP genotype data was coded as dosages,
+with reference and alternative allele coding as in
+dbSNP. We intersectted to the subset
+of samples assayed for 
+genotype (4,141,537 variants), 
+RNA-seq (15,857 genes), 
+miRNA-seq (247 miRNAs),
+and DNA methylation (391,626 CpG sites), resulting in a total
+of 370 samples. We only consider
+the autosome in our analyses.
+We adjusted gene and miRNA expression
+and DNA methylation by relevant
+covariates (20 principal 
+components of the genotype 
+age at death,
+and sex).
+
+\subsubsection{Summary statistics
+for downstream association studies}
+
+For association testing, we downloaded
+iCOGs GWAS summary statistics for
+breast cancer-specific survival for
+women of European ancestry \cite{Guo2015}.
+Funding for BCAC and iCOGS came from: 
+Cancer Research UK [grant numbers 
+C1287/A16563, C1287/A10118, C1287/A10710, 
+C12292/A11174, C1281/A12014, C5047/A8384, 
+C5047/A15007, C5047/A10692, C8197/A16565], 
+the European Union’s Horizon 2020 Research 
+and Innovation Programme (grant numbers 
+634935 and 633784 for BRIDGES and B-CAST respectively), the European Community’s 
+Seventh Framework Programme under grant 
+agreement n$^\circ$ 223175 
+[HEALTHF2-2009-223175] (COGS), 
+the National Institutes of Health 
+[CA128978] and Post-Cancer GWAS 
+initiative [1U19 CA148537, 1U19 
+CA148065-01 (DRIVE) and 1U19 
+CA148112 - the GAME-ON initiative], 
+the Department of Defence [W81XWH-10-1-0341], 
+and the Canadian Institutes of Health Research CIHR)
+for the CIHR Team in Familial Risks of Breast 
+Cancer [grant PSR-SIIRI-701]. All studies and 
+funders as listed in Michailidou
+et al \cite{Michailidou2013,Michailidou2015} 
+and in Guo et al \cite{Guo2015} 
+are acknowledged for their contributions.
+
+
+For association testing, we downloaded
+GWAS summary statistics for risk of
+late-onset Alzheimer's disease 
+from the International Genomics
+of Alzheimer's Project (IGAP)
+\cite{Lambert2013Meta-analysisDisease}.
+We also downloaded GWAS and genome-wide
+association by proxy (GWAX) summary statistics
+for risk of major depressive
+disorder (MDD) from the Psychiatric Genomics
+Consortium \cite{Wray2018Genome-wideDepression}
+and the UK Biobank \cite{Liu2017Case-controlDisease}, respectively.
+
+IGAP is a large two-stage study based on GWAS 
+on individuals of European ancestry. 
+In stage 1, IGAP used genotyped and 
+imputed data on 7,055,881 single 
+nucleotide polymorphisms (SNPs) to 
+meta-analyse four previously-published
+GWAS datasets consisting of 17,008
+Alzheimer's disease cases and 
+37,154 controls (The European 
+Alzheimer's disease Initiative –
+EADI the Alzheimer Disease Genetics 
+Consortium – ADGC The Cohorts for
+Heart and Aging Research in Genomic 
+Epidemiology consortium – CHARGE The 
+Genetic and Environmental Risk in AD 
+consortium – GERAD). In stage 2, 11,632
+SNPs were genotyped and tested for 
+association in an independent set of 
+8,572 Alzheimer's disease cases and 
+11,312 controls. Finally, a 
+meta-analysis was performed combining results from stages 1 and 2.
+
+\subsection{Model training
+and association testing in
+TCGA-BRCA and ROS/MAP}
+
+Using both TCGA-BRCA and
+ROS/MAP multiomic
+data, we first identifed
+associations between
+SNPs and mediators (transcription
+factor genes, miRNAs, and
+CpG methylation sites),
+mediators and gene expression,
+and SNPs and gene expression
+using MatrixEQTL
+\cite{Shabalin2012a}.
+These QTL analyses were
+adjusted for 10 principal
+components of the genotype
+matrix to account for 
+population stratification,
+along with other relevant
+covariates (tumor stage and age
+for TCGA-BRCA, age and sex and smoking status for ROS/MAP).
+For MeTWAS modeling, we considered
+the top 5 mediators associated
+with the gene of interest.
+For DePMA models, we considered
+all distal-SNPs
+associated with gene expression
+at raw $P < 10^{-6}$
+and any local mediators at
+FDR-adjusted $P < 0.05$.
+Local windows for all models
+were set to 0.5 Mb. For association
+testing, we consider
+only genes with significant 
+non-zero
+estimated total
+heritability by
+GCTA-LDMS \cite{Yang2015}
+and cross-validation
+adjusted $R^2 > 0$
+across 5 folds.
+The MeTWAS or DePMA
+model with larger cross-validation
+$R^2$ was considered
+as the final MOSTWAS model
+for a given gene. All
+other modeling options
+in MeTWAS and DePMA
+were set to the defaults
+provided by the MOSTWAS package.
+
+Using TCGA-BRCA models,
+we conducted TWAS burden testing
+\cite{Pasaniuc2014FastEnrichment,Gusev2016} in iCOGs
+GWAS summary statistics
+for breast cancer-specific
+survival in a cohort
+of women of European ancestry.
+We subjected TWAS-identified loci
+at Benjamini-Hochberg \cite{Benjamini1995} 
+FDR-adjusted $P < 0.05$
+to permutation testing,
+and any loci that persisted
+past permutation testing to
+distal variation
+added-last testing.
+
+Using ROS/MAP models,
+we first conducted 
+TWAS burden testing
+in GWAS summary statistics
+for late-onset
+Alzheimer's disease risk
+from IGAP, prioritized
+14 known risk loci identified
+from literature 
+\cite{Lambert2013Meta-analysisDisease,Reitz2014GeneticDisease,Sims2017RareDisease,Yuan2017TheDisease}.
+We subjected TWAS-identified loci
+at Benjamini-Hochberg \cite{Benjamini1995} 
+FDR-adjusted $P < 0.05$
+to permutation testing,
+and any loci that persisted
+past permutation testing to
+distal variation
+added-last testing.
+We similarly conducted TWAS
+for risk of major
+depressive disorder (MDD)
+using GWAS summary statistics
+from PGC (excluding data
+from 23andMe and the UK Biobank)
+with the necessary follow-up
+tests. For any TWAS-identified loci
+that persisted
+permutation in PGC,
+we further conducted TWAS
+in GWAX summary statistics 
+for MDD risk in
+the UK Biobank
+\cite{Liu2017Case-controlDisease}
+for replication.
