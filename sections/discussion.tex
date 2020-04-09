@@ -1,0 +1,165 @@
+Through a variety of simulations and 
+real applications in two settings,
+we demonstrate that multi-omic methods 
+that prioritize distal variation in TWAS 
+have higher predictive performance
+and power to detect cell-specific gene-trait 
+associations \cite{Brown2013IntegrativeEQTLs,Pierce2018Co-occurringMechanisms,vanderWijst2019Single-cellDisease},
+especially when distal variation
+contribute substantially to trait heritability.
+We proposed two methods (MeTWAS
+and DePMA) for
+identifying and including distal
+genetic variants in gene
+expression prediction models.
+We have provided implementations of these
+methods in the MOSTWAS
+(Multi-omic Strategies for Transcriptome-Wide
+Association Studies)
+R package, available freely
+on Github.
+MOSTWAS contains functions
+to train expression models
+with both MeTWAS and DePMA
+and outputs models
+with 5-fold cross-validation $R^2 \geq 0.01$
+and significant germline heritability.
+The package also contains functions and documentation
+for simulation analyses
+\cite{Mancuso2019ProbabilisticStudies},
+the weighted burden \cite{Pasaniuc2014FastEnrichment,Gusev2016}
+and follow-up permutation \cite{Gusev2016} and distal-SNPs
+added-last tests for TWAS
+using GWAS summary statistics,
+and file-formatting. We also provide
+guidelines for parallelization
+to lessen computational time.
+
+Not only does MOSTWAS improve
+transcriptomic imputation both
+in- and out-of-sample, it also provides a test for the 
+identification of heritable mediators that affect
+eventual transcription of the gene
+of interest. These identified mediators
+can provide insight into the
+underlying mechanisms
+for SNP-gene-trait associations
+to improve
+detection of gene-trait
+associations and to prioritize biological units for functional
+follow-up studies.
+Using MOSTWAS and iCOGs
+summary-level GWAS statistics
+for breast cancer-specific survival \cite{Guo2015}, we
+identified 11 survival-associated loci
+that are enriched for p53 binding and
+oxidoreductase activity 
+pathways \cite{Bao2017P53Context,Zhou2016SystematicState}.
+These loci include two genes 
+(\textit{MAP3K6} and \textit{MAP4K5}) encoding
+mitogen-activated protein kinases, which are 
+signalling transduction molecules 
+involved in 
+the progression of aggressive
+breast cancer hormone subtypes
+\cite{Ahmad2016ClinicopathologicalCancers}.
+TWAS using MOSTWAS models
+was able to recapitulate 5 out of 14 known
+Alzheimer's disease risk loci
+in IGAP GWAS summary statistics
+\cite{Lambert2013Meta-analysisDisease},
+which were not recoverable
+with local-only models.
+We showed the utility of 
+the distal-SNPs added-last test
+to prioritize significant distal SNP-gene-trait
+associations
+for follow-up mechanistic studies,
+which could not be identified 
+using traditional local-only TWAS.
+In PGC GWAS summary-level data
+for major depressive disorder
+\cite{Wray2018Genome-wideDepression},
+we found 102 risk loci, 7 of which
+were replicated in independent
+GWAX summary statistics from the UK
+Biobank \cite{Liu2017Case-controlDisease}.
+Three of these seven loci (\textit{SYT1}, 
+\textit{CACNA2D3}, 
+\textit{ADAD2})
+encode important proteins
+involved in synaptic transmission in the brain
+and RNA editing. Studies have shown that variation
+at these loci may lead to loss
+of function at synapses and RNA editing
+that lead to psychiatric disorders
+\cite{Ryan2006GeneGenes,Baker2015IdentificationCycling,Heyes2015GeneticDisorders,Savva2012TheFamily,Slotkin2013Adenosine-to-inosineDisease}.
+All survival- or risk-associated loci identified by MOSTWAS
+were not detected using local-only models.
+
+A considerable limitation
+of MOSTWAS is the 
+increased computational burden
+over local-only modelling, especially
+in DePMA's permutation-based mediation
+analysis for multiple genome-wide mediators.
+We believe a Monte-Carlo resampling
+method will aid
+in scalability by making 
+some standard
+distributional assumptions
+on the effect sizes of
+SNPs and mediators in the DePMA
+mediation model
+\cite{Preacher2012AdvantagesEffects}.
+Nevertheless, we believe that MOSTWAS's gain
+in predictive performance 
+and power to detect gene-trait associations
+may outweigh this computational time.
+In addition,
+RNA-sequencing alignment errors
+can lead to false positives in
+distal-eQTL detection \cite{Saha2019FalseApproved}, 
+and in turn,
+bias the mediation modeling.
+Cross-mapping estimation, as
+described by Saha \etal{} \cite{Saha2019FalseApproved},
+can be used to flag potentially falsely
+positive distal-QTLs that are detected
+as the first step in MeTWAS and DePMA.
+Another limitation of MOSTWAS is
+the general lack of rich multi-omic
+panels, like TCGA-BRCA and ROS/MAP,
+that provide a large set of
+mediating biomarkers that
+may be mechanistically involved
+in gene regulation.
+However, the two-step regression
+framework outlined in MeTWAS
+allows for importing
+mediator intensity models
+trained in other cohorts
+to estimate
+the germline portion
+of total gene expression from
+distal variants.
+
+In conclusion,  
+MOSTWAS provides a user-friendly
+and intuitive tool that extends 
+transcriptomic imputation and
+association studies to include
+distal genetic variants. 
+We demonstrated that the methods
+in MOSTWAS based on
+two-step regression and mediation
+analysis generally out-perform
+local-only models in
+both transcriptomic prediction and TWAS power,
+though at the cost of longer computational times.
+MOSTWAS enables users to utilize rich reference multi-omic 
+datasets for enhanced gene 
+mapping to better understand 
+the genetic etiology of polygenic traits
+and diseases with more direct insight into
+functional follow-up studies.

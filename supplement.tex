@@ -21,6 +21,9 @@
 \DeclareMathOperator{\sech}{sech}
 \DeclareMathOperator{\csch}{csch}
 
+\renewcommand{\thefigure}{S\arabic{figure}}
+\renewcommand{\thetable}{S\arabic{table}}
+
 \usepackage[numbers,compress,super]{natbib}
  
 \newenvironment{theorem}[2][Theorem]{\begin{trivlist}
@@ -70,7 +73,7 @@ through $m$ mediators that are local to $s$.
 Consider the following
 mediation model for $1 \leq j \leq m$:
 
-\begin{equation}\label{mediation}
+\begin{equation}\label{mediationeqn}
 \begin{split}
 Y_G & = X_s\beta_s + \mathbf{M}\beta_{\mathbf{M}} + \mathbf{X}_C\beta_{C} + \varepsilon_{Y_G} \\
 M_j & = X_s\alpha_{M_j} + \mathbf{X}_C\alpha_{C,j} + \varepsilon_{M_j}
@@ -320,16 +323,21 @@ of each predictive model.}
 
 \begin{center}
 \begin{figure}[!h]
-    \includegraphics[width=.9\textwidth]{figures/ch4_suppfig0.pdf}
-    \caption{\emph{Comparison of computation times
-    between local-only and MOSTWAS modelling.}
-    Mean and standard deviation of per-gene computation time
-    across 50 randomly selected genes in TCGA-BRCA.
-    Computations here were done with a 24-core,
-    3.0 GHz processor.}
-    \label{fig:ch4_suppfig0}
+    \includegraphics[width=\textwidth]{figures/ch4_suppfig3_5.png}
+    \caption{\emph{Comparison of in-
+    and out-sample predictive performance
+    of local-only and MOSTWAS expression models.}
+   Median predictive adjusted $R^2$
+   for in-sample (left) and out-sample (right)
+   performance in TCGA-BRCA and ROS/MAP
+   expression models using local-only (red),
+   MeTWAS (blue), and DePMA (green) modelling.
+   The interval provided shows the 25\% and 75\%
+   quartiles. Only genes with significant $h^2$
+   at raw $P < 0.05$ are shown here.}
+    \label{fig:ch4_suppfig3_5}
 \end{figure}
-\end{center} 
+\end{center}
 
 
 \begin{center}
@@ -463,6 +471,19 @@ MDD risk-associated loci identified
 by MOSTWAS models.} TWAS associations with major depressive disorder from GWAS statistics from Psychiatric Genomics Consortium that were replicated with GWAX summary statistics in UK Biobank. The top PGC GWAS SNP in the identified loci with its location and $P$-value are provided.}
 \label{tbl:ch4_supptab3}
 \end{table}
+
+\begin{center}
+\begin{figure}[!h]
+    \includegraphics[width=.9\textwidth]{figures/ch4_suppfig0.pdf}
+    \caption{\emph{Comparison of computation times
+    between local-only and MOSTWAS modelling.}
+    Mean and standard deviation of per-gene computation time
+    across 50 randomly selected genes in TCGA-BRCA.
+    Computations here were done with a 24-core,
+    3.0 GHz processor.}
+    \label{fig:ch4_suppfig0}
+\end{figure}
+\end{center} 
 
 \pagebreak
   

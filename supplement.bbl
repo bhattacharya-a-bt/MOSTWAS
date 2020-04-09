@@ -1,0 +1,54 @@
+\begin{thebibliography}{1}
+
+\bibitem{Bishop}
+Y.~M. Bishop et~al.
+\newblock {\em {Discrete Multivariate Analysis: Theory and Practice}}.
+\newblock Springer, New York, 1975.
+
+\bibitem{Sobel1982AsymptoticModels}
+M.~E. Sobel.
+\newblock {Asymptotic Confidence Intervals for Indirect Effects in Structural
+  Equation Models}.
+\newblock {\em Sociological Methodology}, 13:290, 1982.
+
+\bibitem{Sobel1987DirectModels}
+M.~E. Sobel.
+\newblock {Direct and Indirect Effects in Linear Structural Equation Models}.
+\newblock {\em Sociological Methods {\&} Research}, 16(1):155--176, 8 1987.
+
+\bibitem{Pasaniuc2014FastEnrichment}
+B.~Pasaniuc et~al.
+\newblock {Fast and accurate imputation of summary statistics enhances evidence
+  of functional enrichment}.
+\newblock {\em Bioinformatics}, 30(20):2906--2914, 2014.
+
+\bibitem{Gusev2016}
+A.~Gusev et~al.
+\newblock {Integrative approaches for large-scale transcriptome-wide
+  association studies}.
+\newblock {\em Nature Genetics}, 48(3):245--252, 3 2016.
+
+\bibitem{Koch2013LongGenome}
+E.~Koch et~al.
+\newblock {Long Range Linkage Disequilibrium across the Human Genome}.
+\newblock {\em PLoS ONE}, 8(12):e80754, 12 2013.
+
+\bibitem{Park2019Population-specificVariants}
+L.~Park.
+\newblock {Population-specific long-range linkage disequilibrium in the human
+  genome and its influence on identifying common disease variants}.
+\newblock {\em Scientific Reports}, 9(1):1--13, 12 2019.
+
+\bibitem{Benjamini1995}
+Y.~Benjamini and Y.~Hochberg.
+\newblock {Controlling the False Discovery Rate: A Practical and Powerful
+  Approach to Multiple}.
+\newblock Technical Report~1, 1995.
+
+\bibitem{Lambert2013Meta-analysisDisease}
+J.~C. Lambert et~al.
+\newblock {Meta-analysis of 74,046 individuals identifies 11 new susceptibility
+  loci for Alzheimer's disease}.
+\newblock {\em Nature Genetics}, 45(12):1452--1458, 12 2013.
+
+\end{thebibliography}

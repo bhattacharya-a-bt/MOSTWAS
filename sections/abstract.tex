@@ -1,0 +1,32 @@
+\begin{abstract}
+Traditional predictive models for transcriptome-wide association
+studies (TWAS) consider only single nucleotide polymorphisms (SNPs)
+local to genes of interest and perform parameter shrinkage
+with a regularization process. These approaches ignore the effect of
+distal-SNPs or possible effects underlying the SNP-gene
+association. Here, we outline multi-omic strategies for transcriptome
+imputation from germline genetics for testing gene-trait associations
+by prioritizing distal-SNPs to the gene of interest. In one extension,
+we identify mediating biomarkers (CpG sites, microRNAs, and
+transcription factors) highly associated with gene expression and
+train predictive models for these mediators using their local
+SNPs. Imputed values for mediators are then incorporated into the
+final model as fixed effects with local SNPs to the
+gene included as regularized effects. In the second extension, we
+assess distal-eSNPs (SNPs in eQTLs) 
+for their mediation effect through mediators local
+to these distal-eSNPs. Highly mediated distal-eSNPs are then included
+in the eventual transcriptomic prediction model. We show considerable gains in percent variance explained of gene
+expression and TWAS power to detect gene-trait associations
+using simulation analysis and real data
+applications with TCGA breast cancer data and in ROS/MAP brain tissue
+data.  This
+integrative approach to transcriptome-wide imputation and association
+studies aids in understanding the complex interactions underlying
+genetic regulation within a tissue and identifying important risk
+genes for various traits and disorders.
+\end{abstract}
+
+\begin{keyword}
+TWAS\sep GWAS \sep eQTL \sep mediation analysis
+\end{keyword}

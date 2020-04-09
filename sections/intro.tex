@@ -1,0 +1,69 @@
+Genomic methods that borrow information
+from multiple data sources, or ``omics'' assays, offer advantages in
+interpretability, statistical efficiency, and opportunities
+to understand the flow of information in disease regulation
+\cite{Hasin2017,Pinu2019}.
+Transcriptome-wide association studies (TWAS)
+aggregate genetic information
+into functionally-relevant testing units that map
+to genes and their expression in a relevant tissue.
+This gene-based approach combines the effects
+of many regulatory variants into 
+a single testing unit that increases
+study power and more interpretable trait-associated
+genomic loci \cite{Gamazon2015,Gusev2016}. However,
+traditional TWAS methods like PrediXcan and FUSION
+focus on local genetic regulation of
+transcription. These
+methods ignore significant
+portions of heritable
+expression that can be attributed
+to distal genetic variants
+which may indicate complex
+mechanisms that contribute
+to gene regulation.
+
+Recent work in transcriptional regulation has
+estimated that distal genetic variants can account
+for up to 70\% of the variance in gene expression 
+\cite{Brynedal2017, Liu2019}. This result
+accords with Boyle \etal{}'s omnigenic model,
+proposing that regulatory networks are so
+interconnected that a majority of genetic variants in
+the genome, local or distal, have indirect effects on transcription of
+any particular gene
+\cite{Boyle2017, Liu2019}. Many groups have leveraged
+this model to identify distal expression quantitative
+trait loci (eQTLs) by testing
+the effect of a distal-eSNP on an eGene
+mediated through
+a set of genes local to the SNP,
+concluding that many distal-eQTLs are often
+eQTLs for many local genes
+\cite{Brown2013IntegrativeEQTLs,He2013Sherlock:GWAS,Pierce2014,Yang2017,Pierce2018Co-occurringMechanisms,Shan2019}.
+It has been shown previously that
+distal-eQTLs found in regulatory hotspots
+are generally cell-type specific \cite{Brown2013IntegrativeEQTLs,Pierce2018Co-occurringMechanisms,vanderWijst2019Single-cellDisease}.
+Deep learning methods have employed similar logic
+to link GWAS-identified variants to nearby regulatory mechanisms
+for functional hypothesis generation \cite{Arloth2020DeepWAS:Learning}.
+Furthermore, Zhang \etal{}'s recent EpiXcan method demonstrates
+that incorporating epigenetic information into transcriptomic
+prediction models generally improves predictive performance
+and power in detecting gene-trait associations in TWAS \cite{Zhang2019}.
+
+Here, we outline two extensions to TWAS,
+borrowing information from other omics assays to enrich or prioritize
+mediator relationships of eQTLs in expression models.
+Using simulations and 
+data from the The Cancer Genome
+Atlas (TCGA) \cite{McLendon2008} 
+and the Religious Orders Study and 
+the Rush Memory and Aging Project (ROS/MAP) \cite{DeJager2018},
+we show improvements in 
+transcriptomic prediction
+and power to detect
+gene-trait associations.
+These \textbf{M}ulti-\textbf{O}mic \textbf{S}trategies for \textbf{T}ranscriptome-\textbf{W}ide
+\textbf{A}ssociation \textbf{S}tudies are curated in the R package MOSTWAS,
+available freely at \url{www.github.com/bhattacharya-a-bt/MOSTWAS}.
