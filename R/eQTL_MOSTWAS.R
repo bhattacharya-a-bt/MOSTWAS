@@ -43,7 +43,7 @@ eQTL_MOSTWAS <- function(SNP_file_name,
                          p_loc_qtl = 1e-6,
                          p_dis_qtl = 1e-6,
                          FDRcut = 0.05,
-                         useModel = 'modelLinear',
+                         useModel = modelLINEAR,
                          DePMA = F
                        ){
 
@@ -89,16 +89,16 @@ eQTL_MOSTWAS <- function(SNP_file_name,
     useModel = useModel,
     errorCovariance = errorCovariance,
     verbose = TRUE,
-    output_file_name.loc  = output_file_name_loc_qtl,
-    pvOutputThreshold.loc = p_loc_qtl,
+    output_file_name.cis  = output_file_name_loc_qtl,
+    pvOutputThreshold.cis = p_loc_qtl,
     snpspos = snpspos,
     genepos = genepos,
-    locDist = locDist,
+    cisDist = locDist,
     pvalue.hist = TRUE,
     min.pv.by.genesnp = FALSE,
     noFDRsaveMemory = FALSE)
 
-  if (DEPMA){
+  if (DePMA){
 
   a = data.table::fread(output_file_name_dis_qtl)
   snp_dis = a$SNP
@@ -156,11 +156,11 @@ eQTL_MOSTWAS <- function(SNP_file_name,
     useModel = useModel,
     errorCovariance = errorCovariance,
     verbose = TRUE,
-    output_file_name.loc  = output_file_name_loc_med,
-    pvOutputThreshold.loc = pvOutputThreshold_loc,
+    output_file_name.cis  = output_file_name_loc_med,
+    pvOutputThreshold.cis = pvOutputThreshold_loc,
     snpspos = snpspos,
     genepos = genepos,
-    locDist = locDist,
+    cisDist = locDist,
     pvalue.hist = TRUE,
     min.pv.by.genesnp = FALSE,
     noFDRsaveMemory = FALSE)
