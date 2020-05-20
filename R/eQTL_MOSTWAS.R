@@ -301,7 +301,7 @@ eQTL_MOSTWAS <- function(SNP_file_name,
   snps$fileSkipRows = 1;          # one row of column labels
   snps$fileSkipColumns = 1;       # one column of row labels
   snps$fileSliceSize = 2000;      # read file in slices of 2,000 rows
-  snps$LoadFile(SNP_file_name);
+  snps$LoadFile(SNP_file_name_dis);
 
 
   gene = SlicedData$new();
@@ -354,4 +354,3 @@ eQTL_MOSTWAS <- function(SNP_file_name,
          sep='\t')
   }
 }
->>>>>>> d899b0674fc30295ccdaabc889cc2e24167bad2e
