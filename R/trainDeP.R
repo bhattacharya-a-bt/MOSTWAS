@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #' Train and predict gene's predictive model with mediators using DePMA
 #'
 #' The function trains a predictive model of a given gene using top mediators
@@ -616,4 +615,3 @@ trainDeP <- function(geneInt,
     }
 
 }
->>>>>>> d899b0674fc30295ccdaabc889cc2e24167bad2e

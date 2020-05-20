@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 #' Train and predict gene's predictive model with mediators using MeTWAS
 #'
 #' The function trains a predictive model of a given gene using top mediators
@@ -441,5 +440,3 @@ trainExpression <- function(geneInt,
   save(Model,R2,Predicted,Mediators,CisR2,h2,h2.Pvalue,CorMat,
          file = paste0(modelDir,geneInt,'.wgt.med.RData'))
   }
-
->>>>>>> d899b0674fc30295ccdaabc889cc2e24167bad2e
