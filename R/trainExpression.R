@@ -141,8 +141,6 @@ trainExpression <- function(geneInt,
   names(medTrainList) = medList
 
 
-  print('FITTING MEDIATORS')
-  fe.R2 = 0
   if (length(medTrainList) > 0){
     medTrainList = medTrainList[as.numeric(which(sapply(medTrainList,
                                                       function(x) x[3]) >= .01))]
@@ -191,12 +189,21 @@ trainExpression <- function(geneInt,
                              numSNPShift = numSNPShift,
                              ldThresh = ldThresh,
                              snpAnnot = snpAnnot)
+  if (is.null(cisGenoMod$Model)){
+    cisGenoMod$Model = as.data.frame(matrix(nrow = 1,ncol = 4))
+    colnames(cisGenoMod$Model) = c('SNP',
+                                   'Chromosome',
+                                   'Position',
+                                   'Effect')
+    cisGenoMod$Model[1,] = 0
+  }
 
 
   cisGenoMod$Model$Mediator = 'Cis'
   if (exists('trans.mod.df')){
     cisGenoMod$Model = rbind(cisGenoMod$Model,trans.mod.df)
-    }
+  }
+  cisGenoMod$Model = subset(cisGenoMod$Model,Effect!=0)
   cisGenoMod$CVR2 = cisGenoMod$CVR2 + fe.R2
   cisGenoMod$CVR2.cis = cisGenoMod$CVR2 - fe.R2
   cisGenoMod$h2 = herit$h2
