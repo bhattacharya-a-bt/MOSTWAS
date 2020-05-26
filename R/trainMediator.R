@@ -49,7 +49,9 @@ trainMediator <- function(medInt,
 
   fileName = medInt
   colnames(mediator)[1] = 'Mediator'
-  if (is.null(pheno)){ pheno = as.numeric(mediator[mediator$Mediator == medInt,-1]) }
+  if (is.null(pheno)){
+    pheno = as.numeric(mediator[mediator$Mediator == medInt,-1])
+    }
 
   if (!is.null(covariates)){
   res = as.data.frame(cbind(pheno,t(covariates[,-1])))
@@ -120,7 +122,8 @@ trainMediator <- function(medInt,
   mod.df.enet = data.frame(SNP = c(thisSNP$snpid),
                       Chromosome = c(thisSNP$chr),
                       Position = c(thisSNP$pos),
-                      Effect = as.numeric(coef(fin.model.enet,s = 'lambda.min'))[-1])
+                      Effect = as.numeric(coef(fin.model.enet,
+                                               s = 'lambda.min'))[-1])
   mod.df.enet = subset(mod.df.enet,Effect != 0)
 
   fin.model.blup = rrBLUP::mixed.solve(y = pheno,

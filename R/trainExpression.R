@@ -90,7 +90,9 @@ trainExpression <- function(geneInt,
                                prune = prune,
                                snpAnnot = snpAnnot)
 
-  system(paste0('rm -r ',geneInt,'_h2_temp'))
+  if (dir.exists(paste0(geneInt,'_h2_temp/'))){
+    system(paste0('rm -r ',geneInt,'_h2_temp'))
+    }
 
 
   if (herit$P > h2Pcutoff) {
