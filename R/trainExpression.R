@@ -140,7 +140,8 @@ trainExpression <- function(geneInt,
   }
   names(medTrainList) = medList
 
-
+  print('FITTING MEDIATORS')
+  fe.R2 = 0
   if (length(medTrainList) > 0){
     medTrainList = medTrainList[as.numeric(which(sapply(medTrainList,
                                                       function(x) x[3]) >= .01))]
