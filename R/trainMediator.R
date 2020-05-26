@@ -66,6 +66,12 @@ trainMediator <- function(medInt,
   snpList = cisGeno$snpList
   thisSNP = cisGeno$thisSNP
 
+  if (length(snpList) == 0){
+  return(list(Model = NULL,
+              Predicted = NULL,
+              CVR2 = -1))
+    }
+
   if (prune){
     if (ncol(snpCur) == length(pheno)){
       snpCur = t(snpCur)
