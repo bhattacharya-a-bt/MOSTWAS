@@ -136,6 +136,7 @@ estimateHeritability <- function(biomInt,
     impute2.format <- matrix(new.levels[matrix.alleles],ncol=ncol(matrix.alleles))
     gen <- cbind(chr_dosage[,1:5],impute2.format)
     gen[is.na(gen)] <- '<NA>'
+    colnames(gen) = colnames(chr_dosage)
 
     require(data.table)
     data.table::fwrite(gen,genfile,row.names=FALSE,
