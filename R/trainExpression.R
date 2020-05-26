@@ -169,7 +169,9 @@ trainExpression <- function(geneInt,
       trans.mod.df = subset(trans.mod.df,SNP != 'Intercept')
       rownames(trans.mod.df) = NULL
       pheno = pheno - as.numeric(predict(lmCVFit))
-    } else {pheno = pheno}
+    } else {
+      pheno = pheno
+      fixedEffects = NULL}
   }
 
 
