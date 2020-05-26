@@ -169,7 +169,7 @@ trainExpression <- function(geneInt,
       trans.mod.df = subset(trans.mod.df,SNP != 'Intercept')
       rownames(trans.mod.df) = NULL
       pheno = pheno - as.numeric(predict(lmCVFit))
-    }
+    } else {pheno = pheno}
   }
 
 
@@ -214,7 +214,7 @@ trainExpression <- function(geneInt,
   CisR2 = cisGenoMod$CVR2.cis
   h2 = abs(herit$h2)
   h2.Pvalue = herit$P
-  #if (R2 < 0.01){ return('CV R2 < 0.01.') }
+  if (R2 < 0.01){ return('CV R2 < 0.01.') }
   ## REMOVE THE NEXT LINE
   CorMat = cbind(Predicted,fixedEffects)
   save(Model,R2,Predicted,Mediators,CisR2,h2,h2.Pvalue,CorMat,
