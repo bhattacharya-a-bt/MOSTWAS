@@ -95,13 +95,6 @@ LDprune <- function(W,
                '--out',bedfile),
          intern = !verbose)
 
-  a = data.table::fread(paste0(bedfile,'.fam'))
-  a$V5 = 2
-  data.table::fwrite(a,paste0(bedfile,'.fam'),
-                     col.names=F,
-                     row.names=F,
-                     quote=F,
-                     sep='\t')
 
   system(paste('plink','--bfile',bedfile,
                '--indep-pairwise',windowSize,numSNPShift,ldThresh,
