@@ -21,6 +21,7 @@ getCisGenotypes <- function(biomInt,
 
   colnames(locs)[1] = 'snpid'
   colnames(snpLocs)[1] = 'snpid'
+  colnames(locs)[3] = 'pos'
 
   locs = subset(locs, snpid == biomInt)
   thisSNP = subset(snpLocs, chr == locs$chr[1] &
