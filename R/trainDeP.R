@@ -288,7 +288,7 @@ trainDeP <- function(geneInt,
 
     Model = subset(Model,Effect != 0)
     R2 = max(adjR2(pheno,pred.blup),adjR2(pheno,pred.enet))
-    if (R2 < 0.01){ return('CV R2 < 0.01.') }
+    #if (R2 < 0.01){ return('CV R2 < 0.01.') }
     h2 = herit$h2
     h2.Pvalue = herit$P
     save(Model,R2,Predicted,h2,h2.Pvalue,
