@@ -42,6 +42,8 @@ burdenTest <- function(wgt,
   pieces = strsplit(wgt,'/')
   fn = pieces[[1]][length(pieces[[1]])]
   geneInt = strsplit(fn,'[.]')[[1]][1]
+  colnames(sumStats)[which(colnames(sumStats) == chr)] = 'Chromosome'
+  colnames(sumStats)[which(colnames(sumStats) == pos)] = 'Position'
 
   if (R2 <= R2cutoff){
     return(paste0(geneInt,
