@@ -177,19 +177,23 @@ burdenTest <- function(wgt,
   Z = c(Z,newZ)
   Model = rbind(Model,ModelOut)
 
-  permutationLD = boot::boot(data = Model$Effect,
-                           statistic = calculateTWAS,
-                           R = nperms,
-                           sim = 'permutation',
-                           Z = Z,
-                           LD = LD)
 
-  twasLD = permutationLD$t0
+
+  twasLD = as.numeric(Model$Effect %*% Z) /
+    sqrt(as.numeric(Model$Effect %*% LD %*% Model$Effect))
   P = 2*pnorm(-abs(twasLD))
 
   if (min(sumS$P) <= P & P <= alpha){
+    permutationLD = boot::boot(data = Model$Effect,
+                               statistic = calculateTWAS,
+                               R = nperms,
+                               sim = 'permutation',
+                               Z = Z,
+                               LD = LD)
     permute.p = mean(abs(permutationLD$t) > abs(permutationLD$t0))
-  } else {permute.p = 1}
+  } else {
+    permute.p = 1
+    }
 
   return(list(Gene = geneInt,
               Z = twasLD,
