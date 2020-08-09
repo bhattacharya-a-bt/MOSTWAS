@@ -164,15 +164,17 @@ burdenTest <- function(wgt,
   snpCur = snpCur[match(c(as.character(Model$SNP),
                           as.character(ModelOut$SNP)),snpCur$SNP),]
   genos = as.matrix(snpCur[,-1])
-  LD = genos %*% t(genos) / (ncol(genos)-1)
-  miss.LD = LD[1:nrow(Model),
-               (nrow(Model)+1):nrow(LD)] %*%
+  LD = Rfast::mat.mult(genos %*% t(genos)) / (ncol(genos)-1)
+  miss.LD = Rfast::mat.mult(LD[1:nrow(Model),
+               (nrow(Model)+1):nrow(LD)],
     solve(LD[(nrow(Model)+1):nrow(LD),
-             (nrow(Model)+1):nrow(LD)] + .1 * diag(nrow(ModelOut)))
+             (nrow(Model)+1):nrow(LD)] + .1 * diag(nrow(ModelOut))))
   Z = as.numeric(sumS$Flip)/as.numeric(sumS$SE)
   impz = t(miss.LD) %*% as.vector(Z)
-  r2pred = diag(t(miss.LD) %*% LD[1:nrow(Model),
-                                  1:nrow(Model)] %*% miss.LD)
+  r2pred = diag(Rfast::mat.mult(Rfast::mat.mult(t(miss.LD),
+                                                LD[1:nrow(Model),
+                                                   1:nrow(Model)]),
+                                miss.LD))
   newZ = as.numeric(impz) / sqrt(r2pred)
   Z = c(Z,newZ)
   Model = rbind(Model,ModelOut)
@@ -192,8 +194,7 @@ burdenTest <- function(wgt,
                                LD = LD)
     permute.p = mean(abs(permutationLD$t) > abs(permutationLD$t0))
   } else {
-    permute.p = 1
-    }
+    permute.p = 1}
 
   return(list(Gene = geneInt,
               Z = twasLD,
