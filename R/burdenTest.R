@@ -132,7 +132,7 @@ burdenTest <- function(wgt,
                   sumS){
 
     search = sumS[i,]
-    ref = annot[annot$GenPos == search$GenPos,]
+    ref = snpAnnot[snpAnnot$GenPos == search$GenPos,]
     if (toupper(ref$REF[1]) != toupper(search$REF[1])){
       return(-1*search$Beta[1])
     } else {return(search$Beta)}
