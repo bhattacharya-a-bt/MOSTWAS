@@ -89,6 +89,9 @@ burdenTest <- function(wgt,
   colnames(sumS)[which(colnames(sumS) == pos)] = 'Position'
   colnames(sumS)[which(colnames(sumS) == ref)] = 'REF'
   colnames(sumS)[which(colnames(sumS) == pval)] = 'P'
+  if (sum(!Model$GenPos %in% sumS$GenPos) > 0){
+    ModelOut = subset(Model,!GenPos %in% sumS$GenPos)
+    }
   Model = subset(Model,GenPos %in% sumS$GenPos)
 
   sumS = sumS[match(Model$GenPos,sumS$GenPos),]
@@ -148,11 +151,23 @@ burdenTest <- function(wgt,
     return(twas)
   }
 
-  Z = as.numeric(sumS$Flip)/as.numeric(sumS$SE)
-  snpCur = subset(snps, SNP %in% Model$SNP)
-  snpCur = snpCur[match(as.character(Model$SNP),snpCur$SNP),]
+  snpCur = subset(snps, SNP %in% c(as.character(Model$SNP),
+                                   as.character(ModelOut$SNP)))
+  snpCur = snpCur[match(c(as.character(Model$SNP),
+                          as.character(ModelOut$SNP)),snpCur$SNP),]
   genos = as.matrix(snpCur[,-1])
   LD = genos %*% t(genos) / (ncol(genos)-1)
+  miss.LD = LD[1:nrow(Model),
+               (nrow(Model)+1):nrow(LD)] %*%
+    solve(LD[(nrow(Model)+1):nrow(LD),
+             (nrow(Model)+1):nrow(LD)] + .1 * diag(nrow(ModelOut)))
+  Z = as.numeric(sumS$Flip)/as.numeric(sumS$SE)
+  impz = t(miss.LD) %*% as.vector(Z)
+  r2pred = diag(t(miss.LD) %*% LD[1:nrow(Model),
+                                  1:nrow(Model)] %*% miss.LD)
+  newZ = as.numeric(impz) / sqrt(r2pred)
+  Z = c(Z,newZ)
+  Model = rbind(Model,ModelOut)
 
   permutationLD = boot::boot(data = Model$Effect,
                            statistic = calculateTWAS,
@@ -164,7 +179,7 @@ burdenTest <- function(wgt,
   twasLD = permutationLD$t0
   P = 2*pnorm(-abs(twasLD))
 
-  if (P < alpha){
+  if (min(sumS$P) <= P & P <= alpha){
     permute.p = mean(abs(permutationLD$t) > abs(permutationLD$t0))
   } else {permute.p = 1}
 
