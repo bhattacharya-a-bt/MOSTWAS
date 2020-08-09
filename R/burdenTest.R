@@ -26,8 +26,9 @@ burdenTest <- function(wgt,
                        sumStats,
                        snpAnnot = NULL,
                        onlyCis = F,
-                       beta,
-                       se,
+                       Z = NULL,
+                       beta = NULL,
+                       se = NULL,
                        chr,
                        pos,
                        ref,
@@ -83,6 +84,13 @@ burdenTest <- function(wgt,
   Model$GenPos = paste(Model$Chromosome,Model$Position,sep = ':')
 
   sumS = subset(sumStats,GenPos %in% Model$GenPos)
+  if (!is.null(Z)){ colnames(sumS)[which(colnames(sumS) == Z)] = 'Z' }
+  if (is.null(beta) & is.null(se)) {
+    sumS$Beta = sumS$Z
+    sumS$SE = 1
+    beta = 'Beta'
+    se = 'SE'
+  }
   colnames(sumS)[which(colnames(sumS) == beta)] = 'Beta'
   colnames(sumS)[which(colnames(sumS) == se)] = 'SE'
   colnames(sumS)[which(colnames(sumS) == chr)] = 'Chromosome'
@@ -125,7 +133,7 @@ burdenTest <- function(wgt,
 
     search = sumS[i,]
     ref = annot[annot$GenPos == search$GenPos,]
-    if (ref$REF[1] != search$REF[1]){
+    if (toupper(ref$REF[1]) != toupper(search$REF[1])){
       return(-1*search$Beta[1])
     } else {return(search$Beta)}
 
