@@ -183,7 +183,7 @@ burdenTest <- function(wgt,
     sqrt(as.numeric(Model.tot$Effect %*% LD %*% Model.tot$Effect))
   P = 2*pnorm(-abs(twasLD))
 
-  if (min(sumS$P) <= P & P <= alpha){
+  if (P <= alpha){
     permutationLD = boot::boot(data = Model$Effect,
                                statistic = calculateTWAS,
                                R = nperms,
