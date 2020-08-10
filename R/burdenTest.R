@@ -175,13 +175,12 @@ burdenTest <- function(wgt,
                                    1:nrow(Model)]) %*%
                                 miss.LD)
   newZ = as.numeric(impz) / sqrt(r2pred)
-  Z = c(Z,newZ)
-  Model = rbind(Model,ModelOut)
+  Z.tot = c(Z,newZ)
+  Model.tot = rbind(Model,ModelOut)
 
 
-
-  twasLD = as.numeric(Model$Effect %*% Z) /
-    sqrt(as.numeric(Model$Effect %*% LD %*% Model$Effect))
+  twasLD = as.numeric(Model.tot$Effect %*% Z.tot) /
+    sqrt(as.numeric(Model.tot$Effect %*% LD %*% Model.tot$Effect))
   P = 2*pnorm(-abs(twasLD))
 
   if (min(sumS$P) <= P & P <= alpha){
@@ -190,7 +189,7 @@ burdenTest <- function(wgt,
                                R = nperms,
                                sim = 'permutation',
                                Z = Z,
-                               LD = LD)
+                               LD = LD[1:nrow(Model),1:nrow(Model)])
     permute.p = mean(abs(permutationLD$t) > abs(permutationLD$t0))
   } else {
     permute.p = 1}
