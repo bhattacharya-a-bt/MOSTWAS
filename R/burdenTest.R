@@ -190,7 +190,8 @@ burdenTest <- function(wgt,
                                sim = 'permutation',
                                Z = Z,
                                LD = LD[1:nrow(Model),1:nrow(Model)])
-    permute.p = mean(abs(permutationLD$t) > abs(permutationLD$t0))
+    permute.p = (nperms * mean(abs(permutationLD$t) >
+                                 abs(permutationLD$t0)) + 1)/(nperms+1)
   } else {
     permute.p = 1}
 
