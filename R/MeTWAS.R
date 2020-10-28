@@ -92,7 +92,7 @@ MeTWAS <- function(geneInt,
 
   }
 
-  tmpBed = tempfile(fileext = ".bed")
+  tmpBed = paste0(tempFolder,"MeTWAS_",geneInt,".bed")
   bigsnpr::snp_writeBed(midSNP,tmpBed)
 
   system(paste('gcta64',
