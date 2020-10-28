@@ -15,6 +15,7 @@ reference:
     contents:
       - trainExpression
       - trainDeP
+      - MeTWAS
   - title: "Association testing"
     desc: >
       Functions from TWAS association testing
@@ -49,3 +50,4 @@ reference:
       - testTME
       - trainMediator
       - trainSNPPheno
+      - trainLocalModel
