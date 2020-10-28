@@ -197,7 +197,7 @@ Here's an example of what a SNP dosage file looks like:
 
 ```{r, echo=F}
 
-head(data.table::fread('~/MOSTWAS/inst/extdata/snps.txt'))[,1:10]
+head(data.table::fread('C:/Users/Arjun/OneDrive - University of North Carolina at Chapel Hill/MOSTWAS/inst/extdata/snps.txt'))[,1:10]
 
 ```
 
