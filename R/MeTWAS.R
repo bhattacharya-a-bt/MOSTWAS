@@ -74,7 +74,8 @@ MeTWAS <- function(geneInt,
                     snpObj$map$physical.pos > ml$left - cisDist))
 
   }
-  midSNP = bigsnpr::snp_attach(subset(snpObj,ind.col = w))
+  midSNPfile = subset(snpObj,ind.col = w)
+  midSNP = bigsnpr::snp_attach(midSNPfile)
   midSNP$fam$affection = pheno
 
   if (prune){
@@ -235,5 +236,6 @@ MeTWAS <- function(geneInt,
   save(Model,R2,Predicted,Mediators,CisR2,h2,h2.Pvalue,CorMat,
        file = paste0(modelDir,geneInt,'.wgt.med.RData'))
   rm(midSNP)
+  file.remove(midSNPfile)
 
 }
