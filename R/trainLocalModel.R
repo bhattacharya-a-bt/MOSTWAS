@@ -55,7 +55,7 @@ trainLocalModel <- function(phenoInt,
     mod.enet <- bigstatsr::big_spLinReg(midSNP.cur$genotypes,
                          pheno[train[[i]]],
                          ind.train = train[[i]],
-                         alphas = .5, warn = FALSE)
+                         alphas = .5,K = 5, warn = FALSE)
     pred.enet[test[[i]]] = predict(mod.enet,
                                    midSNP.cur$genotypes,
                         ind.row = test[[i]])
@@ -74,7 +74,7 @@ trainLocalModel <- function(phenoInt,
 
     fin.model.enet = bigstatsr::big_spLinReg(midSNP.cur$genotypes,
                                              pheno,
-                                             alphas = .5, warn = FALSE)
+                                             alphas = .5, K = 5, warn = FALSE)
     mod.df.enet = data.frame(SNP = midSNP.cur$map$marker.ID,
                              Chromosome = midSNP.cur$map$chromosome,
                              Position = midSNP.cur$map$physical.pos,
