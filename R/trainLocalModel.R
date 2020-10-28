@@ -42,7 +42,7 @@ trainLocalModel <- function(phenoInt,
                              returnTrain = T)
   set.seed(seed)
   test = caret::createFolds(y = pheno,
-                            k = k,
+                            k = nfolds,
                             returnTrain = F)
 
   pred.blup = pred.enet = vector(mode = 'numeric',
