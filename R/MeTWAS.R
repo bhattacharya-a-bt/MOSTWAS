@@ -50,7 +50,8 @@ MeTWAS <- function(geneInt,
                    cores,
                    verbose = T,
                    R2Cutoff = 0.01,
-                   modelDir){
+                   modelDir,
+                   tempFolder){
 
   set.seed(seed)
   if (!dir.exists(modelDir)){
