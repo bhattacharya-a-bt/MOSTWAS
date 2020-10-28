@@ -30,7 +30,7 @@ trainLocalModel <- function(phenoInt,
 
   colnames(mediator)[1] = 'Mediator'
   pheno = as.numeric(mediator[mediator$Mediator == phenoInt,-1])
-  ml = subset(medLocs,geneid == lll[i])
+  ml = subset(medLocs,geneid == phenoInt)
   w = which(midSNP$map$chromosome == ml$chr[1] &
               midSNP$map$physical.pos < ml$right + cisDist &
               midSNP$map$physical.pos > ml$left - cisDist)

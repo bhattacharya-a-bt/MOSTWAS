@@ -233,4 +233,6 @@ MeTWAS <- function(geneInt,
   CorMat = cbind(Predicted,fixedEffects)
   save(Model,R2,Predicted,Mediators,CisR2,h2,h2.Pvalue,CorMat,
        file = paste0(modelDir,geneInt,'.wgt.med.RData'))
+  rm(midSNP)
+
 }

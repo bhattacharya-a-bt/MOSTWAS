@@ -28,8 +28,6 @@
 #' @importFrom data.table fread
 #' @importFrom data.table fwrite
 #' @importFrom parallel mclapply
-#' @importFrom IHW ihw
-#' @importFrom IHW adj_pvalues
 #'
 #' @export
 trainDeP <- function(geneInt,
