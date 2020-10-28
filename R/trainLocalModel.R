@@ -38,7 +38,7 @@ trainLocalModel <- function(phenoInt,
 
   set.seed(seed)
   train = caret::createFolds(y = pheno,
-                             k=k,
+                             k=nfolds,
                              returnTrain = T)
   set.seed(seed)
   test = caret::createFolds(y = pheno,
