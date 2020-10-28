@@ -4,8 +4,20 @@
 \alias{addedLastTest}
 \title{Compute weighted burden test}
 \usage{
-addedLastTest(wgt, snps, sumStats, snpAnnot = NULL, beta, se, chr, pos,
-  ref, pval, R2cutoff, locChrom)
+addedLastTest(
+  wgt,
+  snps,
+  sumStats,
+  snpAnnot = NULL,
+  beta,
+  se,
+  chr,
+  pos,
+  ref,
+  pval,
+  R2cutoff,
+  locChrom
+)
 }
 \arguments{
 \item{wgt}{character, name of expression model .RData file}

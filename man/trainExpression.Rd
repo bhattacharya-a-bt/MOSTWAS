@@ -4,11 +4,32 @@
 \alias{trainExpression}
 \title{Train and predict gene's predictive model with mediators using MeTWAS}
 \usage{
-trainExpression(geneInt, snps, snpLocs, mediator, medLocs, covariates,
-  dimNumeric, qtlFull, h2Pcutoff = 0.1, numMed = 5, seed, k,
-  cisDist = 5e+05, parallel = T, prune = T, windowSize = 50,
-  numSNPShift = 5, ldThresh = 0.5, cores, verbose = T, LDMS = F,
-  modelDir, ldScrRegion = 200, snpAnnot = NULL)
+trainExpression(
+  geneInt,
+  snps,
+  snpLocs,
+  mediator,
+  medLocs,
+  covariates,
+  dimNumeric,
+  qtlFull,
+  h2Pcutoff = 0.1,
+  numMed = 5,
+  seed,
+  k,
+  cisDist = 5e+05,
+  parallel = T,
+  prune = F,
+  windowSize = 50,
+  numSNPShift = 5,
+  ldThresh = 0.5,
+  cores,
+  verbose = T,
+  LDMS = F,
+  modelDir,
+  ldScrRegion = 200,
+  snpAnnot = NULL
+)
 }
 \arguments{
 \item{geneInt}{character, identifier for gene of interest}

@@ -4,13 +4,25 @@
 \alias{eQTL_MOSTWAS}
 \title{LD prune a genotype matrix}
 \usage{
-eQTL_MOSTWAS(SNP_file_name, snps_location_file_name,
-  SNP_file_name_dis = NULL, expression_file_name,
-  gene_location_file_name, mediators_file_name, meds_location_file_name,
-  covariates_file_name, output_file_name_loc_qtl, output_file_name_dis_qtl,
-  output_file_name_loc_med = NULL, output_file_name_dis_med = NULL,
-  p_loc_qtl = 1e-06, p_dis_qtl = 1e-06, FDRcut = 0.05,
-  useModel = "modelLinear", DePMA = F)
+eQTL_MOSTWAS(
+  SNP_file_name,
+  snps_location_file_name,
+  SNP_file_name_dis = NULL,
+  expression_file_name,
+  gene_location_file_name,
+  mediators_file_name,
+  meds_location_file_name,
+  covariates_file_name,
+  output_file_name_loc_qtl,
+  output_file_name_dis_qtl,
+  output_file_name_loc_med = NULL,
+  output_file_name_dis_med = NULL,
+  p_loc_qtl = 1e-06,
+  p_dis_qtl = 1e-06,
+  FDRcut = 0.05,
+  useModel = modelLINEAR,
+  DePMA = F
+)
 }
 \arguments{
 \item{SNP_file_name}{character, file name for SNP dosages in MatrixEQTL format}

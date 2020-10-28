@@ -4,11 +4,30 @@
 \alias{estimateHeritability}
 \title{Estimate germline heritability of a biomarker}
 \usage{
-estimateHeritability(biomInt, snps, pheno, snpLocs, mediator, medLocs,
-  covariates, fileName, dimNumeric, numMed = 5, cisDist = 5e+05,
-  needMed = T, prune = F, medList, verbose = F, windowSize,
-  numSNPShift, ldThresh, ldScrRegion = 200, LDMS = F, supplySNP = F,
-  snpAnnot = NULL)
+estimateHeritability(
+  biomInt,
+  snps,
+  pheno,
+  snpLocs,
+  mediator,
+  medLocs,
+  covariates,
+  fileName,
+  dimNumeric,
+  numMed = 5,
+  cisDist = 5e+05,
+  needMed = T,
+  prune = F,
+  medList,
+  verbose = F,
+  windowSize,
+  numSNPShift,
+  ldThresh,
+  ldScrRegion = 200,
+  LDMS = F,
+  supplySNP = F,
+  snpAnnot = NULL
+)
 }
 \arguments{
 \item{biomInt}{character, identifier for biomarker of interest}
@@ -27,7 +46,7 @@ estimateHeritability(biomInt, snps, pheno, snpLocs, mediator, medLocs,
 
 \item{dimNumeric}{integer, number of continuous covariates}
 
-\item{numMed}{integer, number of top mediators to include}
+\item{numMed}{integer, maximum number of mediators to find}
 
 \item{cisDist}{numeric, base pair window of cis definition}
 
@@ -48,8 +67,6 @@ estimateHeritability(biomInt, snps, pheno, snpLocs, mediator, medLocs,
 \item{LDMS}{logical, T/F to run GCTA-LDMS}
 
 \item{supplySNP}{logical, T/F to run GCTA on the full provided snps}
-
-\item{numMed}{integer, maximum number of mediators to find}
 }
 \value{
 heritability estimate and associated LRT P-value

@@ -4,8 +4,23 @@
 \alias{burdenTest}
 \title{Compute weighted burden test}
 \usage{
-burdenTest(wgt, snps, sumStats, snpAnnot = NULL, onlyCis = F, beta, se,
-  chr, pos, ref, pval, R2cutoff, alpha, nperms = 1000)
+burdenTest(
+  wgt,
+  snps,
+  sumStats,
+  snpAnnot = NULL,
+  onlyCis = F,
+  Z = NULL,
+  beta = NULL,
+  se = NULL,
+  chr,
+  pos,
+  ref,
+  pval,
+  R2cutoff,
+  alpha,
+  nperms = 1000
+)
 }
 \arguments{
 \item{wgt}{character, name of expression model .RData file}

@@ -4,8 +4,14 @@
 \alias{convertToDosage}
 \title{Train and predict gene's predictive model with mediators}
 \usage{
-convertToDosage(format = "plink", fileName, doseFile, locsFile,
-  annotFile, append = F)
+convertToDosage(
+  format = "plink",
+  fileName,
+  doseFile,
+  locsFile,
+  annotFile,
+  append = F
+)
 }
 \arguments{
 \item{format}{character, 'plink' or 'vcf'}

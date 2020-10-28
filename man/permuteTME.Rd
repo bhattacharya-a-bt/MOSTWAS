@@ -4,8 +4,15 @@
 \alias{permuteTME}
 \title{Perform permutation test for the total mediation effect}
 \usage{
-permuteTME(snp, expression, mediators, covs, nperms = 1000,
-  parallel = "no", nc)
+permuteTME(
+  snp,
+  expression,
+  mediators,
+  covs,
+  nperms = 1000,
+  parallel = "no",
+  nc
+)
 }
 \arguments{
 \item{snp}{vector, SNP of interest}

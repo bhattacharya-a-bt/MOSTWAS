@@ -4,8 +4,16 @@
 \alias{simEQTL}
 \title{Simulate eQTL reference panel}
 \usage{
-simEQTL(geno.loc, geno.dis, nqtl, b_qtls.loc, b_qtls.dis, eqtl_h2.loc,
-  eqtl_h2.dis, numMed)
+simEQTL(
+  geno.loc,
+  geno.dis,
+  nqtl,
+  b_qtls.loc,
+  b_qtls.dis,
+  eqtl_h2.loc,
+  eqtl_h2.dis,
+  numMed
+)
 }
 \arguments{
 \item{geno.loc}{data.frame, reference genotypes for local SNPs}

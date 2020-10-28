@@ -1,19 +1,18 @@
 Package: MOSTWAS
 Title: Multi-Omic Strategies for Transcriptome-Wide Association Studies
-Version: 0.0.3
+Version: 0.1.0
 Authors@R:
     person(given = "Arjun",
            family = "Bhattacharya",
            role = c("aut", "cre"),
            email = "bhattacharya.a.bt@gmail.com")
 Description: Enrichment for transcriptome imputation and association studies using mediating biomarkers.
-Imports: caret, rrBLUP, IHW, abind, MatrixEQTL, dplyr, glmnet
+Imports: caret, rrBLUP, IHW, abind, MatrixEQTL, dplyr, glmnet, bigsnpr, bigstatsr
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 VignetteBuilder: knitr
 Suggests: 
     testthat, knitr, rmarkdown
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 URL: https://bhattacharya-a-bt.github.io/MOSTWAS https://www.github.com/bhattacharya-a-bt/MOSTWAS
-

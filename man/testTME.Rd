@@ -4,8 +4,18 @@
 \alias{testTME}
 \title{Run TME tests through a data.frame of mediators}
 \usage{
-testTME(i, mediator, qtMed, transSNPs, pheno, sobel = F, nperms = 1000,
-  cores, covariates, parallel = "no")
+testTME(
+  i,
+  mediator,
+  qtMed,
+  transSNPs,
+  pheno,
+  sobel = F,
+  nperms = 1000,
+  cores,
+  covariates,
+  parallel = "no"
+)
 }
 \arguments{
 \item{i}{integer, row of data.frame}

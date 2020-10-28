@@ -4,8 +4,17 @@
 \alias{LDprune}
 \title{LD prune a genotype matrix}
 \usage{
-LDprune(W, snpList, snpLocs, fileName, windowSize, numSNPShift, ldThresh,
-  verbose = T, snpAnnot = NULL)
+LDprune(
+  W,
+  snpList,
+  snpLocs,
+  fileName,
+  windowSize,
+  numSNPShift,
+  ldThresh,
+  verbose = T,
+  snpAnnot = NULL
+)
 }
 \arguments{
 \item{W}{matrix, dosage of SNPs}

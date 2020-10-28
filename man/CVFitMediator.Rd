@@ -4,8 +4,15 @@
 \alias{CVFitMediator}
 \title{Fit a single split in cross-validation for a given biomarker}
 \usage{
-CVFitMediator(foldNum, parts.train, parts.test, pheno, snpCur,
-  parallel = T, fixedEffects = NULL)
+CVFitMediator(
+  foldNum,
+  parts.train,
+  parts.test,
+  pheno,
+  snpCur,
+  parallel = T,
+  fixedEffects = NULL
+)
 }
 \arguments{
 \item{foldNum}{integer, which fold of the k splits}

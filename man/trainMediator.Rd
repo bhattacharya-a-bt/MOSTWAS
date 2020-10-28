@@ -4,9 +4,23 @@
 \alias{trainMediator}
 \title{Train and predict mediator predictive model}
 \usage{
-trainMediator(medInt, pheno = NULL, mediator, medLocs, snps, snpLocs,
-  covariates, seed, k, cisDist = 5e+05, prune = T, windowSize = 50,
-  numSNPShift = 5, ldThresh = 0.5, snpAnnot = NULL)
+trainMediator(
+  medInt,
+  pheno = NULL,
+  mediator,
+  medLocs,
+  snps,
+  snpLocs,
+  covariates,
+  seed,
+  k,
+  cisDist = 5e+05,
+  prune = T,
+  windowSize = 50,
+  numSNPShift = 5,
+  ldThresh = 0.5,
+  snpAnnot = NULL
+)
 }
 \arguments{
 \item{medInt}{character, identifier for mediator of interest}

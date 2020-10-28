@@ -4,9 +4,19 @@
 \alias{trainSNPPheno}
 \title{Train a local-only model for a phenotype}
 \usage{
-trainSNPPheno(pheno, snpCur, snpList, thisSNP, fileName, prune = T,
-  windowSize = 50, numSNPShift = 5, ldThresh = 0.5, verbose = T,
-  snpAnnot = NULL)
+trainSNPPheno(
+  pheno,
+  snpCur,
+  snpList,
+  thisSNP,
+  fileName,
+  prune = T,
+  windowSize = 50,
+  numSNPShift = 5,
+  ldThresh = 0.5,
+  verbose = T,
+  snpAnnot = NULL
+)
 }
 \arguments{
 \item{pheno}{vector, phenotypes}

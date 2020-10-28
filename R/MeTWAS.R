@@ -25,11 +25,9 @@
 #' @return final model for gene along with CV R2 and predicted values
 #'
 #' @importFrom caret createFolds
-#' @importFrom doParallel registerDoParallel
-#' @importFrom data.table fread
-#' @importFrom data.table fwrite
-#' @importFrom glmnet cv.glmnet
-#' @importFrom rrBLUP mixed.solve
+#' @importFrom bigsnpr snp_attach
+#' @importFrom bigsnpr snp_clumping
+#' @importFrom bigsnpr snp_writeBed
 #' @importFrom parallel mclapply
 #' @importFrom abind abind
 #'
