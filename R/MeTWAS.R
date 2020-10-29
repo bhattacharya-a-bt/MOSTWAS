@@ -74,6 +74,9 @@ MeTWAS <- function(geneInt,
                     snpObj$map$physical.pos > ml$left[1] - cisDist))
 
   }
+  if (length(w) == 0){
+    return('SNPs not found')
+  }
   midSNPfile = subset(snpObj,ind.col = w)
   midSNP = bigsnpr::snp_attach(midSNPfile)
   midSNP$fam$affection = pheno
