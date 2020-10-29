@@ -83,9 +83,9 @@ trainLocalModel <- function(phenoInt,
     fin.model.enet = bigstatsr::big_spLinReg(midSNP.cur$genotypes,
                                              pheno,
                                              alphas = .5, K = 5, warn = FALSE)
-    mod.df.enet = data.frame(SNP = midSNP.cur$map$marker.ID,
-                             Chromosome = midSNP.cur$map$chromosome,
-                             Position = midSNP.cur$map$physical.pos,
+    mod.df.enet = data.frame(SNP = midSNP.cur$map$marker.ID[attr(fin.model.enet,'ind.col')],
+                             Chromosome = midSNP.cur$map$chromosome[attr(fin.model.enet,'ind.col')],
+                             Position = midSNP.cur$map$physical.pos[attr(fin.model.enet,'ind.col')],
                              Effect = summary(fin.model.enet)$beta)
     colnames(mod.df.enet) = c('SNP','Chromosome','Position','Effect')
     mod.df.enet = subset(mod.df.enet,Effect != 0)
