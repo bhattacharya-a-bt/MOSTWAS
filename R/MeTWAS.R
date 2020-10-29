@@ -4,11 +4,11 @@
 #' as fixed effects and assesses in-sample performance with cross-validation.
 #'
 #' @param geneInt character, identifier for gene of interest
-#' @param snps data frame, SNP dosages
-#' @param snpLocs data frame, MatrixEQTL locations for SNPs
+#' @param snpObj binsnp object, SNP dosages
 #' @param mediator data frame, mediator intensities
 #' @param medLocs data frame, MatrixEQTL locations for mediators
 #' @param covariates data frame, covariates
+#' @param dimNumeric numeric, number of numeric covariates
 #' @param qtlFull data frame, all QTLs (cis and trans) between mediators and genes
 #' @param h2Pcutoff numeric, P-value cutoff for heritability
 #' @param numMed integer, number of top mediators to include
@@ -16,11 +16,12 @@
 #' @param k integer, number of training-test splits
 #' @param parallel logical, TRUE/FALSE to run glmnet in parallel
 #' @param prune logical, TRUE/FALSE to LD prune the genotypes
-#' @param windowSize integer, window size for PLINK pruning
-#' @param numSNPShift integer, shifting window for PLINK pruning
 #' @param ldThresh numeric, LD threshold for PLINK pruning
 #' @param cores integer, number of parallel cores
-#' @param outputAll logical, include mediator information
+#' @param verbose logical, output everything
+#' @param R2Cutoff numeric, cutoff for model R2
+#' @param modelDir character, directory for saving models
+#' @param tempFolder character, directory of saving snp backing files
 #'
 #' @return final model for gene along with CV R2 and predicted values
 #'
