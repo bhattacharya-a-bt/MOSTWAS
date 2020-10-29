@@ -32,8 +32,16 @@ trainLocalModel <- function(phenoInt,
   pheno = as.numeric(mediator[mediator$Mediator == phenoInt,-1])
   ml = subset(medLocs,geneid == phenoInt)
   w = which(midSNP$map$chromosome == ml$chr[1] &
-              midSNP$map$physical.pos < ml$right + cisDist &
-              midSNP$map$physical.pos > ml$left - cisDist)
+              midSNP$map$physical.pos < ml$right[1] + cisDist &
+              midSNP$map$physical.pos > ml$left[1] - cisDist)
+  if (length(w) == 0){
+    return(list(Model = data.frame(SNP = NA,
+                                   Chromosome = NA,
+                                   Position = NA,
+                                   Effect = NA),
+                Predicted = rep(NA,length = length(pheno)),
+                CVR2 = 0))
+  }
   midSNP.cur = bigsnpr::snp_attach(subset(midSNP,ind.col = w))
 
   set.seed(seed)

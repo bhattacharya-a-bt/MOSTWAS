@@ -70,8 +70,8 @@ MeTWAS <- function(geneInt,
 
     ml = subset(medLocs,geneid == lll[i])
     w = c(w,which(snpObj$map$chromosome == ml$chr[1] &
-                    snpObj$map$physical.pos < ml$right + cisDist &
-                    snpObj$map$physical.pos > ml$left - cisDist))
+                    snpObj$map$physical.pos < ml$right[1] + cisDist &
+                    snpObj$map$physical.pos > ml$left[1] - cisDist))
 
   }
   midSNPfile = subset(snpObj,ind.col = w)
