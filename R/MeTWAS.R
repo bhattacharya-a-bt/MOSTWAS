@@ -65,6 +65,7 @@ MeTWAS <- function(geneInt,
 
   print('ESTIMATING HERITABILITY')
   lll = c(geneInt,medList)
+  lll = lll[!is.na(lll)]
   w = c()
   for (i in 1:length(lll)){
 
