@@ -119,8 +119,8 @@ MeTWAS <- function(geneInt,
                '--out',paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi')),
          intern = !verbose)
 
-  if (file.exists(fread(paste0(strsplit(tmpBed,'.bed')[[1]][1],
-                               '_multi.hsq'),fill=T))){
+  if (file.exists(paste0(strsplit(tmpBed,'.bed')[[1]][1],
+                               '_multi.hsq'))){
   a = fread(paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi.hsq'),fill=T)
   herit = list(h2 = a$Variance[4],
                P = a$Variance[9])
