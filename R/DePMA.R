@@ -61,9 +61,6 @@ DePMA <- function(geneInt,
                   modelDir,
                   tempFolder){
 
-  if (!verbose){
-    sink('/dev/null')
-  }
 
   if (!dir.exists(modelDir)){
     dir.create(modelDir)
@@ -137,9 +134,6 @@ DePMA <- function(geneInt,
                }
 
   if (herit$P > h2Pcutoff) {
-    if (!verbose){
-      sink()
-    }
     return(paste0(geneInt,' is not heritable at P < ',h2Pcutoff))
   }
 
@@ -335,10 +329,6 @@ DePMA <- function(geneInt,
   }
   rm(midSNP)
   file.remove(midSNPfile)
-
-  if (!verbose){
-    sink()
-  }
 
 }
 
