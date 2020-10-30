@@ -183,13 +183,16 @@ DePMA <- function(geneInt,
     } else {include.trans = NULL}
   } else {include.trans = NULL}
   w = c(which(midSNP$map$chromosome == ml$chr[1] &
-              midSNP$map$physical.pos < ml$right + cisDist &
-              midSNP$map$physical.pos > ml$left - cisDist),
+              midSNP$map$physical.pos < ml$right[1] + cisDist &
+              midSNP$map$physical.pos > ml$left[1] - cisDist),
         which(midSNP$map$marker.ID %in% include.trans))
-  midSNPfile = subset(snpObj,ind.col = tot.w)
+  midSNPfile = subset(snpObj,ind.col = w)
   midSNP = bigsnpr::snp_attach(midSNPfile)
 
   print('FITTING FULL MODEL')
+  geno.var = which(apply(as.matrix(midSNP$genotypes[]),2,var) != 0)
+  if (length(geno.var) == 0){return('Final model has no SNPs')}
+  midSNP = bigsnpr::snp_attach(subset(midSNP,ind.col = geno.var))
   fin.model.enet = bigstatsr::big_spLinReg(midSNP$genotypes,
                                            pheno,
                                            alphas = .5,
@@ -293,6 +296,10 @@ DePMA <- function(geneInt,
 
     }
 
+    geno.var = which(apply(as.matrix(midSNP$genotypes[]),2,var) != 0)
+    if (length(geno.var) == 0){
+      pred.enet[test[[i]]] = pred.blup[test[[i]]] = 0
+    } else {
     mod.enet <- bigstatsr::big_spLinReg(snpCur$genotypes,
                                         pheno[train[[i]]],
                                         ind.train = train[[i]],
@@ -305,7 +312,7 @@ DePMA <- function(geneInt,
                                    Z = snpCur$genotypes[train[[i]],])
     pred.blup[test[[i]]] = as.numeric(snpCur$genotypes[test[[i]],] %*%
                                         mod.blup$u)
-    }}
+    }}}
   }
 
   r2.blup = adjR2(pheno,pred.blup)
