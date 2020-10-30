@@ -15,6 +15,9 @@ adjR2 <- function(x,
                   method = 'pearson'){
 
   n = length(x)
+  if (var(x) == 0 | var(y) == 0){
+    return(0)
+  }
   r2 = cor(x,y,method=method)^2
   ar2 = 1 - (1 - r2)*((n-1)/(n-2))
   return(max(0,ar2))

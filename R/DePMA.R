@@ -70,6 +70,9 @@ DePMA <- function(geneInt,
   set.seed(seed)
   colnames(mediator)[1] = 'Mediator'
   pheno = as.numeric(mediator[mediator$Mediator == geneInt,-1])
+  if (var(pheno) == 0){
+    return('Gene expression has variance 0')
+  }
   pheno = (pheno - mean(pheno))/sd(pheno)
 
   print('GATHERING GENOTYPES')
@@ -177,7 +180,7 @@ DePMA <- function(geneInt,
       TME.P = sapply(medTest,function(x) x[[2]])
       p_weights = p.adjust(TME.P,'BH')
       include.trans = transSNPs$SNP[p_weights < 0.10]
-    }
+    } else {include.trans = NULL}
   } else {include.trans = NULL}
   w = c(which(midSNP$map$chromosome == ml$chr[1] &
               midSNP$map$physical.pos < ml$right + cisDist &
