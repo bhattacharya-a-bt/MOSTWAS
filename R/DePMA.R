@@ -228,7 +228,10 @@ DePMA <- function(geneInt,
     qtMedP = subset(qtMedP,SNP %in% tra.eSNP & FDR < 0.05)
 
     if (nrow(qtMedP) != 0){
-      transSNPs = subset(snps,SNP %in% qtMedP$SNP)
+      snps = as.data.frame(cbind(midSNP$map$marker.ID,
+                                 t(midSNP$genotypes[])))
+      colnames(snps) = c('SNP',midSNP$fam$family.ID)
+      transSNPs = subset(snps,SNP %in% qtMed$SNP)
       if (nrow(transSNPs) != 0){
         if (parallel){
           medTest = parallel::mclapply(1:nrow(transSNPs),
