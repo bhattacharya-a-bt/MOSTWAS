@@ -28,7 +28,8 @@ DePMA(
   qtlTra_parts,
   qtMed_parts,
   modelDir,
-  tempFolder
+  tempFolder,
+  R2Cutoff
 )
 }
 \arguments{
@@ -74,11 +75,11 @@ DePMA(
 
 \item{tempFolder}{character, directory of saving snp backing files}
 
+\item{R2Cutoff}{numeric, cutoff for model R2}
+
 \item{qtlFull}{data frame, all QTLs (cis and trans) between mediators and genes}
 
 \item{numMed}{integer, number of top mediators to include}
-
-\item{R2Cutoff}{numeric, cutoff for model R2}
 }
 \value{
 final model for gene along with CV R2 and predicted values
