@@ -59,7 +59,8 @@ DePMA <- function(geneInt,
                   qtlTra_parts,
                   qtMed_parts,
                   modelDir,
-                  tempFolder){
+                  tempFolder,
+                  R2Cutoff){
 
 
   if (!dir.exists(modelDir)){
@@ -301,6 +302,9 @@ DePMA <- function(geneInt,
 
   r2.blup = adjR2(pheno,pred.blup)
   r2.enet = adjR2(pheno,pred.enet)
+  if (max(c(r2.blup,r2.enet)) < R2Cutoff){
+    return(paste0('CV R2 < ',R2Cutoff))
+  }
 
   if (r2.blup <= r2.enet & nrow(mod.df.enet) != 0){
     Model = mod.df.enet
