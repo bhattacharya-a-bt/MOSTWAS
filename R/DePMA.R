@@ -223,7 +223,9 @@ DePMA <- function(geneInt,
                                  length = length(pheno))
   k = length(qtlTra_parts)
   for (i in 1:k){
-
+    if (var(pheno[train[[i]]]) == 0){
+      pred.enet[test[[i]]] = pred.blup[test[[i]]] = 0
+    } else {
     qtlTraP = data.table::fread(qtlTra_parts[i])
     qtMedP = data.table::fread(qtMed_parts[i])
     tra.eSNP = qtlTra$SNP[qtlTraP$gene == geneInt]
@@ -303,7 +305,7 @@ DePMA <- function(geneInt,
                                    Z = snpCur$genotypes[train[[i]],])
     pred.blup[test[[i]]] = as.numeric(snpCur$genotypes[test[[i]],] %*%
                                         mod.blup$u)
-    }
+    }}
   }
 
   r2.blup = adjR2(pheno,pred.blup)
