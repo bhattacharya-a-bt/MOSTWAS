@@ -80,6 +80,7 @@ DePMA <- function(geneInt,
   w = which(snpObj$map$chromosome == ml$chr[1] &
                   snpObj$map$physical.pos < ml$right[1] + cisDist &
                   snpObj$map$physical.pos > ml$left[1] - cisDist)
+  if (length(w) == 0){return('No local SNPs in SNP matrix')}
   tra.eSNP = qtlTra$SNP[qtlTra$gene == geneInt]
   tra.w = which(snpObj$map$marker.ID %in% tra.eSNP)
   tot.w = c(w,tra.w)
