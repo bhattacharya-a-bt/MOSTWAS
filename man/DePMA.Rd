@@ -10,7 +10,7 @@ DePMA(
   mediator,
   medLocs,
   covariates,
-  cisDist = 5e+05,
+  cisDist = 1e+06,
   qtlTra,
   qtMed,
   h2Pcutoff,

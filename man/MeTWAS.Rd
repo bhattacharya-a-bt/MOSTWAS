@@ -16,7 +16,7 @@ MeTWAS(
   numMed = 5,
   seed = 1218,
   k = 5,
-  cisDist = 5e+05,
+  cisDist = 1e+06,
   parallel = T,
   prune = F,
   ldThresh = 0.5,
