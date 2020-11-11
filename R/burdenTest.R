@@ -61,7 +61,7 @@ burdenTest <- function(wgt,
   if (onlyCis){
 
     Model = subset(Model,Chromosome == locChrom)
-    if (CisR2 <= R2cutoff){
+    if (R2 <= R2cutoff){
       return(paste0(geneInt,
                     ' is not locally predicted at R2 > ',
                     R2cutoff))
