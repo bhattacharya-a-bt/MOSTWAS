@@ -9,6 +9,7 @@ reference:
     contents:
       - convertToDosage
       - eQTL_MOSTWAS
+      - mergeFinalModels
   - title: "MOSTWAS modeling"
     desc: >
       Main wrapper functions for MOSTWAS expression models
@@ -18,13 +19,13 @@ reference:
       - DePMA
   - title: "Association testing"
     desc: >
-      Functions from TWAS association testing
+      Functions for TWAS association testing
     contents:
       - burdenTest
       - addedLastTest
   - title: "Simulation framework"
     desc: >
-      Functions from running simulation analysis
+      Functions for running simulation analysis
     contents:
       - regress
       - simBeta
@@ -51,3 +52,5 @@ reference:
       - trainMediator
       - trainSNPPheno
       - trainLocalModel
+      - trainDeP
+      - trainExpression

@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MOSTWAS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -69,7 +69,8 @@
 
       
 
-      </header><div class="row">
+      </header><script src="MOSTWAS_vignette_files/accessible-code-block-0.0.1/empty-anchor.js"></script><link href="MOSTWAS_vignette_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet">
+<script src="MOSTWAS_vignette_files/anchor-sections-1.0/anchor-sections.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Multi-Omic Strategies for TWAS (MOSTWAS)</h1>
@@ -110,22 +111,23 @@
 <div id="using-mostwas" class="section level2">
 <h2 class="hasAnchor">
 <a href="#using-mostwas" class="anchor"></a>Using MOSTWAS</h2>
-<p>MOSTWAS is meant to be run on a high-performance cluster (HPC) and integrates with <a href="http://zzz.bwh.harvard.edu/plink/">PLINK</a> and <a href="https://cnsgenomics.com/software/gcta/">GCTA</a> to perform file formatting, linkage disequilibrium estimation, and heritability estimation. If your HPC already has PLINK and GCTA installed, be sure to load and add those modules to your personal PATH with something like this:</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r">module add plink
-module add gcta</pre></body></html></div>
+<p>MOSTWAS is meant to be run on a high-performance cluster (HPC) and integrates with <a href="https://cnsgenomics.com/software/gcta/">GCTA</a> to perform file formatting, linkage disequilibrium estimation, and heritability estimation. If your HPC already has PLINK and GCTA installed, be sure to load and add those modules to your personal PATH with something like this:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a>module add plink</span>
+<span id="cb1-2"><a href="#cb1-2"></a>module add gcta</span></code></pre></div>
 <p>If PLINK and GCTA aren’t automatically installed, you can simply download and install these software add them manually to your PATH:</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r">module use /path/to/personal/plink
-module use /path/to/persona/gcta
-module load plink
-module load gcta64
-module add plink
-module add gcta</pre></body></html></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>module use <span class="op">/</span>path<span class="op">/</span>to<span class="op">/</span>personal<span class="op">/</span>plink</span>
+<span id="cb2-2"><a href="#cb2-2"></a>module use <span class="op">/</span>path<span class="op">/</span>to<span class="op">/</span>persona<span class="op">/</span>gcta</span>
+<span id="cb2-3"><a href="#cb2-3"></a>module load plink</span>
+<span id="cb2-4"><a href="#cb2-4"></a>module load gcta64</span>
+<span id="cb2-5"><a href="#cb2-5"></a>module add plink</span>
+<span id="cb2-6"><a href="#cb2-6"></a>module add gcta</span></code></pre></div>
 <p>Now, we can go to <code>R</code> to use MOSTWAS.</p>
 <div id="installing-mostwas" class="section level3">
 <h3 class="hasAnchor">
 <a href="#installing-mostwas" class="anchor"></a>Installing MOSTWAS</h3>
 <p>MOSTWAS is available freely on Github. To install the package:</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span>(<span class="st">'bhattacharya-a-bt/MOSTWAS'</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">'bhattacharya-a-bt/MOSTWAS'</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="necessary-input-files" class="section level3">
 <h3 class="hasAnchor">
@@ -163,7 +165,7 @@ module add gcta</pre></body></html></div>
 #&gt; 4:  snp4  10 8067381843
 #&gt; 5:  snp5  10 8065968791
 #&gt; 6:  snp6  10 8067362206</code></pre>
-<p>The <code><a href="../reference/convertToDosage.html">convertToDosage()</a></code> function can convert a .vcf or binary PLINK format (BED/BIM/FAM) into the dosage files needed for MOSTWAS.</p>
+<p>For training models using the <code><a href="../reference/MeTWAS.html">MeTWAS()</a></code> and <code><a href="../reference/DePMA.html">DePMA()</a></code> models, we recommend keeping the genotype files in binary PLINK format (i.e. .bed/.bim/.fam) and reading in the file using the <code>bigsnpr</code> package. Here’s a link to their <a href="https://privefl.github.io/bigsnpr/">documentation</a>.</p>
 </div>
 <div id="eqtl-analysis" class="section level3">
 <h3 class="hasAnchor">
@@ -174,24 +176,25 @@ module add gcta</pre></body></html></div>
 <li>DePMA requires distal-eQTLs between SNPs and genes, and local mediator QTLs for those distal-eQTLs.</li>
 </ul>
 <p>We have provided a wrapper function to do these eQTL analyses with <code>MatrixEQTL</code>:</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r">
-<span class="fu"><a href="../reference/eQTL_MOSTWAS.html">eQTL_MOSTWAS</a></span>(<span class="kw">SNP_file_name</span> <span class="kw">=</span> <span class="st">'snps.txt'</span>,
-             <span class="kw">snps_location_file_name</span> <span class="kw">=</span> <span class="st">'snpLocs.txt'</span>,
-             <span class="kw">SNP_file_name_dis</span> <span class="kw">=</span> <span class="st">'snps_dis.txt'</span>,
-             <span class="kw">expression_file_name</span> <span class="kw">=</span> <span class="st">'genes.txt'</span>,
-             <span class="kw">gene_location_file_name</span> <span class="kw">=</span> <span class="st">'geneLocs.txt'</span>,
-             <span class="kw">mediators_file_name</span> <span class="kw">=</span> <span class="st">'mediators.txt'</span>,
-             <span class="kw">meds_location_file_name</span> <span class="kw">=</span> <span class="st">'medLocs.txt'</span>,
-             <span class="kw">covariates_file_name</span> <span class="kw">=</span> <span class="st">'covs.txt'</span>,
-             <span class="kw">output_file_name_loc_qtl</span> <span class="kw">=</span> <span class="st">'out_loc_qtl.txt'</span>,
-             <span class="kw">output_file_name_dis_qtl</span> <span class="kw">=</span> <span class="st">'out_dis_qtl.txt'</span>,
-             <span class="kw">output_file_name_loc_med</span> <span class="kw">=</span> <span class="st">'out_loc_med.txt'</span>,
-             <span class="kw">output_file_name_dis_med</span> <span class="kw">=</span> <span class="st">'out_dos_med.txt'</span>,
-             <span class="kw">p_loc_qtl</span> <span class="kw">=</span> <span class="fl">1e-6</span>,
-             <span class="kw">p_dis_qtl</span> <span class="kw">=</span> <span class="fl">1e-6</span>,
-             <span class="kw">FDRcut</span> <span class="kw">=</span> <span class="fl">0.05</span>,
-             <span class="kw">useModel</span> <span class="kw">=</span> <span class="st">'modelLinear'</span>,
-             <span class="kw">DePMA</span> <span class="kw">=</span> <span class="no">F</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="fu"><a href="../reference/eQTL_MOSTWAS.html">eQTL_MOSTWAS</a></span><span class="op">(</span>SNP_file_name <span class="op">=</span> <span class="st">'snps.txt'</span>,
+             snps_location_file_name <span class="op">=</span> <span class="st">'snpLocs.txt'</span>,
+             SNP_file_name_dis <span class="op">=</span> <span class="st">'snps_dis.txt'</span>,
+             expression_file_name <span class="op">=</span> <span class="st">'genes.txt'</span>,
+             gene_location_file_name <span class="op">=</span> <span class="st">'geneLocs.txt'</span>,
+             mediators_file_name <span class="op">=</span> <span class="st">'mediators.txt'</span>,
+             meds_location_file_name <span class="op">=</span> <span class="st">'medLocs.txt'</span>,
+             covariates_file_name <span class="op">=</span> <span class="st">'covs.txt'</span>,
+             output_file_name_loc_qtl <span class="op">=</span> <span class="st">'out_loc_qtl.txt'</span>,
+             output_file_name_dis_qtl <span class="op">=</span> <span class="st">'out_dis_qtl.txt'</span>,
+             output_file_name_loc_med <span class="op">=</span> <span class="st">'out_loc_med.txt'</span>,
+             output_file_name_dis_med <span class="op">=</span> <span class="st">'out_dos_med.txt'</span>,
+             p_loc_qtl <span class="op">=</span> <span class="fl">1e-6</span>,
+             p_dis_qtl <span class="op">=</span> <span class="fl">1e-6</span>,
+             FDRcut <span class="op">=</span> <span class="fl">0.05</span>,
+             useModel <span class="op">=</span> <span class="st">'modelLinear'</span>,
+             DePMA <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></code></pre></div>
 <p>We have provided a toggle <code>DePMA</code> that takes in a logical object (i.e. <code>TRUE</code> or <code>FALSE</code>) to do either QTL analysis for DePMA or MeTWAS. <code>MatrixEQTL</code> is also a very intuitive software, so you can easily code your own analyses.</p>
 <p><strong>Please cite <a href="https://www.ncbi.nlm.nih.gov/pubmed/22492648">Shabalin 2012</a> if you use MOSTWAS!</strong></p>
 </div>
@@ -200,83 +203,81 @@ module add gcta</pre></body></html></div>
 <a href="#training-models-with-metwas" class="anchor"></a>Training models with MeTWAS</h3>
 <p>MOSTWAS wrapper functions have multiple options to provide users with freedom in training predictive models. It may get a little confusing, but we’ll cover the options one-by-one.</p>
 <p>You can run MeTWAS all in one, for a given gene (call this gene <code>test</code>):</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r">
-<span class="fu"><a href="../reference/trainExpression.html">trainExpression</a></span>(<span class="kw">geneInt</span> <span class="kw">=</span> <span class="st">'test'</span>, <span class="co">## name of gene of interest</span>
-                <span class="no">snps</span>, <span class="co">## data.frame or data.table for SNP dosages</span>
-                <span class="no">snpLocs</span>, <span class="co">## SNP locations</span>
-                <span class="no">mediator</span>, <span class="co">## mediator intensities</span>
-                <span class="no">medLocs</span>, <span class="co">## mediator locations (four column as in gene locations)</span>
-                <span class="no">covariates</span>,
-                <span class="kw">dimNumeric</span> <span class="kw">=</span> <span class="fl">10</span>, <span class="co">## number of dimensions of covariates that are genotype PCs (usually 5-10)</span>
-                <span class="kw">qtlFull</span> <span class="kw">=</span> <span class="kw pkg">data.table</span><span class="kw ns">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html">fread</a></span>(<span class="st">'out_dis_qtl.txt'</span>), <span class="co">## mediator QTLs (mediators to genes)</span>
-                <span class="kw">h2Pcutoff</span> <span class="kw">=</span> <span class="fl">0.05</span>, <span class="co">## P-value cutoff for likelihood ratio test for heritability estimation</span>
-                <span class="kw">numMed</span> <span class="kw">=</span> <span class="fl">5</span>, <span class="co">## number of mediators considered per gene</span>
-                <span class="no">seed</span>, <span class="co">## seed for reproducibility</span>
-                <span class="no">k</span>, <span class="co">## number of folds for cross-validation</span>
-                <span class="kw">cisDist</span> <span class="kw">=</span> <span class="fl">5e5</span>, <span class="co">## window for local SNPs</span>
-                <span class="kw">parallel</span> <span class="kw">=</span> <span class="no">F</span>, <span class="co">## parallelize fitting local-only mediator models</span>
-                <span class="kw">prune</span> <span class="kw">=</span> <span class="no">T</span>, <span class="co">## toggle LD pruning</span>
-                <span class="kw">windowSize</span> <span class="kw">=</span> <span class="fl">50</span>, <span class="co">## window size for PLINK LD pruning</span>
-                <span class="kw">numSNPShift</span> <span class="kw">=</span> <span class="fl">5</span>, <span class="co">## shifting window for PLINK LD pruning</span>
-                <span class="kw">ldThresh</span> <span class="kw">=</span> <span class="fl">.5</span>, <span class="co">## LD threshold for LD pruning</span>
-                <span class="kw">cores</span> <span class="kw">=</span> <span class="fl">5</span>, <span class="co">## number of cores for parallelization</span>
-                <span class="kw">verbose</span> <span class="kw">=</span> <span class="no">T</span>,
-                <span class="kw">LDMS</span> <span class="kw">=</span> <span class="no">T</span>, <span class="co">## toggle for GCTA-LDMS</span>
-                <span class="kw">modelDir</span> <span class="kw">=</span> <span class="st">'/path/to/MeTWASmodels'</span>, <span class="co">## folder for MeTWAS locations </span>
-                <span class="kw">ldScrRegion</span> <span class="kw">=</span> <span class="fl">200</span>, <span class="co">## region size parameter for GCTA-LDMS</span>
-                <span class="kw">snpAnnot</span> <span class="kw">=</span> <span class="kw">NULL</span> <span class="co">## annotation file for reference and alternative alleles</span>
-                )</pre></body></html></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="fu"><a href="../reference/MeTWAS.html">MeTWAS</a></span><span class="op">(</span><span class="va">geneInt</span>,
+       <span class="va">snpObj</span>,
+       <span class="va">mediator</span>,
+       <span class="va">medLocs</span>,
+       <span class="va">covariates</span>,
+       <span class="va">dimNumeric</span>,
+       <span class="va">qtlFull</span>,
+       h2Pcutoff <span class="op">=</span> <span class="fl">.1</span>,
+       numMed <span class="op">=</span> <span class="fl">5</span>,
+       seed <span class="op">=</span> <span class="fl">1218</span>,
+       k <span class="op">=</span> <span class="fl">5</span>,
+       cisDist <span class="op">=</span> <span class="fl">1e6</span>,
+       parallel <span class="op">=</span> <span class="cn">F</span>,
+       prune <span class="op">=</span> <span class="cn">F</span>,
+       ldThresh <span class="op">=</span> <span class="fl">.5</span>,
+       <span class="va">cores</span>,
+       verbose <span class="op">=</span> <span class="cn">T</span>,
+       R2Cutoff <span class="op">=</span> <span class="fl">0.01</span>,
+       <span class="va">modelDir</span>,
+       <span class="va">tempFolder</span><span class="op">)</span></code></pre></div>
 <p>A few notes on these options:</p>
 <ul>
 <li>
+<code>snpObj</code> is a bigSNP object that is read in using the <code>bigsnpr</code> package. This is a much more memory-efficient and faster approach.</li>
+<li>
 <code>dimNumeric</code> takes in the number of leading rows of the <code>covariates</code> file that are genotype PCs for heritability estimation using GCTA.</li>
 <li>
-<code>qtlFull</code> takes in the QTL results, as a <code>data.frame</code> or <code>data.table</code> that give associations between mediators and genes.</li>
+<code>qtlFull</code> takes in the QTL results, as a <code>data.frame</code> or <code>data.table</code> that give associations between mediators and genes. This is in the format of MatrixEQTL output.</li>
 <li>
 <code>h2Pcutoff</code> gives a <span class="math inline">\(P\)</span>-value cutoff for heritability estimation using GCTA</li>
 <li>
-<code>numMed</code> gives an upper limit to the number of top gene-associated mediators to limit computational time</li>
+<code>numMed</code> gives an upper limit to the number of top gene-associated mediators to limit computational time. Ideally, in the distal QTL analysis between mediators (predictors) and genes (outcomes)</li>
 <li>
-<code>parallel</code> toggles parallel fitting of the <code>numMed</code> local-only models of mediators with an <code>mclapply()</code> implementation. The <code>cores</code> option allows you to set the number of parallel cores for this implementation and doesn’t need to be larger than <code>parallel</code>.</li>
+<code>parallel</code> toggles parallel fitting of the <code>numMed</code> local-only models of mediators with an <code>mclapply()</code> implementation. The <code>cores</code> option allows you to set the number of parallel cores for this implementation.</li>
 <li>
-<code>prune</code> togggles wheter the SNP dosages need to be LD-pruned. We have seen previously that LD-pruning may improve prediction <a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-1942-6">Bhattacharya et al 2020</a>. <code>windowSize</code>, <code>numSNPShift</code>, and <code>ldThresh</code> provide the three parameters that PLINK uses.</li>
-<li>We have also included the option to use GCTA-LDMS for heritability estimation, which is toggled with <code>LDMS = T</code>. We recommend this generally for imputed SNP panels.</li>
+<code>prune</code> togggles wheter the SNP dosages need to be LD-pruned. We have seen previously that LD-pruning may improve prediction <a href="https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-1942-6">Bhattacharya et al 2020</a>. <code>ldThresh</code> provides the LD threshold for clumping.</li>
 <li>
 <code>snpAnnot</code> takes in a data.frame of SNP annotations that includes three columns. This is generally needed if the SNP identifiers are not in 1000GP form (i.e. chrom:position:REF:ALT).</li>
+<li>Models are outputted to <code>modelDir</code> and backing files for <code>bigsnpr</code> packages are stored in <code>tempFolder</code>
+</li>
 </ul>
 </div>
 <div id="training-models-with-depma" class="section level3">
 <h3 class="hasAnchor">
 <a href="#training-models-with-depma" class="anchor"></a>Training models with DePMA</h3>
 <p>You can run DePMA all in one, for a given gene (call this gene <code>test</code>). Many of the options are similar, so we’ll highlight the different options in DePMA:</p>
-<div class="sourceCode" id="cb8"><html><body><pre class="r">
-<span class="fu"><a href="../reference/trainDeP.html">trainDeP</a></span>(<span class="kw">geneInt</span> <span class="kw">=</span> <span class="st">'test'</span>,
-         <span class="no">snps</span>,
-         <span class="no">snpLocs</span>,
-         <span class="no">mediator</span>,
-         <span class="no">medLocs</span>,
-         <span class="no">covariates</span>,
-         <span class="kw">cisDist</span> <span class="kw">=</span> <span class="fl">5e5</span>,
-         <span class="no">qtlTra</span>, <span class="co"># full distal eQTL data.frame</span>
-         <span class="no">qtMed</span>, <span class="co"># full local mediator QTL data.frame</span>
-         <span class="no">h2Pcutoff</span>,
-         <span class="no">dimNumeric</span>,
-         <span class="no">verbose</span>,
-         <span class="no">seed</span>,
-         <span class="kw">sobel</span> <span class="kw">=</span> <span class="no">F</span>, <span class="co"># toggle to T if using the asymptotic Sobel test for mediation analysis</span>
-         <span class="kw">nperms</span> <span class="kw">=</span> <span class="fl">1000</span>, <span class="co"># number of permutations for permutation test for mediation analysis</span>
-         <span class="no">k</span>,
-         <span class="kw">parallel</span> <span class="kw">=</span> <span class="no">F</span>,
-         <span class="kw">parType</span> <span class="kw">=</span> <span class="st">'no'</span>, <span class="co"># parallelization type for permutation testing (uses boot package)</span>
-         <span class="no">prune</span>,
-         <span class="kw">windowSize</span> <span class="kw">=</span> <span class="fl">50</span>,
-         <span class="kw">numSNPShift</span> <span class="kw">=</span> <span class="fl">5</span>,
-         <span class="kw">ldThresh</span> <span class="kw">=</span> <span class="fl">.5</span>,
-         <span class="no">cores</span>,
-         <span class="no">qtlTra_parts</span>, <span class="co"># vector of filenames for distal eQTLs for training sets (needed for cross-validation)</span>
-         <span class="no">qtMed_parts</span>, <span class="co"># vector of filenames for local mediator QTLs for training sets (needed for CV)</span>
-         <span class="no">modelDir</span>,
-         <span class="kw">snpAnnot</span> <span class="kw">=</span> <span class="kw">NULL</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="fu"><a href="../reference/DePMA.html">DePMA</a></span><span class="op">(</span>geneInt <span class="op">=</span> <span class="st">'test'</span>,
+      <span class="va">snpObj</span>,
+      <span class="va">mediator</span>,
+      <span class="va">medLocs</span>,
+      <span class="va">covariates</span>,
+      cisDist <span class="op">=</span> <span class="fl">1e6</span>,
+      <span class="va">qtlTra</span>,
+      <span class="va">qtMed</span>,
+      <span class="va">h2Pcutoff</span>,
+      <span class="va">dimNumeric</span>,
+      <span class="va">verbose</span>,
+      <span class="va">seed</span>,
+      sobel <span class="op">=</span> <span class="cn">F</span>,
+      nperms <span class="op">=</span> <span class="fl">1000</span>,
+      <span class="va">k</span>,
+      <span class="va">parallel</span>,
+      parType <span class="op">=</span> <span class="st">'no'</span>,
+      <span class="va">prune</span>,
+      ldThresh <span class="op">=</span> <span class="fl">.5</span>,
+      <span class="va">cores</span>,
+      <span class="va">qtlTra_parts</span>,
+      <span class="va">qtMed_parts</span>,
+      <span class="va">modelDir</span>,
+      <span class="va">tempFolder</span>,
+      <span class="va">R2Cutoff</span><span class="op">)</span></code></pre></div>
 <p>A few notes on these options:</p>
 <ul>
 <li>
@@ -289,37 +290,38 @@ module add gcta</pre></body></html></div>
 <div id="running-multiple-genes-in-parallel" class="section level3">
 <h3 class="hasAnchor">
 <a href="#running-multiple-genes-in-parallel" class="anchor"></a>Running multiple genes in parallel</h3>
-<p>Usually, you’ll need to train models for 15,000+ genes in an RNA-seq panel. Serially running both MeTWAS and DePMA is very slow, even when parallelizing within a single gene. We recommend a batch submission procedure, perhaps using the <code>rslurm</code> package. Given that the genes of interest as in the vector <code>geneList</code>, we can simply define a <code>data.frame</code> of parameters and submit multiple jobs all in one:</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r">
-<span class="no">pars</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(<span class="kw">geneInt</span> <span class="kw">=</span> <span class="no">geneList</span>)
-<span class="no">batch_DeP</span> <span class="kw">&lt;-</span> <span class="kw">function</span>(<span class="no">geneInt</span>){
-  <span class="fu"><a href="../reference/trainDeP.html">trainDeP</a></span>(<span class="no">geneInt</span>,<span class="no">snps</span>,<span class="no">snpLocs</span>,<span class="no">mediator</span>,<span class="no">...</span>)
-}
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">rslurm</span>)
-<span class="no">sjob</span> <span class="kw">&lt;-</span> <span class="fu">slurm_apply</span>(<span class="no">batch_DeP</span>, <span class="no">pars</span>, <span class="kw">jobname</span> <span class="kw">=</span> <span class="st">'test_DePMA'</span>,
-                    <span class="kw">nodes</span> <span class="kw">=</span> <span class="fl">2</span>, <span class="kw">cpus_per_node</span> <span class="kw">=</span> <span class="fl">2</span>, <span class="kw">submit</span> <span class="kw">=</span> <span class="fl">TRUE</span>)</pre></body></html></div>
+<p>Usually, you’ll need to train models for 15,000+ genes in an RNA-seq panel. Serially running DePMA is slow (MeTWAS is quite fast), even when parallelizing within a single gene. We recommend a batch submission procedure, perhaps using the <code>rslurm</code> package. Given that the genes of interest as in the vector <code>geneList</code>, we can simply define a <code>data.frame</code> of parameters and submit multiple jobs all in one:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="va">pars</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>geneInt <span class="op">=</span> <span class="va">geneList</span><span class="op">)</span>
+<span class="va">batch_DeP</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">geneInt</span><span class="op">)</span><span class="op">{</span>
+  <span class="fu"><a href="../reference/DePMA.html">DePMA</a></span><span class="op">(</span><span class="va">geneInt</span>,<span class="va">snpObj</span>,<span class="va">mediator</span>,<span class="va">...</span><span class="op">)</span>
+<span class="op">}</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">rslurm</span><span class="op">)</span>
+<span class="va">sjob</span> <span class="op">&lt;-</span> <span class="fu">slurm_apply</span><span class="op">(</span><span class="va">batch_DeP</span>, <span class="va">pars</span>, jobname <span class="op">=</span> <span class="st">'test_DePMA'</span>,
+                    nodes <span class="op">=</span> <span class="fl">2</span>, cpus_per_node <span class="op">=</span> <span class="fl">2</span>, submit <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p>This generates <code>R</code> scripts for every gene and submits them to your SLURM cluster. You can delete all the files using <code>cleanup_files(sjob)</code>.</p>
 <p>Other options include the <code>BatchJobs</code> <a href="https://cran.r-project.org/web/packages/BatchJobs/BatchJobs.pdf">package on CRAN</a> or <a href="https://snakemake.readthedocs.io/en/stable/">snakemake</a>.</p>
-<p>With <code>slurm_apply()</code>, we were able to fit a whole RNA-seq panel using both MeTWAS and DePMA in roughly 28 hours.</p>
+<p>With <code>slurm_apply()</code>, we were able to fit a whole RNA-seq panel using both MeTWAS and DePMA in roughly 20 hours.</p>
 </div>
 <div id="fusion-like-association-testing" class="section level3">
 <h3 class="hasAnchor">
 <a href="#fusion-like-association-testing" class="anchor"></a>FUSION-like association testing</h3>
 <p>We provide functions for testing as well. The function <code><a href="../reference/burdenTest.html">burdenTest()</a></code> does the weighted burned test of association and gives the option for permutation testing, as in <a href="https://www.ncbi.nlm.nih.gov/pubmed/26854917">FUSION</a>:</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r">burdenTest(wgt, ### .RData file name for a given gene's MOSTWAS model
-           snps, ### data.frame/data.table for SNP dosages
-           sumStats, ### data.frame/data.table for GWAS summary statistics
-           snpAnnot = NULL,
-           onlyCis = F, ### toggle to include only local SNPs
-           beta, ### column name for effect sizes in GWAS summary stats
-           se, ### column name for standard errors for betas in GWAS summary stats
-           chr, ### column name for SNP chromosome locations in GWAS summary stats
-           pos, ### column name for SNP basepair position in GWAS summary stats
-           ref, ### column name for SNP reference allele in GWAS summary stats
-           pval, ### column name for P-value in GWAS summary stats
-           R2cutoff = 0.01, ### cross-validation R2 cutoff to test a gene
-           alpha, ### P-value cutoff in TWAS association to conduct permuation test
-           nperms = 1e3 ### number of permutations in permuation test)</pre></body></html></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a><span class="kw">burdenTest</span>(wgt, <span class="co">### .RData file name for a given gene's MOSTWAS model</span></span>
+<span id="cb10-2"><a href="#cb10-2"></a>           snps, <span class="co">### data.frame/data.table for SNP dosages</span></span>
+<span id="cb10-3"><a href="#cb10-3"></a>           sumStats, <span class="co">### data.frame/data.table for GWAS summary statistics</span></span>
+<span id="cb10-4"><a href="#cb10-4"></a>           <span class="dt">snpAnnot =</span> <span class="ot">NULL</span>,</span>
+<span id="cb10-5"><a href="#cb10-5"></a>           <span class="dt">onlyCis =</span> F, <span class="co">### toggle to include only local SNPs</span></span>
+<span id="cb10-6"><a href="#cb10-6"></a>           beta, <span class="co">### column name for effect sizes in GWAS summary stats</span></span>
+<span id="cb10-7"><a href="#cb10-7"></a>           se, <span class="co">### column name for standard errors for betas in GWAS summary stats</span></span>
+<span id="cb10-8"><a href="#cb10-8"></a>           chr, <span class="co">### column name for SNP chromosome locations in GWAS summary stats</span></span>
+<span id="cb10-9"><a href="#cb10-9"></a>           pos, <span class="co">### column name for SNP basepair position in GWAS summary stats</span></span>
+<span id="cb10-10"><a href="#cb10-10"></a>           ref, <span class="co">### column name for SNP reference allele in GWAS summary stats</span></span>
+<span id="cb10-11"><a href="#cb10-11"></a>           pval, <span class="co">### column name for P-value in GWAS summary stats</span></span>
+<span id="cb10-12"><a href="#cb10-12"></a>           <span class="dt">R2cutoff =</span> <span class="fl">0.01</span>, <span class="co">### cross-validation R2 cutoff to test a gene</span></span>
+<span id="cb10-13"><a href="#cb10-13"></a>           alpha, <span class="co">### P-value cutoff in TWAS association to conduct permuation test</span></span>
+<span id="cb10-14"><a href="#cb10-14"></a>           <span class="dt">nperms =</span> <span class="fl">1e3</span> <span class="co">### number of permutations in permuation test)</span></span></code></pre></div>
 <p>A comment on permutation testing:</p>
 <ul>
 <li>Permutation testing assess wheter the TWAS association persists when conditioning on large GWAS effect sizes. This test is meant to be conservatively used, so we recommend imposing a stringent <span class="math inline">\(P\)</span>-value cutoff to prioritize a gene for permutation testing (i.e. <code>alpha</code> at the Bonferroni cutoff).</li>
@@ -329,18 +331,18 @@ module add gcta</pre></body></html></div>
 <h3 class="hasAnchor">
 <a href="#distal-snps-added-last-test" class="anchor"></a>Distal-SNPs added last test</h3>
 <p>For genes with significant TWAS associations from <code><a href="../reference/burdenTest.html">burdenTest()</a></code>, we may be interested in assessing whether the distal SNPs provide any added information beyond what we can observe from the local variation around the gene of interest. We developed an added-last test of distal SNPs using summary statistics. It can be run using the <code><a href="../reference/addedLastTest.html">addedLastTest()</a></code> function that take in similar options as <code><a href="../reference/burdenTest.html">burdenTest()</a></code>:</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r">addedLastTest(wgt,
-              snps,
-              sumStats,
-              snpAnnot = NULL,
-              beta,
-              se,
-              chr,
-              pos,
-              ref,
-              pval,
-              R2cutoff,
-              locChrom ### chromosome on which the gene of interest exists)</pre></body></html></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="kw">addedLastTest</span>(wgt,</span>
+<span id="cb11-2"><a href="#cb11-2"></a>              snps,</span>
+<span id="cb11-3"><a href="#cb11-3"></a>              sumStats,</span>
+<span id="cb11-4"><a href="#cb11-4"></a>              <span class="dt">snpAnnot =</span> <span class="ot">NULL</span>,</span>
+<span id="cb11-5"><a href="#cb11-5"></a>              beta,</span>
+<span id="cb11-6"><a href="#cb11-6"></a>              se,</span>
+<span id="cb11-7"><a href="#cb11-7"></a>              chr,</span>
+<span id="cb11-8"><a href="#cb11-8"></a>              pos,</span>
+<span id="cb11-9"><a href="#cb11-9"></a>              ref,</span>
+<span id="cb11-10"><a href="#cb11-10"></a>              pval,</span>
+<span id="cb11-11"><a href="#cb11-11"></a>              R2cutoff,</span>
+<span id="cb11-12"><a href="#cb11-12"></a>              locChrom <span class="co">### chromosome on which the gene of interest exists)</span></span></code></pre></div>
 <p>The added-last test need not be run only on genes prioritized for permutation testing. We recommned any significant gene in overall TWAS association to be prioritized for added-last testing. The results from this test can allow users to focus on these distal regions for functional hypothesis generation and possible follow-up studies.</p>
 </div>
 </div>
@@ -361,7 +363,7 @@ module add gcta</pre></body></html></div>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

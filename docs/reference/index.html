@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MOSTWAS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -149,6 +149,12 @@
           <p><code><a href="eQTL_MOSTWAS.html">eQTL_MOSTWAS()</a></code> </p>
         </td>
         <td><p>LD prune a genotype matrix</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="mergeFinalModels.html">mergeFinalModels()</a></code> </p>
+        </td>
+        <td><p>Output final MOSTWAS models</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -165,13 +171,19 @@
       <tr>
         
         <td>
-          <p><code><a href="trainExpression.html">trainExpression()</a></code> </p>
+          <p><code><a href="trainLocalModel.html">trainLocalModel()</a></code> </p>
+        </td>
+        <td><p>Train a local-only model for a phenotype</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="MeTWAS.html">MeTWAS()</a></code> </p>
         </td>
         <td><p>Train and predict gene's predictive model with mediators using MeTWAS</p></td>
       </tr><tr>
         
         <td>
-          <p><code><a href="trainDeP.html">trainDeP()</a></code> </p>
+          <p><code><a href="DePMA.html">DePMA()</a></code> </p>
         </td>
         <td><p>Train and predict gene's predictive model with mediators using DePMA</p></td>
       </tr>
@@ -179,7 +191,7 @@
       <tr>
         <th colspan="2">
           <h2 id="section-association-testing" class="hasAnchor"><a href="#section-association-testing" class="anchor"></a>Association testing</h2>
-          <p class="section-desc"><p>Functions from TWAS association testing</p></p>
+          <p class="section-desc"><p>Functions for TWAS association testing</p></p>
         </th>
       </tr>
       
@@ -204,7 +216,7 @@
       <tr>
         <th colspan="2">
           <h2 id="section-simulation-framework" class="hasAnchor"><a href="#section-simulation-framework" class="anchor"></a>Simulation framework</h2>
-          <p class="section-desc"><p>Functions from running simulation analysis</p></p>
+          <p class="section-desc"><p>Functions for running simulation analysis</p></p>
         </th>
       </tr>
       
@@ -345,6 +357,24 @@
           <p><code><a href="trainSNPPheno.html">trainSNPPheno()</a></code> </p>
         </td>
         <td><p>Train a local-only model for a phenotype</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="trainLocalModel.html">trainLocalModel()</a></code> </p>
+        </td>
+        <td><p>Train a local-only model for a phenotype</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="trainDeP.html">trainDeP()</a></code> </p>
+        </td>
+        <td><p>Train and predict gene's predictive model with mediators using DePMA</p></td>
+      </tr><tr>
+        
+        <td>
+          <p><code><a href="trainExpression.html">trainExpression()</a></code> </p>
+        </td>
+        <td><p>Train and predict gene's predictive model with mediators using MeTWAS</p></td>
       </tr>
     </tbody>
     </table>
@@ -364,7 +394,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

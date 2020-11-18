@@ -73,7 +73,7 @@ as fixed effects and assesses in-sample performance with cross-validation." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MOSTWAS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -126,11 +126,32 @@ as fixed effects and assesses in-sample performance with cross-validation." />
 as fixed effects and assesses in-sample performance with cross-validation.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>trainExpression</span>(<span class='no'>geneInt</span>, <span class='no'>snps</span>, <span class='no'>snpLocs</span>, <span class='no'>mediator</span>, <span class='no'>medLocs</span>, <span class='no'>covariates</span>,
-  <span class='no'>dimNumeric</span>, <span class='no'>qtlFull</span>, <span class='kw'>h2Pcutoff</span> <span class='kw'>=</span> <span class='fl'>0.1</span>, <span class='kw'>numMed</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='no'>seed</span>, <span class='no'>k</span>,
-  <span class='kw'>cisDist</span> <span class='kw'>=</span> <span class='fl'>5e+05</span>, <span class='kw'>parallel</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>prune</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>windowSize</span> <span class='kw'>=</span> <span class='fl'>50</span>,
-  <span class='kw'>numSNPShift</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>ldThresh</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='no'>cores</span>, <span class='kw'>verbose</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>LDMS</span> <span class='kw'>=</span> <span class='no'>F</span>,
-  <span class='no'>modelDir</span>, <span class='kw'>ldScrRegion</span> <span class='kw'>=</span> <span class='fl'>200</span>, <span class='kw'>snpAnnot</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>trainExpression</span><span class='op'>(</span>
+  <span class='va'>geneInt</span>,
+  <span class='va'>snps</span>,
+  <span class='va'>snpLocs</span>,
+  <span class='va'>mediator</span>,
+  <span class='va'>medLocs</span>,
+  <span class='va'>covariates</span>,
+  <span class='va'>dimNumeric</span>,
+  <span class='va'>qtlFull</span>,
+  h2Pcutoff <span class='op'>=</span> <span class='fl'>0.1</span>,
+  numMed <span class='op'>=</span> <span class='fl'>5</span>,
+  <span class='va'>seed</span>,
+  <span class='va'>k</span>,
+  cisDist <span class='op'>=</span> <span class='fl'>5e+05</span>,
+  parallel <span class='op'>=</span> <span class='cn'>T</span>,
+  prune <span class='op'>=</span> <span class='cn'>F</span>,
+  windowSize <span class='op'>=</span> <span class='fl'>50</span>,
+  numSNPShift <span class='op'>=</span> <span class='fl'>5</span>,
+  ldThresh <span class='op'>=</span> <span class='fl'>0.5</span>,
+  <span class='va'>cores</span>,
+  verbose <span class='op'>=</span> <span class='cn'>T</span>,
+  LDMS <span class='op'>=</span> <span class='cn'>F</span>,
+  <span class='va'>modelDir</span>,
+  ldScrRegion <span class='op'>=</span> <span class='fl'>200</span>,
+  snpAnnot <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -228,7 +249,7 @@ as fixed effects and assesses in-sample performance with cross-validation.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

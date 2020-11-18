@@ -74,7 +74,7 @@ cross-validation." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MOSTWAS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -128,9 +128,23 @@ predicts the genetically regulated intensity of it in the training set via
 cross-validation.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>trainMediator</span>(<span class='no'>medInt</span>, <span class='kw'>pheno</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>mediator</span>, <span class='no'>medLocs</span>, <span class='no'>snps</span>, <span class='no'>snpLocs</span>,
-  <span class='no'>covariates</span>, <span class='no'>seed</span>, <span class='no'>k</span>, <span class='kw'>cisDist</span> <span class='kw'>=</span> <span class='fl'>5e+05</span>, <span class='kw'>prune</span> <span class='kw'>=</span> <span class='no'>T</span>, <span class='kw'>windowSize</span> <span class='kw'>=</span> <span class='fl'>50</span>,
-  <span class='kw'>numSNPShift</span> <span class='kw'>=</span> <span class='fl'>5</span>, <span class='kw'>ldThresh</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>snpAnnot</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>trainMediator</span><span class='op'>(</span>
+  <span class='va'>medInt</span>,
+  pheno <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>mediator</span>,
+  <span class='va'>medLocs</span>,
+  <span class='va'>snps</span>,
+  <span class='va'>snpLocs</span>,
+  <span class='va'>covariates</span>,
+  <span class='va'>seed</span>,
+  <span class='va'>k</span>,
+  cisDist <span class='op'>=</span> <span class='fl'>5e+05</span>,
+  prune <span class='op'>=</span> <span class='cn'>T</span>,
+  windowSize <span class='op'>=</span> <span class='fl'>50</span>,
+  numSNPShift <span class='op'>=</span> <span class='fl'>5</span>,
+  ldThresh <span class='op'>=</span> <span class='fl'>0.5</span>,
+  snpAnnot <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -212,7 +226,7 @@ cross-validation.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

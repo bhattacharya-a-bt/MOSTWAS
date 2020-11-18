@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">MOSTWAS</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
 
@@ -124,13 +124,25 @@
     <p>The function prunes SNPs that are in LD using PLINK</p>
     </div>
 
-    <pre class="usage"><span class='fu'>eQTL_MOSTWAS</span>(<span class='no'>SNP_file_name</span>, <span class='no'>snps_location_file_name</span>,
-  <span class='kw'>SNP_file_name_dis</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>expression_file_name</span>,
-  <span class='no'>gene_location_file_name</span>, <span class='no'>mediators_file_name</span>, <span class='no'>meds_location_file_name</span>,
-  <span class='no'>covariates_file_name</span>, <span class='no'>output_file_name_loc_qtl</span>, <span class='no'>output_file_name_dis_qtl</span>,
-  <span class='kw'>output_file_name_loc_med</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>output_file_name_dis_med</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>p_loc_qtl</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>, <span class='kw'>p_dis_qtl</span> <span class='kw'>=</span> <span class='fl'>1e-06</span>, <span class='kw'>FDRcut</span> <span class='kw'>=</span> <span class='fl'>0.05</span>,
-  <span class='kw'>useModel</span> <span class='kw'>=</span> <span class='st'>"modelLinear"</span>, <span class='kw'>DePMA</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
+    <pre class="usage"><span class='fu'>eQTL_MOSTWAS</span><span class='op'>(</span>
+  <span class='va'>SNP_file_name</span>,
+  <span class='va'>snps_location_file_name</span>,
+  SNP_file_name_dis <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>expression_file_name</span>,
+  <span class='va'>gene_location_file_name</span>,
+  <span class='va'>mediators_file_name</span>,
+  <span class='va'>meds_location_file_name</span>,
+  <span class='va'>covariates_file_name</span>,
+  <span class='va'>output_file_name_loc_qtl</span>,
+  <span class='va'>output_file_name_dis_qtl</span>,
+  output_file_name_loc_med <span class='op'>=</span> <span class='cn'>NULL</span>,
+  output_file_name_dis_med <span class='op'>=</span> <span class='cn'>NULL</span>,
+  p_loc_qtl <span class='op'>=</span> <span class='fl'>1e-06</span>,
+  p_dis_qtl <span class='op'>=</span> <span class='fl'>1e-06</span>,
+  FDRcut <span class='op'>=</span> <span class='fl'>0.05</span>,
+  useModel <span class='op'>=</span> <span class='va'>modelLINEAR</span>,
+  DePMA <span class='op'>=</span> <span class='cn'>F</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -224,7 +236,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
