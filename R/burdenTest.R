@@ -160,8 +160,12 @@ burdenTest <- function(wgt,
     return(twas)
   }
 
+  if (exists('ModelOut')){
   snpCur = subset(snps, SNP %in% c(as.character(Model$SNP),
-                                   as.character(ModelOut$SNP)))
+                                   as.character(ModelOut$SNP)))}
+  else {
+    snpCur = subset(snps,SNP %in% as.character(Model$SNP))
+  }
   snpCur = snpCur[match(c(as.character(Model$SNP),
                           as.character(ModelOut$SNP)),snpCur$SNP),]
   genos = as.matrix(snpCur[,-1])

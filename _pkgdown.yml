@@ -13,9 +13,9 @@ reference:
     desc: >
       Main wrapper functions for MOSTWAS expression models
     contents:
-      - trainExpression
-      - trainDeP
+      - trainLocalModel
       - MeTWAS
+      - DePMA
   - title: "Association testing"
     desc: >
       Functions from TWAS association testing
