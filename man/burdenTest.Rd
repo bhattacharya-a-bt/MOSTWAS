@@ -19,6 +19,7 @@ burdenTest(
   pval,
   R2cutoff,
   alpha,
+  locChrom,
   nperms = 1000
 )
 }
