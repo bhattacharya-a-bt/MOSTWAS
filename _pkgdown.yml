@@ -51,6 +51,5 @@ reference:
       - testTME
       - trainMediator
       - trainSNPPheno
-      - trainLocalModel
       - trainDeP
       - trainExpression
