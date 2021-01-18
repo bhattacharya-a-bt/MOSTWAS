@@ -10,6 +10,7 @@
 #' @param cisDist numeric, local window, default .5 Mb
 #' @param nfolds integer, number of folds
 #' @param seed numeric, random seed
+#' @param verbose logical, print gene name
 #'
 #' @return list with Model, predicted values, and CV-R2
 #'
@@ -26,8 +27,12 @@ trainLocalModel <- function(phenoInt,
                            covariates,
                            cisDist = 5e5,
                            nfolds = 5,
-                           seed = 1218){
+                           seed = 1218,
+                           verbose = T){
 
+  if (verbose){
+    print(phenoInt)
+  }
   colnames(mediator)[1] = 'Mediator'
   pheno = as.numeric(mediator[mediator$Mediator == phenoInt,-1])
   ml = subset(medLocs,geneid == phenoInt)
