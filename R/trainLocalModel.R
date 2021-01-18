@@ -14,105 +14,86 @@
 #'
 #' @return list with Model, predicted values, and CV-R2
 #'
-#' @importFrom caret createFolds
-#' @importFrom rrBLUP mixed.solve
 #' @importFrom bigsnpr snp_attach
-#' @importFrom bigstatsr big_spLinReg
+#' @importFrom glmnet cv.glmnet
 #'
 #' @export
 trainLocalModel <- function(phenoInt,
-                           midSNP,
-                           mediator,
-                           medLocs,
-                           covariates,
-                           cisDist = 5e5,
-                           nfolds = 5,
-                           seed = 1218,
-                           verbose = T){
-
-  if (verbose){
-    print(phenoInt)
-  }
-  colnames(mediator)[1] = 'Mediator'
-  pheno = as.numeric(mediator[mediator$Mediator == phenoInt,-1])
-  ml = subset(medLocs,geneid == phenoInt)
-  w = which(midSNP$map$chromosome == ml$chr[1] &
-              midSNP$map$physical.pos < ml$right[1] + cisDist &
-              midSNP$map$physical.pos > ml$left[1] - cisDist)
-  if (length(w) == 0){
-    return(list(Model = data.frame(SNP = NA,
-                                   Chromosome = NA,
-                                   Position = NA,
-                                   Effect = NA),
-                Predicted = rep(NA,length = length(pheno)),
-                CVR2 = 0))
-  }
-  midSNP.cur = bigsnpr::snp_attach(subset(midSNP,ind.col = w))
-
-  set.seed(seed)
-  train = caret::createFolds(y = pheno,
-                             k=nfolds,
-                             returnTrain = T)
-  set.seed(seed)
-  test = caret::createFolds(y = pheno,
-                            k = nfolds,
-                            returnTrain = F)
-
-  pred.blup = pred.enet = vector(mode = 'numeric',
-                                 length = length(pheno))
-  df = cbind(pheno,t(as.matrix(covariates[,-1])))
-  colnames(df)[1] = 'pheno'
-  pheno = as.numeric(resid(lm(pheno ~ .,data = as.data.frame(df))))
-
-  for (i in 1:5){
-    mod.enet <- bigstatsr::big_spLinReg(midSNP.cur$genotypes,
-                         pheno[train[[i]]],
-                         ind.train = train[[i]],
-                         alphas = .5,K = 5, warn = FALSE)
-    pred.enet[test[[i]]] = predict(mod.enet,
-                                   midSNP.cur$genotypes,
-                        ind.row = test[[i]])
-
-    mod.blup = rrBLUP::mixed.solve(y = pheno[train[[i]]],
-                               Z = midSNP.cur$genotypes[train[[i]],])
-    pred.blup[test[[i]]] = as.numeric(midSNP.cur$genotypes[test[[i]],] %*%
-                                        mod.blup$u)
-  }
-  enet.R2 = adjR2(pheno,pred.enet)
-  blup.R2 = adjR2(pheno,pred.blup)
-  model = ifelse(blup.R2 >= enet.R2,
-                 'LMM','Elastic net')
-
-  if (model == 'Elastic net'){
-
-    fin.model.enet = bigstatsr::big_spLinReg(midSNP.cur$genotypes,
-                                             pheno,
-                                             alphas = .5, K = 5, warn = FALSE)
-    mod.df.enet = data.frame(SNP = midSNP.cur$map$marker.ID[attr(fin.model.enet,'ind.col')],
-                             Chromosome = midSNP.cur$map$chromosome[attr(fin.model.enet,'ind.col')],
-                             Position = midSNP.cur$map$physical.pos[attr(fin.model.enet,'ind.col')],
-                             Effect = summary(fin.model.enet)$beta)
-    colnames(mod.df.enet) = c('SNP','Chromosome','Position','Effect')
-    mod.df.enet = subset(mod.df.enet,Effect != 0)
-    if (nrow(mod.df.enet) == 0){
-      model = 'LMM'
-    } else {
-      return(list(Model = mod.df.enet,
-                  Predicted = pred.enet,
-                  CVR2 = adjR2(pheno,pred.enet)))
+                            midSNP,
+                            mediator,
+                            medLocs,
+                            covariates,
+                            cisDist = 5e5,
+                            nfolds = 5,
+                            seed = 1218,
+                            verbose = T){
+    
+    if (verbose){
+        print(phenoInt)
     }
-
-  }
-
-  if (model == 'LMM') {
-  fin.model.blup = rrBLUP::mixed.solve(y = pheno,
-                                       Z = midSNP.cur$genotypes[])
-  mod.df.blup = data.frame(SNP = midSNP.cur$map$marker.ID,
-                           Chromosome = midSNP.cur$map$chromosome,
-                           Position = midSNP.cur$map$physical.pos,
-                           Effect = as.numeric(fin.model.blup$u))
-  return(list(Model = mod.df.blup,
-              Predicted = pred.blup,
-              CVR2 = adjR2(pheno,pred.blup)))
-  }
+    colnames(mediator)[1] = 'Mediator'
+    pheno = as.numeric(mediator[mediator$Mediator == phenoInt,-1])
+    ml = subset(medLocs,geneid == phenoInt)
+    w = which(midSNP$map$chromosome == ml$chr[1] &
+                  midSNP$map$physical.pos < ml$right[1] + cisDist &
+                  midSNP$map$physical.pos > ml$left[1] - cisDist)
+    if (length(w) == 0){
+        return(list(Model = data.frame(SNP = NA,
+                                       Chromosome = NA,
+                                       Position = NA,
+                                       Effect = NA),
+                    Predicted = rep(NA,length = length(pheno)),
+                    CVR2 = 0))
+    }
+    midSNP.cur = bigsnpr::snp_attach(subset(midSNP,ind.col = w))
+    
+        df = cbind(pheno,t(as.matrix(covariates[,-1])))
+    colnames(df)[1] = 'pheno'
+    pheno = as.numeric(resid(lm(pheno ~ .,data = as.data.frame(df))))
+    
+    set.seed(seed)
+    fin.model.enet = glmnet::cv.glmnet(midSNP.cur$genotypes[],
+                                       pheno,
+                                       alpha = .5,
+                                       K = 5,
+                                       keep = T)
+    fin.model.blup = glmnet::cv.glmnet(midSNP.cur$genotypes[],
+                                       pheno,
+                                       alpha = 0,
+                                       K = 5,
+                                       keep = T)
+    pred.enet = fin.model.enet$fit.preval[,which.min(fin.model.enet$cvm)]
+    pred.blup = fin.model.blup$fit.preval[,which.min(fin.model.blup$cvm)]
+    enet.R2 = adjR2(pheno,pred.enet)
+    blup.R2 = adjR2(pheno,pred.blup)
+    model = ifelse(blup.R2 >= enet.R2,
+                   'LMM','Elastic net')
+    
+    if (model == 'Elastic net'){
+        
+       mod.df.enet = data.frame(SNP = midSNP.cur$map$marker.ID,
+                                 Chromosome = midSNP.cur$map$chromosome,
+                                 Position = midSNP.cur$map$physical.pos,
+                                 Effect = as.numeric(coef(fin.model.enet,s='lambda.min'))[-1])
+        colnames(mod.df.enet) = c('SNP','Chromosome','Position','Effect')
+        mod.df.enet = subset(mod.df.enet,Effect != 0)
+        if (nrow(mod.df.enet) == 0){
+            model = 'LMM'
+        } else {
+            return(list(Model = mod.df.enet,
+                        Predicted = pred.enet,
+                        CVR2 = adjR2(pheno,pred.enet)))
+        }
+        
+    }
+    
+    if (model == 'LMM') {
+        mod.df.blup = data.frame(SNP = midSNP.cur$map$marker.ID,
+                                 Chromosome = midSNP.cur$map$chromosome,
+                                 Position = midSNP.cur$map$physical.pos,
+                                 Effect = as.numeric(coef(fin.model.blup,s='lambda.min'))[-1])
+        return(list(Model = mod.df.blup,
+                    Predicted = pred.blup,
+                    CVR2 = adjR2(pheno,pred.blup)))
+    }
 }
