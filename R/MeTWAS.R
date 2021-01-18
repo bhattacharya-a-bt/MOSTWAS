@@ -124,14 +124,25 @@ MeTWAS <- function(geneInt,
                '--out',paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi')),
          intern = !verbose)
 
-  if (file.exists(paste0(strsplit(tmpBed,'.bed')[[1]][1],
-                               '_multi.hsq'))){
-  a = fread(paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi.hsq'),fill=T)
-  herit = list(h2 = a$Variance[4],
-               P = a$Variance[9])
+  if (file.exists(paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi.hsq'))){
+    a = data.table::fread(paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi.hsq'),fill=T)
+    herit = list(h2 = a$Variance[a$Source == 'V(G)/Vp'],
+                 P = a$Variance[a$Source == 'Pval'])
   } else {
+    system(paste('gcta64',
+                 '--reml',
+                 '--grm',strsplit(tmpBed,'.bed')[[1]][1],
+                 '--pheno',phenFile,
+                 '--qcovar',covarFile,
+                 '--out',paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi')),
+           intern = !verbose)
+    if (file.exists(paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi.hsq'))){
+      a = data.table::fread(paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi.hsq'),fill=T)
+      herit = list(h2 = a$Variance[a$Source == 'V(G)/Vp'],
+                   P = a$Variance[a$Source == 'Pval'])
+    } else {
     herit = list(h2 = 0,P=1)
-  }
+  }}
 
   if (herit$P > h2Pcutoff) {
     return(paste(geneInt,
