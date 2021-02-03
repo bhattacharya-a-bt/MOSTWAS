@@ -127,14 +127,14 @@ DePMA <- function(geneInt,
                '--grm',strsplit(tmpBed,'.bed')[[1]][1],
                '--pheno',phenFile,
                '--qcovar',covarFile,
-               '--reml-no-constrain --reml-bendV',
+               '--reml-no-constrain',
                '--out',paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi')),
          intern = !verbose)
 
   if (file.exists(paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi.hsq'))){
   a = fread(paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi.hsq'),fill=T)
   herit = list(h2 = a$Variance[4],
-               P = a$Variance[9])} else {
+               P = a$Variance[8])} else {
                  herit = list(h2 = 0,P = 1)
                }
 
