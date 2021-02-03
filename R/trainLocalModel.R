@@ -14,10 +14,8 @@
 #'
 #' @return list with Model, predicted values, and CV-R2
 #'
-#' @importFrom caret createFolds
-#' @importFrom rrBLUP mixed.solve
 #' @importFrom bigsnpr snp_attach
-#' @importFrom bigstatsr big_spLinReg
+#' @importFrom glmnet cv.glmnet
 #'
 #' @export
 trainLocalModel <- function(phenoInt,
@@ -101,18 +99,5 @@ trainLocalModel <- function(phenoInt,
                   Predicted = pred.enet,
                   CVR2 = adjR2(pheno,pred.enet)))
     }
-
-  }
-
-  if (model == 'LMM') {
-  fin.model.blup = rrBLUP::mixed.solve(y = pheno,
-                                       Z = midSNP.cur$genotypes[])
-  mod.df.blup = data.frame(SNP = midSNP.cur$map$marker.ID,
-                           Chromosome = midSNP.cur$map$chromosome,
-                           Position = midSNP.cur$map$physical.pos,
-                           Effect = as.numeric(fin.model.blup$u))
-  return(list(Model = mod.df.blup,
-              Predicted = pred.blup,
-              CVR2 = adjR2(pheno,pred.blup)))
   }
 }
