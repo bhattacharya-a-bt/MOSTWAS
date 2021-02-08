@@ -120,7 +120,6 @@ MeTWAS <- function(geneInt,
                '--grm',strsplit(tmpBed,'.bed')[[1]][1],
                '--pheno',phenFile,
                '--qcovar',covarFile,
-               '--reml-no-constrain --reml-bendV',
                '--out',paste0(strsplit(tmpBed,'.bed')[[1]][1],'_multi')),
          intern = !verbose)
 
