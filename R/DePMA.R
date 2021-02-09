@@ -60,11 +60,17 @@ DePMA <- function(geneInt,
                   qtMed_parts,
                   modelDir,
                   tempFolder,
-                  R2Cutoff){
+                  R2Cutoff,
+                  gctaFolder = NULL){
 
 
   if (!dir.exists(modelDir)){
     dir.create(modelDir)
+  }
+
+
+  if (is.null(gctaFolder)){
+    gctaFolder = ''
   }
 
   set.seed(seed)
@@ -109,7 +115,7 @@ DePMA <- function(geneInt,
   tmpBed = tempfile(fileext = ".bed")
   bigsnpr::snp_writeBed(midSNP,tmpBed)
 
-  system(paste('gcta64',
+  system(paste(paste0(gctaFolder,'gcta64'),
                '--bfile',strsplit(tmpBed,'.bed')[[1]][1],
                '--autosome --make-grm',
                '--out',strsplit(tmpBed,'.bed')[[1]][1]),
@@ -122,7 +128,7 @@ DePMA <- function(geneInt,
   write.table(cbind(midSNP$fam[,1:2],
                     t(covariates[1:dimNumeric,-1])),
               covarFile,row.names = F,col.names = F,quote=F)
-  system(paste('gcta64',
+  system(paste(paste0(gctaFolder,'gcta64'),
                '--reml',
                '--grm',strsplit(tmpBed,'.bed')[[1]][1],
                '--pheno',phenFile,

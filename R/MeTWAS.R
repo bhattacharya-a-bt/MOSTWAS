@@ -52,11 +52,16 @@ MeTWAS <- function(geneInt,
                    verbose = T,
                    R2Cutoff = 0.01,
                    modelDir,
-                   tempFolder){
+                   tempFolder,
+                   gctaFolder = NULL){
 
   set.seed(seed)
   if (!dir.exists(modelDir)){
     dir.create(modelDir)
+  }
+
+  if (is.null(gctaFolder)){
+    gctaFolder = ''
   }
 
   print('GATHERING MEDIATORS')
@@ -102,7 +107,7 @@ MeTWAS <- function(geneInt,
   tmpBed = paste0(tempFolder,"MeTWAS_",geneInt,".bed")
   bigsnpr::snp_writeBed(midSNP,tmpBed)
 
-  system(paste('gcta64',
+  system(paste(paste0(gctaFolder,'gcta64'),
                '--bfile',strsplit(tmpBed,'.bed')[[1]][1],
                '--autosome --make-grm',
                '--out',strsplit(tmpBed,'.bed')[[1]][1]),
@@ -115,7 +120,7 @@ MeTWAS <- function(geneInt,
   write.table(cbind(midSNP$fam[,1:2],
                     t(covariates[1:dimNumeric,-1])),
               covarFile,row.names = F,col.names = F,quote=F)
-  system(paste('gcta64',
+  system(paste(paste0(gctaFolder,'gcta64'),
                '--reml',
                '--grm',strsplit(tmpBed,'.bed')[[1]][1],
                '--pheno',phenFile,
@@ -128,7 +133,7 @@ MeTWAS <- function(geneInt,
     herit = list(h2 = a$Variance[a$Source == 'V(G)/Vp'],
                  P = a$Variance[a$Source == 'Pval'])
   } else {
-    system(paste('gcta64',
+    system(paste(paste0(gctaFolder,'gcta64'),
                  '--reml',
                  '--grm',strsplit(tmpBed,'.bed')[[1]][1],
                  '--pheno',phenFile,
