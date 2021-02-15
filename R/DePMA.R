@@ -129,7 +129,7 @@ DePMA <- function(geneInt,
                     t(covariates[1:dimNumeric,-1])),
               covarFile,row.names = F,col.names = F,quote=F)
   system(paste(paste0(gctaFolder,'gcta64'),
-               '--reml',
+               '--reml --reml-no-constrain --reml-bendV',
                '--grm',strsplit(tmpBed,'.bed')[[1]][1],
                '--pheno',phenFile,
                '--qcovar',covarFile,
