@@ -181,6 +181,7 @@ MeTWAS <- function(geneInt,
                           nfolds = k)
   }
   names(medTrainList) = medList
+  medTrainList[sapply(medTrainList,length) > 0]
 
   print('FITTING MEDIATORS')
   fe.R2 = 0
