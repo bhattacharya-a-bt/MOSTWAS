@@ -256,6 +256,8 @@ MeTWAS <- function(geneInt,
   CisR2 = cisGenoMod$CVR2.cis
   h2 = abs(herit$h2)
   h2.Pvalue = herit$P
+  print('****************************')
+  print('R2 = ',R2)
   if (R2 < R2Cutoff){ return('CV R2 < 0.01.') }
   ## REMOVE THE NEXT LINE
   CorMat = cbind(Predicted,fixedEffects)
