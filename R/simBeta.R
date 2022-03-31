@@ -14,7 +14,7 @@
 simBeta <- function(p.causal, eqtl_h2, n_snps){
 
   # number of QTLs
-  n_qtls = floor(p.causal * n_snps)
+  n_qtls = max(1,floor(p.causal * n_snps))
 
   # select which SNPs are causal
   c_qtls = sample(1:n_snps,n_qtls)
