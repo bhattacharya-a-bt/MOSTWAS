@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "bhattacharya.a.bt@gmail.com")
 Description: Enrichment for transcriptome imputation and association studies using mediating biomarkers.
-Imports: caret, rrBLUP, IHW, abind, MatrixEQTL, dplyr, glmnet, bigsnpr, bigstatsr
+Imports: caret, rrBLUP, abind, MatrixEQTL, dplyr, glmnet, bigsnpr, bigstatsr
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
